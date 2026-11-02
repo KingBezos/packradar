@@ -17,17 +17,22 @@ function getResendConfig(): { apiKey: string | null; from: string } {
   let apiKey = process.env.RESEND_API_KEY || null;
   let from = process.env.EMAIL_FROM || "PackRadar <onboarding@resend.dev>";
   if (!apiKey) {
-    try {
-      const cfgPath = path.join(process.cwd(), "data", "oauth-config.json");
-      if (fs.existsSync(cfgPath)) {
-        const raw = JSON.parse(fs.readFileSync(cfgPath, "utf8")) as {
-          resendApiKey?: string;
-          emailFrom?: string;
-        };
-        if (raw.resendApiKey) apiKey = raw.resendApiKey.trim();
-        if (raw.emailFrom) from = raw.emailFrom.trim();
-      }
-    } catch {}
+    for (const cfgPath of [
+      path.join(process.cwd(), "data", "oauth-config.json"),
+      "/tmp/packradar-oauth-config.json",
+    ]) {
+      try {
+        if (fs.existsSync(cfgPath)) {
+          const raw = JSON.parse(fs.readFileSync(cfgPath, "utf8")) as {
+            resendApiKey?: string;
+            emailFrom?: string;
+          };
+          if (raw.resendApiKey) apiKey = raw.resendApiKey.trim();
+          if (raw.emailFrom) from = raw.emailFrom.trim();
+          if (apiKey) break;
+        }
+      } catch {}
+    }
   }
   return { apiKey, from };
 }
@@ -46,23 +51,27 @@ export async function sendEmail(to: string, msg: Message): Promise<"sent" | "log
     <a href="${absolute(msg.url)}" style="display:inline-block;margin-top:12px;background:#facc15;color:#0f172a;padding:10px 16px;border-radius:10px;font-weight:700;text-decoration:none">Open PackRadar</a>
     <p style="font-size:11px;color:#94a3b8;margin-top:24px">You're receiving this from PackRadar. Manage alerts: ${SITE_URL()}/alerts<br/>Drop times are community estimates. Not affiliated with Nintendo or The Pokémon Company.</p>
   </div>`;
-  if (!key) {
+  if (key) {
     try {
-      const dir = process.env.VERCEL ? "/tmp/packradar-outbox" : path.join(process.cwd(), "data", "outbox");
-      fs.mkdirSync(dir, { recursive: true });
-      fs.writeFileSync(
-        path.join(dir, `${Date.now()}-${to.replace(/[^a-z0-9]/gi, "_")}.json`),
-        JSON.stringify({ to, from, ...msg, url: absolute(msg.url) }, null, 2),
-      );
-    } catch {}
-    console.log(`[email:dev-outbox] → ${to}: ${msg.title}`);
-    return "logged";
+      const { Resend } = await import("resend");
+      const resend = new Resend(key);
+      const r = await resend.emails.send({ from, to, subject: msg.title, html });
+      if (!r.error) return "sent";
+      console.warn(`[email:resend-warn] ${r.error.message} — falling back to outbox log`);
+    } catch (err) {
+      console.warn(`[email:resend-error] ${(err as Error).message} — falling back to outbox log`);
+    }
   }
-  const { Resend } = await import("resend");
-  const resend = new Resend(key);
-  const r = await resend.emails.send({ from, to, subject: msg.title, html });
-  if (r.error) throw new Error(r.error.message);
-  return "sent";
+  try {
+    const dir = process.env.VERCEL ? "/tmp/packradar-outbox" : path.join(process.cwd(), "data", "outbox");
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(
+      path.join(dir, `${Date.now()}-${to.replace(/[^a-z0-9]/gi, "_")}.json`),
+      JSON.stringify({ to, from, ...msg, url: absolute(msg.url) }, null, 2),
+    );
+  } catch {}
+  console.log(`[email:dev-outbox] → ${to}: ${msg.title}`);
+  return "logged";
 }
 
 /* ───────── Web Push ───────── */

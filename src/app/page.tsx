@@ -6,45 +6,85 @@ import { DroppingSoon } from "@/components/DroppingSoon";
 import { SponsorSlot } from "@/components/SponsorSlot";
 import { NewsCard } from "@/components/NewsCard";
 import { SectionTitle } from "@/components/ui";
-import { latestNews, siteStats, upcomingReleases } from "@/lib/queries";
+import { getMapMachines, latestNews, siteStats, upcomingReleases } from "@/lib/queries";
 import { getCurrentUser } from "@/lib/session";
 import { ReleaseCountdown } from "@/components/ReleaseCountdown";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const [stats, news, releases, user] = await Promise.all([siteStats(), latestNews(6), upcomingReleases(4), getCurrentUser()]);
+  const [stats, news, releases, user, mapMachines] = await Promise.all([
+    siteStats(),
+    latestNews(6),
+    upcomingReleases(4),
+    getCurrentUser(),
+    getMapMachines(),
+  ]);
 
   return (
     <div>
-      {/* Hero */}
+      {/* Compact Full-Width Hero + Full-Length Search Bar */}
       <section className="relative overflow-hidden">
-        <div className="mx-auto max-w-7xl px-4 pb-10 pt-12 sm:pt-16">
-          <div className="max-w-3xl">
-            <span className="chip border-volt/30 text-volt">
-              <Radar className="h-3.5 w-3.5" /> {stats.total.toLocaleString()} machines · {stats.states} states · live
-            </span>
-            <h1 className="mt-4 text-4xl font-black leading-tight tracking-tight text-white sm:text-6xl">
-              Know <span className="text-volt">exactly when</span> the Pokémon vending machine near you drops.
-            </h1>
-            <p className="mt-4 max-w-2xl text-lg text-slate-300">
-              Live drop timers for every Pokémon TCG vending machine in the US, crowd-confirmed by collectors. Pins go{" "}
-              <span className="font-semibold text-yellow-300">yellow</span> 10 minutes before a drop and{" "}
-              <span className="font-semibold text-green-400">green</span> the moment it happens.
-            </p>
-            <div className="mt-6 max-w-2xl">
+        <div className="mx-auto max-w-7xl px-4 pb-5 pt-6 sm:pt-8">
+          <div className="card border-line/80 bg-gradient-to-r from-panel via-panel-2/90 to-panel p-5 sm:p-6">
+            <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
+              <div className="space-y-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="chip border-volt/30 text-volt">
+                    <Radar className="h-3.5 w-3.5" /> {stats.total.toLocaleString()} machines · {stats.states} states · live
+                  </span>
+                  <span className="text-xs text-muted">
+                    Pins go <b className="text-yellow-300">yellow</b> 10m before drop &amp; <b className="text-green-400">green</b> on drop
+                  </span>
+                </div>
+                <h1 className="text-2xl font-black leading-tight tracking-tight text-white sm:text-4xl">
+                  Know <span className="text-volt">exactly when</span> the Pokémon vending machine near you drops.
+                </h1>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm">
+                <div className="rounded-xl border border-line bg-bg/70 px-3 py-2">
+                  <span className="font-black text-white">{stats.withTimes.toLocaleString()}</span>{" "}
+                  <span className="text-muted">with drop times</span>
+                </div>
+                <div className="rounded-xl border border-green-500/30 bg-green-500/10 px-3 py-2">
+                  <span className="font-black text-green-400">{stats.confirmed.toLocaleString()}</span>{" "}
+                  <span className="text-green-200/80">confirmed ≥90%</span>
+                </div>
+                <div className="rounded-xl border border-line bg-bg/70 px-3 py-2">
+                  <span className="font-black text-volt">{stats.reports24h.toLocaleString()}</span>{" "}
+                  <span className="text-muted">reports today</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4 w-full">
               <SearchBox />
             </div>
-            <div className="mt-4 flex flex-wrap gap-4 text-sm text-muted">
-              <span>
-                <b className="text-white">{stats.withTimes.toLocaleString()}</b> with drop times
-              </span>
-              <span>
-                <b className="text-green-400">{stats.confirmed.toLocaleString()}</b> confirmed ≥90%
-              </span>
-              <span>
-                <b className="text-white">{stats.reports24h.toLocaleString()}</b> community reports today
-              </span>
+
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="font-semibold text-slate-400">Popular searches:</span>
+                {[
+                  { label: "Seattle, WA", q: "Seattle" },
+                  { label: "Gladstone, OR", q: "97027" },
+                  { label: "Los Angeles, CA", q: "Los Angeles" },
+                  { label: "Denver, CO", q: "Denver" },
+                  { label: "Columbus, OH", q: "Columbus" },
+                  { label: "Phoenix, AZ", q: "Phoenix" },
+                ].map((item) => (
+                  <Link
+                    key={item.q}
+                    href={`/search?q=${encodeURIComponent(item.q)}`}
+                    className="rounded-full border border-line bg-bg/60 px-2.5 py-0.5 text-slate-300 transition hover:border-volt/50 hover:text-volt"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+              <Link href="/drops" className="font-semibold text-volt hover:underline">
+                View Retail Drops (Target, Best Buy, Walmart, CVS) →
+              </Link>
             </div>
           </div>
         </div>
@@ -54,7 +94,7 @@ export default async function Home() {
       <section className="mx-auto max-w-7xl px-4">
         <div className="grid gap-4 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            <DropMapClient height="520px" />
+            <DropMapClient machines={mapMachines} height="520px" />
             <div className="mt-2 text-right">
               <Link href="/map" className="text-sm font-semibold text-volt hover:underline">
                 Open full-screen map →
@@ -62,7 +102,7 @@ export default async function Home() {
             </div>
           </div>
           <div className="flex flex-col gap-4">
-            <DroppingSoon />
+            <DroppingSoon initialMachines={mapMachines} />
             <SponsorSlot placement="sidebar" />
           </div>
         </div>

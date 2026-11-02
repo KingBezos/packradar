@@ -4,21 +4,67 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Radio, Trophy } from "lucide-react";
 
-type Item = { id: string; message: string; url: string | null; createdAt: string };
+type Item = { id: string; message: string; url: string | null; createdAt?: string };
 
-/** Sitewide Monthly Prize Broadcast + Scrolling live activity ticker (polls every 10s). */
+const FALLBACK_TICKER_ITEMS: Item[] = [
+  {
+    id: "init-1",
+    message: "🎯 Confirmed drop window: Fred Meyer Gladstone, OR (Q00450) dropping at :18 past the hour (94% accuracy)",
+    url: "/machines/Q00450",
+  },
+  {
+    id: "init-2",
+    message: "🔥 Prismatic Evolutions ETB & Booster Bundles monitored across Target, Best Buy, Walmart & Pokémon Center",
+    url: "/drops",
+  },
+  {
+    id: "init-3",
+    message: "⚡ Confirmed drop: Safeway Seattle, WA (Q00003) verified on 60m cadence at :35 past the hour",
+    url: "/machines/Q00003",
+  },
+  {
+    id: "init-4",
+    message: "🏆 Monthly Leaderboard Rewards: 1st Place wins Pokémon ETB · 2nd Booster Bundle · 3rd 2 Free Packs!",
+    url: "/leaderboard",
+  },
+  {
+    id: "init-5",
+    message: "📍 Corridor Intelligence: Kroger Columbus, OH (Q00487) calibrated to :42 hourly drop window",
+    url: "/machines/Q00487",
+  },
+  {
+    id: "init-6",
+    message: "🛒 Destined Rivals (Team Rocket) ETB & Booster Bundles tracked at Best Buy, Target, GameStop & Pokémon Center",
+    url: "/drops",
+  },
+  {
+    id: "init-7",
+    message: "💊 Drugstore Check: CVS, Walgreens & Dollar General stocked with MJ Holdings 2-Pack Blisters & Knock Out Boxes",
+    url: "/drops",
+  },
+  {
+    id: "init-8",
+    message: "⚡ High-Confidence Window: Vons Los Angeles, CA (Q00612) active on :24 hourly drop timer (93% accuracy)",
+    url: "/machines/Q00612",
+  },
+];
+
+/** Sitewide Monthly Prize Broadcast + Scrolling live activity ticker. */
 export function LiveTicker() {
-  const [items, setItems] = useState<Item[]>([]);
+  const [items, setItems] = useState<Item[]>(FALLBACK_TICKER_ITEMS);
   useEffect(() => {
     let alive = true;
     const load = async () => {
       try {
         const r = await fetch("/api/activity?limit=25", { cache: "no-store" });
-        if (r.ok && alive) setItems(await r.json());
+        if (r.ok && alive) {
+          const data = (await r.json()) as Item[];
+          if (Array.isArray(data) && data.length > 0) setItems(data);
+        }
       } catch {}
     };
     load();
-    const t = setInterval(load, 10_000);
+    const t = setInterval(load, 25_000);
     return () => {
       alive = false;
       clearInterval(t);

@@ -7,7 +7,10 @@ import { eq, sql } from "drizzle-orm";
 import { db } from "@/db";
 import * as schema from "@/db/schema";
 
-const OAUTH_FILE = path.join(process.cwd(), "data", "oauth-config.json");
+const OAUTH_FILES = [
+  path.join(process.cwd(), "data", "oauth-config.json"),
+  "/tmp/packradar-oauth-config.json",
+];
 
 export function getGoogleOAuthCreds(): { clientId: string; clientSecret: string } | null {
   if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
@@ -16,22 +19,24 @@ export function getGoogleOAuthCreds(): { clientId: string; clientSecret: string 
       clientSecret: process.env.GOOGLE_CLIENT_SECRET.trim(),
     };
   }
-  try {
-    if (fs.existsSync(OAUTH_FILE)) {
-      const raw = JSON.parse(fs.readFileSync(OAUTH_FILE, "utf8")) as {
-        googleClientId?: string;
-        googleClientSecret?: string;
-      };
-      if (raw.googleClientId && raw.googleClientSecret) {
-        process.env.GOOGLE_CLIENT_ID = raw.googleClientId.trim();
-        process.env.GOOGLE_CLIENT_SECRET = raw.googleClientSecret.trim();
-        return {
-          clientId: raw.googleClientId.trim(),
-          clientSecret: raw.googleClientSecret.trim(),
+  for (const file of OAUTH_FILES) {
+    try {
+      if (fs.existsSync(file)) {
+        const raw = JSON.parse(fs.readFileSync(file, "utf8")) as {
+          googleClientId?: string;
+          googleClientSecret?: string;
         };
+        if (raw.googleClientId && raw.googleClientSecret) {
+          process.env.GOOGLE_CLIENT_ID = raw.googleClientId.trim();
+          process.env.GOOGLE_CLIENT_SECRET = raw.googleClientSecret.trim();
+          return {
+            clientId: raw.googleClientId.trim(),
+            clientSecret: raw.googleClientSecret.trim(),
+          };
+        }
       }
-    }
-  } catch {}
+    } catch {}
+  }
   return null;
 }
 

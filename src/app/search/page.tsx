@@ -14,8 +14,8 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   const r = q ? await searchMachines(q) : { center: null, machines: [] };
   const mm = r.machines.map(toMapMachine);
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8">
-      <div className="max-w-3xl">
+    <div className="mx-auto max-w-7xl px-4 py-6">
+      <div className="w-full">
         <SearchBox initial={q} />
       </div>
       {q && (

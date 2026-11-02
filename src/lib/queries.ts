@@ -22,12 +22,13 @@ import {
   type Machine,
 } from "@/db/schema";
 import { boundingBox, haversineMiles } from "@/lib/geo";
+import { INITIAL_TICKER_ACTIVITY, lookupZipCentroid } from "@/db/seed";
 import { refreshArea } from "@/scrapers/area";
 
-/** Make sure official machines near a point are loaded (waits at most 9s; keeps going in the background). */
+/** Trigger background refresh of official machines near a point without blocking user search requests. */
 async function ensureArea(lat: number, lng: number) {
   const db = await getDb();
-  await Promise.race([refreshArea(db, lat, lng), new Promise((r) => setTimeout(r, 9000))]);
+  void refreshArea(db, lat, lng).catch(() => {});
 }
 
 /** Compact shape sent to the browser for live map pins. */
@@ -144,8 +145,9 @@ export async function searchMachines(qRaw: string, radiusMiles = 25): Promise<Se
   }
   // ZIP
   if (/^\d{5}$/.test(q)) {
-    const [z] = await db.select().from(zipCodes).where(eq(zipCodes.zip, q));
-    const c = z ?? (await geocode(q));
+    const zMem = lookupZipCentroid(q);
+    const zDb = zMem ? null : (await db.select().from(zipCodes).where(eq(zipCodes.zip, q)))[0];
+    const c = zMem ?? zDb ?? (await geocode(q));
     if (c) await ensureArea(c.lat, c.lng);
     if (c) return { center: { lat: c.lat, lng: c.lng, label: `ZIP ${q}` }, machines: await nearbyMachines(c.lat, c.lng, radiusMiles, 60) };
   }
@@ -226,12 +228,25 @@ export async function getMachineDetail(id: string, userId?: string | null) {
 
 export async function latestActivity(limit = 20, sinceMs?: number) {
   const db = await getDb();
-  return db
+  const rows = await db
     .select()
     .from(activity)
     .where(sinceMs ? gte(activity.createdAt, new Date(sinceMs)) : undefined)
     .orderBy(desc(activity.createdAt))
     .limit(limit);
+  if (rows.length === 0 && !sinceMs) {
+    const now = new Date();
+    const seeded = INITIAL_TICKER_ACTIVITY.map((a, idx) => ({
+      type: a.type,
+      machineId: a.machineId,
+      message: a.message,
+      url: a.url,
+      createdAt: new Date(now.getTime() - idx * 45_000),
+    }));
+    await db.insert(activity).values(seeded);
+    return db.select().from(activity).orderBy(desc(activity.createdAt)).limit(limit);
+  }
+  return rows;
 }
 
 export async function latestNews(limit = 12, category?: string, offset = 0) {

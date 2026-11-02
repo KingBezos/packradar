@@ -11,20 +11,22 @@ import { scheduleOf } from "@/lib/map-machine";
 import { STATUS_META, StatusDot, useNow } from "./live";
 
 /** "Next drops" list – nationwide, or near you once location is shared. */
-export function DroppingSoon({ limit = 8 }: { limit?: number }) {
-  const [machines, setMachines] = useState<MapMachine[]>([]);
+export function DroppingSoon({ limit = 8, initialMachines }: { limit?: number; initialMachines?: MapMachine[] }) {
+  const [machines, setMachines] = useState<MapMachine[]>(initialMachines ?? []);
   const [pos, setPos] = useState<{ lat: number; lng: number } | null>(null);
   const [confirmedOnly, setConfirmedOnly] = useState(false);
   const now = useNow();
 
   useEffect(() => {
-    fetch("/api/machines")
-      .then((r) => r.json())
-      .then(setMachines)
-      .catch(() => {});
+    if (!initialMachines || initialMachines.length === 0) {
+      fetch("/api/machines")
+        .then((r) => r.json())
+        .then(setMachines)
+        .catch(() => {});
+    }
     const saved = localStorage.getItem("pr:pos");
     if (saved) setPos(JSON.parse(saved));
-  }, []);
+  }, [initialMachines]);
 
   const locate = () =>
     navigator.geolocation?.getCurrentPosition((p) => {

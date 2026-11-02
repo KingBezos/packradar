@@ -428,6 +428,7 @@ export async function ensureRetailCatalog(db: DB): Promise<{ productsCreated: nu
   let productsCreated = 0;
   let listingsCreated = 0;
   const now = new Date();
+  const toInsertListings: (typeof retailListings.$inferInsert)[] = [];
 
   for (const spec of CURRENT_POKEMON_RETAIL_CATALOG) {
     let prod = existingProducts.find((p) => p.name.toLowerCase() === spec.name.toLowerCase());
@@ -451,7 +452,7 @@ export async function ensureRetailCatalog(db: DB): Promise<{ productsCreated: nu
         (l) => l.productId === prod!.id && l.retailer === lSpec.retailer,
       );
       if (!hasListing) {
-        await db.insert(retailListings).values({
+        toInsertListings.push({
           productId: prod.id,
           retailer: lSpec.retailer,
           url: lSpec.url,
@@ -467,10 +468,10 @@ export async function ensureRetailCatalog(db: DB): Promise<{ productsCreated: nu
   }
 
   // Also ensure any earlier seeded products without listings get standard retailer monitors
-  const updatedListings = await db.select().from(retailListings);
   for (const p of existingProducts) {
-    const pListings = updatedListings.filter((l) => l.productId === p.id);
-    if (pListings.length === 0) {
+    const pListings = existingListings.filter((l) => l.productId === p.id);
+    const queuedForP = toInsertListings.some((l) => l.productId === p.id);
+    if (pListings.length === 0 && !queuedForP) {
       const q = encodeURIComponent(`pokemon ${p.name}`);
       const defaultRetailers = [
         { retailer: "pokemon_center", url: `https://www.pokemoncenter.com/search/${encodeURIComponent(p.name)}`, inStock: true },
@@ -483,7 +484,7 @@ export async function ensureRetailCatalog(db: DB): Promise<{ productsCreated: nu
         { retailer: "dollargeneral", url: `https://www.dollargeneral.com/c/toys/trading-cards`, inStock: true },
       ];
       for (const dr of defaultRetailers) {
-        await db.insert(retailListings).values({
+        toInsertListings.push({
           productId: p.id,
           retailer: dr.retailer,
           url: dr.url,
@@ -496,6 +497,10 @@ export async function ensureRetailCatalog(db: DB): Promise<{ productsCreated: nu
         listingsCreated++;
       }
     }
+  }
+
+  if (toInsertListings.length > 0) {
+    await db.insert(retailListings).values(toInsertListings);
   }
 
   return { productsCreated, listingsCreated };
