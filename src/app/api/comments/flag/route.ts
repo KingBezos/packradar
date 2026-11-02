@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { route, json } from "@/lib/api";
-import { requireRole } from "@/lib/session";
+import { requireRole, requireUser } from "@/lib/session";
 import { getDb } from "@/db";
 import { comments, settings, user } from "@/db/schema";
 import type { AdminInboxItem } from "@/app/api/contact/route";
@@ -54,6 +54,7 @@ const FlagSchema = z.object({
 });
 
 export const POST = route(async (req) => {
+  const u = await requireUser();
   const b = FlagSchema.parse(await json(req));
   const db = await getDb();
 
@@ -68,7 +69,7 @@ export const POST = route(async (req) => {
 
   if (!found) throw new Error("Comment not found");
 
-  const ipHash = getClientIpHash(req, b.clientVoterKey);
+  const ipHash = getClientIpHash(req, b.clientVoterKey || u.id);
   const flagsMap = await loadCommentFlags(db);
   const nowIso = new Date().toISOString();
 

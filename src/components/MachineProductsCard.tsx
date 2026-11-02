@@ -1,6 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Package, Plus, Check, X, Search, Sparkles } from "lucide-react";
 import clsx from "clsx";
 import {
@@ -15,11 +17,14 @@ export function MachineProductsCard({
   machineId,
   initialProfileLabel,
   initialItems,
+  signedIn = false,
 }: {
   machineId: string;
   initialProfileLabel: string;
   initialItems: MachineProductEntry[];
+  signedIn?: boolean;
 }) {
+  const router = useRouter();
   const [profileLabel, setProfileLabel] = useState(initialProfileLabel);
   const [items, setItems] = useState<MachineProductEntry[]>(initialItems);
   const [query, setQuery] = useState("");
@@ -50,6 +55,10 @@ export function MachineProductsCard({
   }, [items]);
 
   const handleAddProduct = async (sku?: string, customName?: string) => {
+    if (!signedIn) {
+      router.push("/sign-up");
+      return;
+    }
     const targetName = customName ?? query.trim();
     if (!sku && !targetName) return;
     setBusy("add");
@@ -81,6 +90,10 @@ export function MachineProductsCard({
   };
 
   const handleVote = async (sku: string, value: 1 | -1) => {
+    if (!signedIn) {
+      router.push("/sign-up");
+      return;
+    }
     setBusy(`vote:${sku}:${value}`);
     setFeedback(null);
     try {
@@ -284,6 +297,21 @@ export function MachineProductsCard({
           )}
         </div>
 
+        {!signedIn && (
+          <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-volt/30 bg-volt/10 px-3 py-2 text-xs">
+            <span className="text-slate-200">
+              🔒 <b className="text-volt">Free Account Required:</b> Join free or sign in to report or confirm products in {machineId} (+1 Rep).
+            </span>
+            <div className="flex items-center gap-2">
+              <Link href="/sign-up" className="font-bold text-volt hover:underline">
+                Join Free →
+              </Link>
+              <Link href="/sign-in" className="text-slate-300 hover:text-white hover:underline">
+                Sign In
+              </Link>
+            </div>
+          </div>
+        )}
         {feedback && (
           <p className={clsx("text-xs font-semibold", feedback.ok ? "text-green-400" : "text-red-400")}>
             {feedback.text}

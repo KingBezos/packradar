@@ -218,7 +218,29 @@ export function AlertAdminButton({
                   />
                 </div>
 
-                {error && <p className="text-xs font-semibold text-red-400">{error}</p>}
+                {error && (
+                  <div className="rounded-xl border border-red-500/40 bg-red-500/10 p-3 text-xs">
+                    <p className="font-semibold text-red-300">{error}</p>
+                    {error.toLowerCase().includes("sign in") && (
+                      <div className="mt-2 flex items-center gap-2">
+                        <Link
+                          href="/sign-up"
+                          onClick={() => setOpen(false)}
+                          className="btn-primary py-1 text-xs font-bold"
+                        >
+                          Join Free →
+                        </Link>
+                        <Link
+                          href="/sign-in"
+                          onClick={() => setOpen(false)}
+                          className="btn-ghost py-1 text-xs"
+                        >
+                          Sign In
+                        </Link>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 <button
                   type="submit"

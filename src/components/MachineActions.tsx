@@ -69,9 +69,9 @@ export function MachineActions({
   const [pAnchor, setPAnchor] = useState(0);
   const [fav, setFav] = useState(isFavorite);
 
-  const run = async (key: string, fn: () => Promise<unknown>, success: string, allowGuest = false) => {
-    if (!signedIn && !allowGuest) {
-      router.push("/sign-in");
+  const run = async (key: string, fn: () => Promise<unknown>, success: string) => {
+    if (!signedIn) {
+      router.push("/sign-up");
       return;
     }
     setBusy(key);
@@ -88,6 +88,10 @@ export function MachineActions({
   };
 
   const submitPhotoProof = async () => {
+    if (!signedIn) {
+      router.push("/sign-up");
+      return;
+    }
     setBusy("photo");
     setMsg(null);
     try {
@@ -122,10 +126,13 @@ export function MachineActions({
     run(
       "drop",
       () => post(`/api/machines/${machineId}/observations`, { kind: "dropped" }),
-      signedIn ? "Thanks! Drop recorded +2 rep" : "Thanks! Drop recorded into live consensus",
-      true,
+      "Thanks! Drop recorded +2 rep",
     );
   const droppedAt = () => {
+    if (!signedIn) {
+      router.push("/sign-up");
+      return;
+    }
     const [h, m] = minute.split(":").map(Number);
     if (Number.isNaN(h) || Number.isNaN(m)) return setMsg({ ok: false, text: "Pick a time" });
     const d = new Date();
@@ -134,13 +141,32 @@ export function MachineActions({
     return run(
       "dropAt",
       () => post(`/api/machines/${machineId}/observations`, { kind: "dropped", observedAt: d.toISOString() }),
-      signedIn ? "Thanks! Drop recorded +2 rep" : "Drop recorded! Sign in on this browser to earn Leaderboard Rep.",
-      true,
+      "Thanks! Drop recorded +2 rep",
     );
   };
 
   return (
     <div className="space-y-5">
+      {!signedIn && (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-volt/40 bg-volt/10 p-4">
+          <div>
+            <p className="text-sm font-black text-white">
+              🔒 Guest View-Only Mode — Create a Free Account to Contribute &amp; Set Alerts
+            </p>
+            <p className="text-xs text-slate-300">
+              Sign up free in 5 seconds (1-click Google or Email) to report drop times, confirm machine products, set up to 10 drop alerts, and compete for monthly Pokémon ETB prizes!
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Link href="/sign-up" className="btn-primary py-1.5 text-xs font-bold">
+              Join Free →
+            </Link>
+            <Link href="/sign-in" className="btn-ghost py-1.5 text-xs font-semibold">
+              Sign In
+            </Link>
+          </div>
+        </div>
+      )}
       <div className="card p-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
@@ -149,7 +175,13 @@ export function MachineActions({
           </div>
           <button
             className="chip border-volt/40 text-volt hover:bg-volt/10"
-            onClick={() => setShowPhotoProof((s) => !s)}
+            onClick={() => {
+              if (!signedIn) {
+                router.push("/sign-up");
+                return;
+              }
+              setShowPhotoProof((s) => !s);
+            }}
           >
             <Camera className="h-3.5 w-3.5" /> Snap Receipt / Screen (+25 Rep)
           </button>
@@ -177,7 +209,6 @@ export function MachineActions({
                 "nodrop",
                 () => post(`/api/machines/${machineId}/observations`, { kind: "no_drop" }),
                 "Noted – if neighbors also miss their window, we'll flag a route reset",
-                true,
               )
             }
           >
@@ -273,7 +304,16 @@ export function MachineActions({
       <div className="card p-5">
         <div className="mb-3 flex items-center justify-between">
           <p className="font-bold text-white">Drop-time candidates</p>
-          <button className="chip hover:text-white" onClick={() => setShowPropose((s) => !s)}>
+          <button
+            className="chip hover:text-white"
+            onClick={() => {
+              if (!signedIn) {
+                router.push("/sign-up");
+                return;
+              }
+              setShowPropose((s) => !s);
+            }}
+          >
             <Plus className="h-3 w-3" /> Suggest a time
           </button>
         </div>
@@ -360,11 +400,15 @@ export function MachineActions({
   );
 }
 
-export function StockButtons({ machineId }: { machineId: string; signedIn?: boolean }) {
+export function StockButtons({ machineId, signedIn }: { machineId: string; signedIn?: boolean }) {
   const router = useRouter();
   const [done, setDone] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
   const send = async (status: string) => {
+    if (!signedIn) {
+      router.push("/sign-up");
+      return;
+    }
     try {
       const res = await post(`/api/machines/${machineId}/stock`, { status });
       setDone(status);
@@ -388,6 +432,12 @@ export function StockButtons({ machineId }: { machineId: string; signedIn?: bool
           </button>
         ))}
       </div>
+      {!signedIn && (
+        <p className="text-[11px] text-muted">
+          🔒 <Link href="/sign-up" className="font-semibold text-volt hover:underline">Join free</Link> or{" "}
+          <Link href="/sign-in" className="font-semibold text-volt hover:underline">sign in</Link> to report machine status.
+        </p>
+      )}
       {note && <p className="text-xs font-medium text-green-400">{note}</p>}
     </div>
   );
@@ -400,9 +450,19 @@ export function CommentForm({ targetType, targetId, signedIn }: { targetType: "m
   const [err, setErr] = useState<string | null>(null);
   if (!signedIn)
     return (
-      <p className="text-sm text-muted">
-        <Link href="/sign-in" className="text-volt hover:underline">Sign in</Link> to join the conversation.
-      </p>
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-line bg-panel-2/60 p-3 text-xs">
+        <span className="text-slate-300">
+          🔒 <b className="text-white">Free Account Required:</b> Create an account or sign in to post tips, questions, or flag comments.
+        </span>
+        <div className="flex gap-2">
+          <Link href="/sign-up" className="btn-primary py-1 text-xs font-bold">
+            Join Free →
+          </Link>
+          <Link href="/sign-in" className="btn-ghost py-1 text-xs">
+            Sign In
+          </Link>
+        </div>
+      </div>
     );
   return (
     <form
@@ -431,12 +491,17 @@ export function CommentForm({ targetType, targetId, signedIn }: { targetType: "m
   );
 }
 
-export function CommentFlagButton({ commentId }: { commentId: string }) {
+export function CommentFlagButton({ commentId, signedIn }: { commentId: string; signedIn?: boolean }) {
+  const router = useRouter();
   const [flagged, setFlagged] = useState(false);
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   const flagComment = async () => {
+    if (!signedIn) {
+      router.push("/sign-up");
+      return;
+    }
     if (flagged || busy) return;
     setBusy(true);
     try {
@@ -456,7 +521,7 @@ export function CommentFlagButton({ commentId }: { commentId: string }) {
       setFlagged(true);
       setStatusMsg(res.triggeredAdminAlert ? "Flagged · Admin Alerted" : "Flagged");
     } catch {
-      setStatusMsg("Error");
+      setStatusMsg("Sign in required");
     } finally {
       setBusy(false);
     }

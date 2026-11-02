@@ -116,6 +116,9 @@ export const POST = route(async (req) => {
   }
 
   const u = await getCurrentUser().catch(() => null);
+  if (b.kind === "admin_alert" && !u) {
+    throw new Error("Please sign in or create a free account to send an Admin Alert.");
+  }
   const db = await getDb();
   const items = await loadInbox(db);
 

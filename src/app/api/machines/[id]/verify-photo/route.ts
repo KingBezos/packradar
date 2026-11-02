@@ -10,7 +10,7 @@
  */
 import { eq } from "drizzle-orm";
 import { route } from "@/lib/api";
-import { getCurrentUser } from "@/lib/session";
+import { requireUser } from "@/lib/session";
 import { getDb } from "@/db";
 import { machines } from "@/db/schema";
 import { extractExifDateFromBuffer, extractReceiptTimestampFromText } from "@/lib/drops/exif";
@@ -55,7 +55,7 @@ async function runGeminiPhotoOcr(base64Jpeg: string, mimeType: string): Promise<
 
 export const POST = route<{ params: Promise<{ id: string }> }>(async (req, { params }) => {
   const { id } = await params;
-  const user = await getCurrentUser();
+  const user = await requireUser();
   const db = await getDb();
   const [m] = await db.select().from(machines).where(eq(machines.id, id));
   if (!m) throw new Error("Machine not found");

@@ -1,7 +1,7 @@
 import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { route, json, rateLimit } from "@/lib/api";
-import { getCurrentUser } from "@/lib/session";
+import { requireUser } from "@/lib/session";
 import { getDb } from "@/db";
 import { machines, stockReports } from "@/db/schema";
 import { addReputation, logActivity, REP } from "@/lib/activity";
@@ -23,8 +23,8 @@ const LABEL: Record<string, string> = {
 
 export const POST = route<{ params: Promise<{ id: string }> }>(async (req, { params }) => {
   const { id } = await params;
-  const u = await getCurrentUser();
-  const rateKey = u ? `stock:${u.id}` : `stock:anon:${req.headers.get("x-forwarded-for") ?? "local"}`;
+  const u = await requireUser();
+  const rateKey = `stock:${u.id}`;
   rateLimit(rateKey, 30, 3_600_000);
 
   const b = Body.parse(await json(req));

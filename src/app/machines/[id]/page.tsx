@@ -141,6 +141,7 @@ export default async function MachinePage({ params }: { params: Promise<{ id: st
             machineId={m.id}
             initialProfileLabel={vendedProducts.profileLabel}
             initialItems={vendedProducts.items}
+            signedIn={Boolean(user)}
           />
 
           <div className="card p-5">
@@ -187,7 +188,7 @@ export default async function MachinePage({ params }: { params: Promise<{ id: st
                     <p className="text-sm">
                       <b className="text-white">{name}</b> <span className={`text-xs ${reputationBadge(reputation).color}`}>{reputationBadge(reputation).label}</span>{" "}
                       <span className="text-xs text-muted">{timeAgo(c.createdAt)}</span>
-                      <CommentFlagButton commentId={c.id} />
+                      <CommentFlagButton commentId={c.id} signedIn={Boolean(user)} />
                     </p>
                     <p className="text-sm text-slate-300">{c.body}</p>
                   </div>

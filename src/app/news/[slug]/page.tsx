@@ -60,7 +60,7 @@ export default async function NewsPostPage({ params }: { params: Promise<{ slug:
               <div>
                 <p className="text-sm">
                   <b className="text-white">{name}</b> <span className="text-xs text-muted">{timeAgo(c.createdAt)}</span>
-                  <CommentFlagButton commentId={c.id} />
+                  <CommentFlagButton commentId={c.id} signedIn={Boolean(user)} />
                 </p>
                 <p className="text-sm text-slate-300">{c.body}</p>
               </div>

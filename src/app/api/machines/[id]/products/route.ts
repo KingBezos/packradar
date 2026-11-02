@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { route, json } from "@/lib/api";
-import { getCurrentUser } from "@/lib/session";
+import { requireUser } from "@/lib/session";
 import { getDb } from "@/db";
 import { machines, user } from "@/db/schema";
 import {
@@ -40,12 +40,11 @@ const ActionSchema = z.discriminatedUnion("action", [
 
 export const POST = route(async (req, ctx: { params: Promise<{ id: string }> }) => {
   const { id } = await ctx.params;
+  const u = await requireUser();
   const b = ActionSchema.parse(await json(req));
   const db = await getDb();
   const [m] = await db.select().from(machines).where(eq(machines.id, id.toUpperCase()));
   if (!m) throw new Error("Machine not found");
-
-  const u = await getCurrentUser().catch(() => null);
 
   if (b.action === "add") {
     if (!b.sku && (!b.customName || b.customName.trim().length < 2)) {

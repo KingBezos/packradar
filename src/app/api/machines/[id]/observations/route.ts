@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { route, json, rateLimit } from "@/lib/api";
-import { getCurrentUser } from "@/lib/session";
+import { requireUser } from "@/lib/session";
 import { getDb } from "@/db";
 import { submitObservation } from "@/lib/drops/engine";
 
@@ -13,8 +13,8 @@ const Body = z.object({
 
 export const POST = route<{ params: Promise<{ id: string }> }>(async (req, { params }) => {
   const { id } = await params;
-  const u = await getCurrentUser();
-  const actorKey = u ? u.id : `anon:${req.headers.get("x-forwarded-for") ?? "local"}`;
+  const u = await requireUser();
+  const actorKey = u.id;
   rateLimit(`obs:${actorKey}`, 25, 3_600_000);
   rateLimit(`obs:${actorKey}:${id}`, 5, 600_000);
   const b = Body.parse(await json(req));
@@ -24,7 +24,7 @@ export const POST = route<{ params: Promise<{ id: string }> }>(async (req, { par
   const db = await getDb();
   const active = await submitObservation(db, {
     machineId: id,
-    userId: u?.id ?? null,
+    userId: u.id,
     observedAt,
     kind: b.kind,
     note: b.note ?? null,
