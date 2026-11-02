@@ -1,8 +1,20 @@
 import { cookies, headers } from "next/headers";
 import { and, eq, gt } from "drizzle-orm";
-import { auth } from "@/lib/auth";
+import { auth, generateSpotterHandle } from "@/lib/auth";
 import { getDb } from "@/db";
 import { session as sessionTable, user as userTable, type User } from "@/db/schema";
+
+async function sanitizeUserPrivacy(db: Awaited<ReturnType<typeof getDb>>, u: User): Promise<User> {
+  const needsHandle = Boolean(u.image) || !u.name || u.name.includes(" ") || u.name.includes("@");
+  if (!u.image && !needsHandle) return u;
+  const newName = needsHandle ? generateSpotterHandle(u.email || u.id) : u.name;
+  await db
+    .update(userTable)
+    .set({ name: newName, image: null })
+    .where(eq(userTable.id, u.id))
+    .catch(() => {});
+  return { ...u, name: newName, image: null };
+}
 
 /** Current signed-in user (full DB row) or null. */
 export async function getCurrentUser(): Promise<User | null> {
@@ -23,7 +35,7 @@ export async function getCurrentUser(): Promise<User | null> {
         .where(and(eq(sessionTable.token, tokenPrefix), gt(sessionTable.expiresAt, new Date())));
       if (sess) {
         const [u] = await db.select().from(userTable).where(eq(userTable.id, sess.userId));
-        if (u) return u;
+        if (u) return await sanitizeUserPrivacy(db, u);
       }
     }
 
@@ -31,7 +43,7 @@ export async function getCurrentUser(): Promise<User | null> {
     const session = await auth.api.getSession({ headers: h }).catch(() => null);
     if (session?.user?.id) {
       const [u] = await db.select().from(userTable).where(eq(userTable.id, session.user.id));
-      if (u) return u;
+      if (u) return await sanitizeUserPrivacy(db, u);
     }
   } catch {
     // ignore cookie parse or static generation errors

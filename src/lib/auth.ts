@@ -40,6 +40,64 @@ export function getGoogleOAuthCreds(): { clientId: string; clientSecret: string 
   return null;
 }
 
+const HANDLE_PREFIXES = [
+  "Volt",
+  "Prismatic",
+  "Shiny",
+  "Umbreon",
+  "Charizard",
+  "Rayquaza",
+  "Gengar",
+  "Pikachu",
+  "Eevee",
+  "Sylveon",
+  "Lucario",
+  "Mewtwo",
+  "Lugia",
+  "Snorlax",
+  "Dragonite",
+  "Greninja",
+  "Tyranitar",
+  "Arcanine",
+  "Suicune",
+  "Zoroark",
+  "Mimikyu",
+  "Dragapult",
+  "Gardevoir",
+  "Darkrai",
+];
+
+const HANDLE_ROLES = [
+  "Spotter",
+  "Scout",
+  "Trainer",
+  "Tracker",
+  "Hunter",
+  "Collector",
+  "Radar",
+  "Ace",
+  "Chaser",
+  "Ripper",
+  "Seeker",
+  "Vault",
+];
+
+export function generateSpotterHandle(seed?: string): string {
+  let hash = Math.floor(Math.random() * 1_000_000);
+  if (seed) {
+    hash = 2166136261;
+    for (let i = 0; i < seed.length; i++) {
+      hash ^= seed.charCodeAt(i);
+      hash = Math.imul(hash, 16777619);
+    }
+    hash = Math.abs(hash);
+  }
+  const p = HANDLE_PREFIXES[hash % HANDLE_PREFIXES.length];
+  const r = HANDLE_ROLES[Math.floor(hash / HANDLE_PREFIXES.length) % HANDLE_ROLES.length];
+  const num = (hash % 900) + 100;
+  return `${p}${r}${num}`;
+}
+
 function buildAuth() {
   const googleCreds = getGoogleOAuthCreds();
   const inferredSiteUrl =
@@ -87,6 +145,10 @@ function buildAuth() {
             clientId: googleCreds.clientId,
             clientSecret: googleCreds.clientSecret,
             prompt: "select_account",
+            mapProfileToUser: (profile) => ({
+              name: generateSpotterHandle(profile.sub || profile.email),
+              image: undefined,
+            }),
           },
         }
       : {},
@@ -101,6 +163,23 @@ function buildAuth() {
     databaseHooks: {
       user: {
         create: {
+          before: async (u) => {
+            const rawName = (u.name || "").trim();
+            const isGoogleOrFullName =
+              Boolean(u.image) ||
+              !rawName ||
+              rawName.toLowerCase() === "auto" ||
+              rawName.includes(" ") ||
+              rawName.includes("@") ||
+              rawName.toLowerCase() === (u.email || "").split("@")[0]?.toLowerCase();
+            return {
+              data: {
+                ...u,
+                name: isGoogleOrFullName ? generateSpotterHandle(u.email || rawName) : rawName,
+                image: null,
+              },
+            };
+          },
           after: async (u) => {
             const admins = (process.env.ADMIN_EMAILS || "")
               .split(",")
@@ -110,12 +189,15 @@ function buildAuth() {
               .select({ n: sql<number>`count(*)::int` })
               .from(schema.user)
               .where(eq(schema.user.role, "admin"));
+            const patch: Partial<typeof schema.user.$inferInsert> = { image: null };
             if (admins.includes(u.email.toLowerCase()) || n === 0) {
-              await db.update(schema.user).set({ role: "admin", emailVerified: true }).where(eq(schema.user.id, u.id));
+              patch.role = "admin";
+              patch.emailVerified = true;
             } else if (!u.emailVerified) {
               const { issueEmailVerificationCode } = await import("@/app/api/auth/verify-email/route");
               await issueEmailVerificationCode(u.email).catch(() => {});
             }
+            await db.update(schema.user).set(patch).where(eq(schema.user.id, u.id));
           },
         },
       },

@@ -199,7 +199,7 @@ export function AuthForm({ mode, google: initialGoogle }: { mode: "sign-in" | "s
             setBusy(true);
             setErr(null);
             const r = up
-              ? await signUp.email({ name: name || email.split("@")[0], email, password })
+              ? await signUp.email({ name: name.trim() || "auto", email, password })
               : await signIn.email({ email, password });
             setBusy(false);
             if (r.error) return setErr(r.error.message ?? "Something went wrong");
@@ -214,12 +214,10 @@ export function AuthForm({ mode, google: initialGoogle }: { mode: "sign-in" | "s
           {up && (
             <input
               className="input"
-              placeholder="Display name"
+              placeholder="Display handle (optional — auto-generated for privacy)"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              required
-              minLength={2}
-              maxLength={40}
+              maxLength={32}
             />
           )}
           <input

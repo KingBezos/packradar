@@ -100,6 +100,16 @@ export function AlertsManager({ subs, plan, maxAlerts, maxLead, homeZip }: { sub
   );
 }
 
+const CLIENT_PREFIXES = ["Volt", "Prismatic", "Shiny", "Umbreon", "Charizard", "Rayquaza", "Gengar", "Pikachu", "Eevee", "Sylveon", "Lucario", "Mewtwo", "Lugia", "Snorlax", "Dragonite", "Greninja", "Tyranitar", "Arcanine"];
+const CLIENT_ROLES = ["Spotter", "Scout", "Trainer", "Tracker", "Hunter", "Collector", "Radar", "Ace", "Chaser", "Vault"];
+
+function randomSpotterHandle() {
+  const p = CLIENT_PREFIXES[Math.floor(Math.random() * CLIENT_PREFIXES.length)];
+  const r = CLIENT_ROLES[Math.floor(Math.random() * CLIENT_ROLES.length)];
+  const n = Math.floor(Math.random() * 900) + 100;
+  return `${p}${r}${n}`;
+}
+
 export function ProfileForm({ name, homeZip, discord, qs, qe }: { name: string; homeZip: string | null; discord: string | null; qs: number | null; qe: number | null }) {
   const router = useRouter();
   const [v, setV] = useState({ name, homeZip: homeZip ?? "", discord: discord ?? "", qs: qs == null ? "" : toTime(qs), qe: qe == null ? "" : toTime(qe) });
@@ -114,15 +124,36 @@ export function ProfileForm({ name, homeZip, discord, qs, qe }: { name: string; 
         quietHoursEnd: v.qe ? fromTime(v.qe) : null,
         testDiscord: test,
       });
-      setMsg(test ? "Test sent to Discord!" : "Saved");
+      setMsg(test ? "Test sent to Discord!" : "Display name & settings saved!");
       router.refresh();
     } catch (e) {
       setMsg((e as Error).message);
     }
   };
   return (
-    <div className="card max-w-xl space-y-3 p-5">
-      <label className="block text-sm">Display name<input className="input mt-1" value={v.name} onChange={(e) => setV({ ...v, name: e.target.value })} /></label>
+    <div className="card max-w-xl space-y-4 p-5">
+      <div>
+        <label className="block text-sm font-semibold text-white">Public Display Handle</label>
+        <p className="mt-0.5 text-xs text-muted">
+          For your privacy, PackRadar never uses your real full name or Google profile photo. Customize your spotter handle anytime:
+        </p>
+        <div className="mt-1.5 flex gap-2">
+          <input
+            className="input flex-1"
+            value={v.name}
+            maxLength={32}
+            placeholder="e.g. UmbreonScout482"
+            onChange={(e) => setV({ ...v, name: e.target.value })}
+          />
+          <button
+            type="button"
+            className="btn-ghost shrink-0 text-xs"
+            onClick={() => setV({ ...v, name: randomSpotterHandle() })}
+          >
+            🎲 Randomize
+          </button>
+        </div>
+      </div>
       <label className="block text-sm">Home ZIP<input className="input mt-1" maxLength={5} value={v.homeZip} onChange={(e) => setV({ ...v, homeZip: e.target.value })} /></label>
       <label className="block text-sm">Discord webhook URL <span className="text-xs text-muted">(Server settings → Integrations → Webhooks)</span>
         <input className="input mt-1" value={v.discord} onChange={(e) => setV({ ...v, discord: e.target.value })} placeholder="https://discord.com/api/webhooks/…" /></label>

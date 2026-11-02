@@ -92,18 +92,16 @@ export function CategoryBadge({ category }: { category: string }) {
   );
 }
 
-export function Avatar({ name, image, size = 28 }: { name: string; image?: string | null; size?: number }) {
-  if (image) {
-    // eslint-disable-next-line @next/next/no-img-element
-    return <img src={image} alt={name} width={size} height={size} className="rounded-full object-cover" style={{ width: size, height: size }} />;
-  }
-  const hue = [...name].reduce((h, c) => h + c.charCodeAt(0), 0) % 360;
+export function Avatar({ name, size = 28 }: { name: string; image?: string | null; size?: number }) {
+  const safeName = (name || "Spotter").trim();
+  const hue = [...safeName].reduce((h, c) => h + c.charCodeAt(0), 0) % 360;
   return (
     <span
-      className="inline-flex items-center justify-center rounded-full text-xs font-bold text-slate-950"
+      className="inline-flex shrink-0 select-none items-center justify-center rounded-full text-xs font-extrabold text-slate-950"
       style={{ width: size, height: size, background: `hsl(${hue} 80% 65%)` }}
+      title={safeName}
     >
-      {name.slice(0, 1).toUpperCase()}
+      {safeName.slice(0, 1).toUpperCase()}
     </span>
   );
 }
