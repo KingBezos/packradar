@@ -17,6 +17,14 @@ function VerifyEmailInner() {
   const [previewCode, setPreviewCode] = useState<string | null>(null);
   const [verified, setVerified] = useState(false);
 
+  const rawNext = params.get("next");
+  const returnTo =
+    rawNext && rawNext.startsWith("/") && !rawNext.startsWith("//")
+      ? rawNext
+      : typeof window !== "undefined" && sessionStorage.getItem("pr_return_to")
+        ? sessionStorage.getItem("pr_return_to")!
+        : "/map";
+
   const sendCode = async (targetEmail?: string) => {
     setBusy(true);
     setErr(null);
@@ -31,7 +39,7 @@ function VerifyEmailInner() {
       if (!r.ok) throw new Error(j.error ?? "Failed to send verification code");
       if (j.alreadyVerified) {
         setVerified(true);
-        setTimeout(() => router.push("/map"), 1200);
+        setTimeout(() => router.push(returnTo), 1200);
         return;
       }
       if (j.previewCode) {
@@ -67,7 +75,7 @@ function VerifyEmailInner() {
       if (!r.ok) throw new Error(j.error ?? "Verification failed");
       setVerified(true);
       setTimeout(() => {
-        router.push("/map");
+        router.push(returnTo);
         router.refresh();
       }, 1000);
     } catch (e) {
@@ -140,8 +148,8 @@ function VerifyEmailInner() {
         )}
 
         <p className="text-center text-xs text-muted">
-          <Link href="/map" className="text-volt hover:underline">
-            Skip for now &amp; browse live map →
+          <Link href={returnTo} className="text-volt hover:underline">
+            Skip for now &amp; return to page →
           </Link>
         </p>
       </div>

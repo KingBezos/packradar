@@ -13,7 +13,7 @@ export const metadata: Metadata = { title: "My alerts" };
 
 export default async function AlertsPage() {
   const u = await getCurrentUser();
-  if (!u) redirect("/sign-in");
+  if (!u) redirect("/sign-in?next=%2Falerts");
   const db = await getDb();
   const rows = await db
     .select({ s: alertSubscriptions, m: machines, p: products })

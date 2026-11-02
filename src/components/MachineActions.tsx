@@ -69,9 +69,11 @@ export function MachineActions({
   const [pAnchor, setPAnchor] = useState(0);
   const [fav, setFav] = useState(isFavorite);
 
+  const nextUrl = encodeURIComponent(`/machines/${machineId}`);
+
   const run = async (key: string, fn: () => Promise<unknown>, success: string) => {
     if (!signedIn) {
-      router.push("/sign-up");
+      router.push(`/sign-up?next=${nextUrl}`);
       return;
     }
     setBusy(key);
@@ -89,7 +91,7 @@ export function MachineActions({
 
   const submitPhotoProof = async () => {
     if (!signedIn) {
-      router.push("/sign-up");
+      router.push(`/sign-up?next=${nextUrl}`);
       return;
     }
     setBusy("photo");
@@ -130,7 +132,7 @@ export function MachineActions({
     );
   const droppedAt = () => {
     if (!signedIn) {
-      router.push("/sign-up");
+      router.push(`/sign-up?next=${nextUrl}`);
       return;
     }
     const [h, m] = minute.split(":").map(Number);
@@ -158,10 +160,10 @@ export function MachineActions({
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <Link href="/sign-up" className="btn-primary py-1.5 text-xs font-bold">
+            <Link href={`/sign-up?next=${nextUrl}`} className="btn-primary py-1.5 text-xs font-bold">
               Join Free →
             </Link>
-            <Link href="/sign-in" className="btn-ghost py-1.5 text-xs font-semibold">
+            <Link href={`/sign-in?next=${nextUrl}`} className="btn-ghost py-1.5 text-xs font-semibold">
               Sign In
             </Link>
           </div>
@@ -177,7 +179,7 @@ export function MachineActions({
             className="chip border-volt/40 text-volt hover:bg-volt/10"
             onClick={() => {
               if (!signedIn) {
-                router.push("/sign-up");
+                router.push(`/sign-up?next=${nextUrl}`);
                 return;
               }
               setShowPhotoProof((s) => !s);
@@ -308,7 +310,7 @@ export function MachineActions({
             className="chip hover:text-white"
             onClick={() => {
               if (!signedIn) {
-                router.push("/sign-up");
+                router.push(`/sign-up?next=${nextUrl}`);
                 return;
               }
               setShowPropose((s) => !s);
@@ -404,9 +406,10 @@ export function StockButtons({ machineId, signedIn }: { machineId: string; signe
   const router = useRouter();
   const [done, setDone] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
+  const nextUrl = encodeURIComponent(`/machines/${machineId}`);
   const send = async (status: string) => {
     if (!signedIn) {
-      router.push("/sign-up");
+      router.push(`/sign-up?next=${nextUrl}`);
       return;
     }
     try {
@@ -434,8 +437,8 @@ export function StockButtons({ machineId, signedIn }: { machineId: string; signe
       </div>
       {!signedIn && (
         <p className="text-[11px] text-muted">
-          🔒 <Link href="/sign-up" className="font-semibold text-volt hover:underline">Join free</Link> or{" "}
-          <Link href="/sign-in" className="font-semibold text-volt hover:underline">sign in</Link> to report machine status.
+          🔒 <Link href={`/sign-up?next=${nextUrl}`} className="font-semibold text-volt hover:underline">Join free</Link> or{" "}
+          <Link href={`/sign-in?next=${nextUrl}`} className="font-semibold text-volt hover:underline">sign in</Link> to report machine status.
         </p>
       )}
       {note && <p className="text-xs font-medium text-green-400">{note}</p>}
@@ -448,6 +451,12 @@ export function CommentForm({ targetType, targetId, signedIn }: { targetType: "m
   const [body, setBody] = useState("");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const nextUrl =
+    typeof window !== "undefined"
+      ? encodeURIComponent(window.location.pathname + window.location.search)
+      : targetType === "machine"
+        ? encodeURIComponent(`/machines/${targetId}`)
+        : encodeURIComponent("/news");
   if (!signedIn)
     return (
       <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-line bg-panel-2/60 p-3 text-xs">
@@ -455,10 +464,10 @@ export function CommentForm({ targetType, targetId, signedIn }: { targetType: "m
           🔒 <b className="text-white">Free Account Required:</b> Create an account or sign in to post tips, questions, or flag comments.
         </span>
         <div className="flex gap-2">
-          <Link href="/sign-up" className="btn-primary py-1 text-xs font-bold">
+          <Link href={`/sign-up?next=${nextUrl}`} className="btn-primary py-1 text-xs font-bold">
             Join Free →
           </Link>
-          <Link href="/sign-in" className="btn-ghost py-1 text-xs">
+          <Link href={`/sign-in?next=${nextUrl}`} className="btn-ghost py-1 text-xs">
             Sign In
           </Link>
         </div>
@@ -499,7 +508,11 @@ export function CommentFlagButton({ commentId, signedIn }: { commentId: string; 
 
   const flagComment = async () => {
     if (!signedIn) {
-      router.push("/sign-up");
+      const nextUrl =
+        typeof window !== "undefined"
+          ? encodeURIComponent(window.location.pathname + window.location.search)
+          : encodeURIComponent("/map");
+      router.push(`/sign-up?next=${nextUrl}`);
       return;
     }
     if (flagged || busy) return;

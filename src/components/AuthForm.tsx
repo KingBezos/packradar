@@ -42,6 +42,7 @@ export function AuthForm({ mode, google: initialGoogle }: { mode: "sign-in" | "s
   const [clientId, setClientId] = useState("");
   const [clientSecret, setClientSecret] = useState("");
   const [origin, setOrigin] = useState("http://localhost:3000");
+  const [returnTo, setReturnTo] = useState("/map");
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   const up = mode === "sign-up";
@@ -49,6 +50,38 @@ export function AuthForm({ mode, google: initialGoogle }: { mode: "sign-in" | "s
   useEffect(() => {
     if (typeof window !== "undefined") {
       setOrigin(window.location.origin);
+      const sp = new URLSearchParams(window.location.search);
+      const paramNext = sp.get("next") || sp.get("callbackUrl") || sp.get("returnTo");
+      const isAuthPath = (p: string) =>
+        p.startsWith("/sign-in") ||
+        p.startsWith("/sign-up") ||
+        p.startsWith("/verify-email") ||
+        p.startsWith("/forgot-password") ||
+        p.startsWith("/reset-password");
+
+      let resolved = "/map";
+      if (paramNext && paramNext.startsWith("/") && !paramNext.startsWith("//") && !isAuthPath(paramNext)) {
+        resolved = paramNext;
+      } else {
+        const stored = sessionStorage.getItem("pr_return_to");
+        if (stored && stored.startsWith("/") && !stored.startsWith("//") && !isAuthPath(stored)) {
+          resolved = stored;
+        } else if (document.referrer) {
+          try {
+            const refUrl = new URL(document.referrer);
+            if (refUrl.origin === window.location.origin) {
+              const refPath = refUrl.pathname + refUrl.search;
+              if (refPath && !isAuthPath(refPath)) {
+                resolved = refPath;
+              }
+            }
+          } catch {}
+        }
+      }
+      setReturnTo(resolved);
+      try {
+        sessionStorage.setItem("pr_return_to", resolved);
+      } catch {}
     }
   }, []);
 
@@ -67,7 +100,7 @@ export function AuthForm({ mode, google: initialGoogle }: { mode: "sign-in" | "s
     }
     setBusy(true);
     setErr(null);
-    const res = await signIn.social({ provider: "google", callbackURL: "/map" });
+    const res = await signIn.social({ provider: "google", callbackURL: returnTo });
     if (res?.error) {
       setBusy(false);
       setErr(res.error.message ?? "Google sign-in failed");
@@ -88,7 +121,7 @@ export function AuthForm({ mode, google: initialGoogle }: { mode: "sign-in" | "s
       if (!r.ok) throw new Error(j.error ?? "Failed to save Google OAuth credentials");
       setGoogleReady(true);
       setShowGoogleSetup(false);
-      await signIn.social({ provider: "google", callbackURL: "/map" });
+      await signIn.social({ provider: "google", callbackURL: returnTo });
     } catch (e) {
       setErr((e as Error).message);
     } finally {
@@ -204,9 +237,9 @@ export function AuthForm({ mode, google: initialGoogle }: { mode: "sign-in" | "s
             setBusy(false);
             if (r.error) return setErr(r.error.message ?? "Something went wrong");
             if (up) {
-              router.push(`/verify-email?email=${encodeURIComponent(email.trim().toLowerCase())}`);
+              router.push(`/verify-email?email=${encodeURIComponent(email.trim().toLowerCase())}&next=${encodeURIComponent(returnTo)}`);
             } else {
-              router.push("/map");
+              router.push(returnTo);
             }
             router.refresh();
           }}
@@ -254,7 +287,10 @@ export function AuthForm({ mode, google: initialGoogle }: { mode: "sign-in" | "s
 
         <p className="mt-5 text-center text-sm text-muted">
           {up ? "Already have an account?" : "New here?"}{" "}
-          <Link href={up ? "/sign-in" : "/sign-up"} className="font-semibold text-volt hover:underline">
+          <Link
+            href={`${up ? "/sign-in" : "/sign-up"}?next=${encodeURIComponent(returnTo)}`}
+            className="font-semibold text-volt hover:underline"
+          >
             {up ? "Sign in" : "Join free"}
           </Link>
         </p>

@@ -222,14 +222,14 @@ export function AlertAdminButton({
                     {error.toLowerCase().includes("sign in") && (
                       <div className="mt-2 flex items-center gap-2">
                         <Link
-                          href="/sign-up"
+                          href={`/sign-up?next=${encodeURIComponent(typeof window !== "undefined" ? window.location.pathname + window.location.search : machineId ? `/machines/${machineId}` : "/map")}`}
                           onClick={() => setOpen(false)}
                           className="btn-primary py-1 text-xs font-bold"
                         >
                           Join Free →
                         </Link>
                         <Link
-                          href="/sign-in"
+                          href={`/sign-in?next=${encodeURIComponent(typeof window !== "undefined" ? window.location.pathname + window.location.search : machineId ? `/machines/${machineId}` : "/map")}`}
                           onClick={() => setOpen(false)}
                           className="btn-ghost py-1 text-xs"
                         >

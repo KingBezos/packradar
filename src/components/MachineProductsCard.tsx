@@ -54,9 +54,11 @@ export function MachineProductsCard({
     return Array.from(types);
   }, [items]);
 
+  const nextUrl = encodeURIComponent(`/machines/${machineId}`);
+
   const handleAddProduct = async (sku?: string, customName?: string) => {
     if (!signedIn) {
-      router.push("/sign-up");
+      router.push(`/sign-up?next=${nextUrl}`);
       return;
     }
     const targetName = customName ?? query.trim();
@@ -91,7 +93,7 @@ export function MachineProductsCard({
 
   const handleVote = async (sku: string, value: 1 | -1) => {
     if (!signedIn) {
-      router.push("/sign-up");
+      router.push(`/sign-up?next=${nextUrl}`);
       return;
     }
     setBusy(`vote:${sku}:${value}`);
@@ -303,10 +305,10 @@ export function MachineProductsCard({
               🔒 <b className="text-volt">Free Account Required:</b> Join free or sign in to report or confirm products in {machineId} (+1 Rep).
             </span>
             <div className="flex items-center gap-2">
-              <Link href="/sign-up" className="font-bold text-volt hover:underline">
+              <Link href={`/sign-up?next=${nextUrl}`} className="font-bold text-volt hover:underline">
                 Join Free →
               </Link>
-              <Link href="/sign-in" className="text-slate-300 hover:text-white hover:underline">
+              <Link href={`/sign-in?next=${nextUrl}`} className="text-slate-300 hover:text-white hover:underline">
                 Sign In
               </Link>
             </div>
