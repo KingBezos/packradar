@@ -11,8 +11,9 @@ import { serebiiReleases } from "./adapters/releases";
 import { retailStock } from "./adapters/retail";
 import { dailyReport } from "./adapters/daily-report";
 import { qaAuditor } from "./adapters/qa-auditor";
+import { discordOutreach } from "./adapters/discord-outreach";
 
-/** Order matters for the daily job: locations → social/video drop times → cluster propagation → releases → retail → news → qa → report. */
+/** Order matters for the daily job: locations → social/video drop times → cluster propagation → releases → retail → news → discord outreach → qa → report. */
 export const ADAPTERS: Adapter[] = [
   officialLocator,
   redditDropTimes,
@@ -21,6 +22,7 @@ export const ADAPTERS: Adapter[] = [
   serebiiReleases,
   retailStock,
   newsFeeds,
+  discordOutreach,
   qaAuditor,
   dailyReport,
 ];

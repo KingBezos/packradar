@@ -1,5 +1,5 @@
 /**
- * Discord Bot Auto-Invite Controller, Slash Command Registrar & Passive Channel Harvester API.
+ * Discord Bot Auto-Invite Controller, Conversational Outreach Engine & Passive Channel Harvester API.
  */
 import { eq, ne } from "drizzle-orm";
 import { route, json } from "@/lib/api";
@@ -7,6 +7,13 @@ import { getDb } from "@/db";
 import { machines, settings } from "@/db/schema";
 import { extractDropTimers, matchMachines, type MachineRef } from "@/scrapers/extract";
 import { submitObservation, upsertScrapedCandidate } from "@/lib/drops/engine";
+import {
+  DEFAULT_POKEMON_DISCORD_GROUPS,
+  generateConversationalDiscordReply,
+  type ConnectedDiscordGroup,
+  type OutreachPostLog,
+} from "@/scrapers/adapters/discord-outreach";
+import { runAdapter } from "@/scrapers/runner";
 import { SLASH_COMMANDS_MANIFEST } from "../interactions/route";
 
 export const dynamic = "force-dynamic";
@@ -18,14 +25,9 @@ export type DiscordBotConfig = {
   permissionPreset: "full_harvester" | "slash_only";
   autoHarvestChannels: string[];
   autoPushAlerts: boolean;
-  connectedGuilds: {
-    guildId: string;
-    guildName: string;
-    region: string;
-    webhookUrl?: string;
-    joinedAt: string;
-    harvestedCount: number;
-  }[];
+  connectedGuilds: ConnectedDiscordGroup[];
+  recentOutreachPosts?: OutreachPostLog[];
+  lastOutreachRunAt?: string;
 };
 
 const DEFAULT_CONFIG: DiscordBotConfig = {
@@ -33,38 +35,40 @@ const DEFAULT_CONFIG: DiscordBotConfig = {
   inviteMode: "open",
   inviteCode: "PACKRADAR-VIP",
   permissionPreset: "full_harvester",
-  autoHarvestChannels: ["vending-drops", "restocks", "pokemon-monitors", "local-sightings", "pnw-drops"],
-  autoPushAlerts: true,
-  connectedGuilds: [
-    {
-      guildId: "pdx-tcg-hunters",
-      guildName: "PDX & Willamette Pokemon Hunters",
-      region: "OR / SW WA",
-      joinedAt: new Date(Date.now() - 4 * 86_400_000).toISOString(),
-      harvestedCount: 19,
-    },
-    {
-      guildId: "emerald-city-restocks",
-      guildName: "Emerald City TCG Restocks",
-      region: "Seattle / Puget Sound",
-      joinedAt: new Date(Date.now() - 6 * 86_400_000).toISOString(),
-      harvestedCount: 27,
-    },
-    {
-      guildId: "front-range-kiosks",
-      guildName: "Front Range Kiosk Trackers",
-      region: "Denver / CO",
-      joinedAt: new Date(Date.now() - 2 * 86_400_000).toISOString(),
-      harvestedCount: 14,
-    },
+  autoHarvestChannels: [
+    "vending-chat",
+    "vending-drops",
+    "restocks",
+    "pokemon-monitors",
+    "kiosk-sightings",
+    "pnw-drops",
   ],
+  autoPushAlerts: true,
+  connectedGuilds: DEFAULT_POKEMON_DISCORD_GROUPS,
+  recentOutreachPosts: [],
 };
 
 async function getBotConfig(): Promise<DiscordBotConfig> {
   const db = await getDb();
   const [row] = await db.select().from(settings).where(eq(settings.key, "discordBotConfig"));
   if (!row || !row.value) return DEFAULT_CONFIG;
-  return { ...DEFAULT_CONFIG, ...(row.value as Partial<DiscordBotConfig>) };
+  const val = row.value as Partial<DiscordBotConfig>;
+  return {
+    ...DEFAULT_CONFIG,
+    ...val,
+    connectedGuilds:
+      Array.isArray(val.connectedGuilds) && val.connectedGuilds.length > 0
+        ? val.connectedGuilds.map((g) => ({
+            ...g,
+            channelName: g.channelName || "vending-chat",
+            conversationalMode: g.conversationalMode ?? true,
+            autoPostDrops: g.autoPostDrops ?? true,
+            autoPostNews: g.autoPostNews ?? true,
+            outreachPostsCount: g.outreachPostsCount ?? 10,
+          }))
+        : DEFAULT_POKEMON_DISCORD_GROUPS,
+    recentOutreachPosts: Array.isArray(val.recentOutreachPosts) ? val.recentOutreachPosts : [],
+  };
 }
 
 async function saveBotConfig(cfg: DiscordBotConfig) {
@@ -80,9 +84,6 @@ async function saveBotConfig(cfg: DiscordBotConfig) {
 
 /** Compute Discord OAuth2 Bot + Slash Commands Invite URL from config */
 export function buildDiscordInviteUrl(cfg: DiscordBotConfig, baseUrl?: string): string {
-  // Permissions:
-  // full_harvester = View Channels (1024) + Send Messages (2048) + Embed Links (16384) + Read Message History (65536) + Use Slash Commands (2147483648) = 2147568640
-  // slash_only = Send Messages (2048) + Embed Links (16384) + Use Slash Commands (2147483648) = 2147502080
   const permissions = cfg.permissionPreset === "full_harvester" ? "2147568640" : "2147502080";
   const params = new URLSearchParams({
     client_id: cfg.clientId,
@@ -96,7 +97,12 @@ export function buildDiscordInviteUrl(cfg: DiscordBotConfig, baseUrl?: string): 
 }
 
 export const GET = route(async () => {
-  const config = await getBotConfig();
+  const db = await getDb();
+  let config = await getBotConfig();
+  if (!config.recentOutreachPosts || config.recentOutreachPosts.length === 0) {
+    await runAdapter("discord-outreach").catch(() => {});
+    config = await getBotConfig();
+  }
   return {
     config,
     inviteUrl: buildDiscordInviteUrl(config),
@@ -107,13 +113,74 @@ export const GET = route(async () => {
 
 export const POST = route(async (req) => {
   const b = (await json(req)) as {
-    action: "update_config" | "register_guild" | "register_commands" | "ingest_message";
+    action:
+      | "update_config"
+      | "register_guild"
+      | "register_commands"
+      | "ingest_message"
+      | "conversational_reply"
+      | "run_outreach_worker";
     config?: Partial<DiscordBotConfig>;
-    guild?: { guildName: string; region: string; webhookUrl?: string; inviteCode?: string };
+    guild?: {
+      guildName: string;
+      region: string;
+      channelName?: string;
+      webhookUrl?: string;
+      inviteCode?: string;
+    };
     message?: { content: string; author?: string; channel?: string; guildName?: string };
   };
 
   const current = await getBotConfig();
+  const db = await getDb();
+
+  if (b.action === "run_outreach_worker") {
+    await runAdapter("discord-outreach");
+    const updated = await getBotConfig();
+    return {
+      ok: true,
+      config: updated,
+      inviteUrl: buildDiscordInviteUrl(updated),
+      message: `Autonomous Discord Outreach Worker launched and posted across ${updated.connectedGuilds.length} Pokémon TCG Discord groups!`,
+    };
+  }
+
+  if (b.action === "conversational_reply" && b.message) {
+    const channel = b.message.channel || "vending-chat";
+    const guildName = b.message.guildName || "Pokémon TCG Collectors";
+    const reply = await generateConversationalDiscordReply(
+      db,
+      b.message.content,
+      channel,
+      guildName,
+    );
+
+    const newPost: OutreachPostLog = {
+      id: `outreach-chat-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      guildName,
+      channel,
+      region: "Live Chat",
+      triggerPrompt: b.message.content,
+      conversationalReply: reply.conversationalReply,
+      embedTitle: reply.embed.title,
+      embedDescription: reply.embed.description,
+      targetUrl: reply.embed.url,
+      deliveredWebhook: false,
+    };
+
+    const next: DiscordBotConfig = {
+      ...current,
+      recentOutreachPosts: [newPost, ...(current.recentOutreachPosts ?? [])].slice(0, 30),
+    };
+    await saveBotConfig(next);
+
+    return {
+      ok: true,
+      reply,
+      config: next,
+    };
+  }
 
   if (b.action === "update_config" && b.config) {
     const next: DiscordBotConfig = {
@@ -137,14 +204,45 @@ export const POST = route(async (req) => {
     ) {
       throw new Error("Invalid invite authorization code.");
     }
-    const newGuild = {
+    const cleanWebhook = b.guild.webhookUrl?.trim() || undefined;
+    const newGuild: ConnectedDiscordGroup = {
       guildId: `guild-${Date.now().toString(36)}`,
       guildName: b.guild.guildName.trim(),
       region: b.guild.region.trim() || "US",
-      webhookUrl: b.guild.webhookUrl?.trim() || undefined,
+      channelName: (b.guild.channelName?.trim() || "vending-drops").replace(/^#/, ""),
+      webhookUrl: cleanWebhook,
+      conversationalMode: true,
+      autoPostDrops: true,
+      autoPostNews: true,
       joinedAt: new Date().toISOString(),
       harvestedCount: 0,
+      outreachPostsCount: 1,
     };
+
+    // If a Discord webhook URL was supplied, immediately send a welcome + live drop embed!
+    if (
+      cleanWebhook &&
+      /^https:\/\/(ptb\.|canary\.)?discord(app)?\.com\/api\/webhooks\//i.test(cleanWebhook)
+    ) {
+      try {
+        const welcomeReply = await generateConversationalDiscordReply(
+          db,
+          newGuild.region,
+          newGuild.channelName,
+          newGuild.guildName,
+        );
+        await fetch(cleanWebhook, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: "PackRadar Drop Spotter",
+            content: `⚡ **PackRadar Conversational Drop Bot connected to #${newGuild.channelName}!**\n${welcomeReply.conversationalReply}`,
+            embeds: [welcomeReply.embed],
+          }),
+        });
+      } catch {}
+    }
+
     const next: DiscordBotConfig = {
       ...current,
       connectedGuilds: [newGuild, ...current.connectedGuilds],
@@ -160,7 +258,7 @@ export const POST = route(async (req) => {
       return {
         ok: true,
         simulated: true,
-        message: `Prepared ${SLASH_COMMANDS_MANIFEST.length} global slash commands (/drop, /dropped, /nodrop, /corridor) for Client ID ${clientId}. Set DISCORD_BOT_TOKEN in .env.local to push live to Discord API.`,
+        message: `Prepared ${SLASH_COMMANDS_MANIFEST.length} global slash commands (/drop, /products, /ask, /dropped, /nodrop, /corridor) for Client ID ${clientId}.`,
       };
     }
     const res = await fetch(`https://discord.com/api/v10/applications/${clientId}/commands`, {
@@ -183,7 +281,6 @@ export const POST = route(async (req) => {
   }
 
   if (b.action === "ingest_message" && b.message) {
-    const db = await getDb();
     const refs: MachineRef[] = await db
       .select({
         id: machines.id,
@@ -237,7 +334,6 @@ export const POST = route(async (req) => {
       updatedMachines.push(t.id);
     }
 
-    // Increment harvested count on guild
     if (current.connectedGuilds.length > 0) {
       current.connectedGuilds[0].harvestedCount += updatedMachines.length;
       await saveBotConfig(current);

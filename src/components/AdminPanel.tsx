@@ -1598,6 +1598,9 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
             </div>
             {isAdmin && (
               <div className="flex flex-wrap gap-2">
+                <button className="btn-ghost text-xs" onClick={() => runBot("discord-outreach")}>
+                  <MessageSquare className="h-4 w-4 text-indigo-400" /> Run Discord Outreach Bot
+                </button>
                 <button className="btn-ghost text-xs" onClick={() => runBot("qa-auditor")}>
                   <ShieldCheck className="h-4 w-4 text-green-400" /> Run Site QA Auditor Bot
                 </button>

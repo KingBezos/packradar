@@ -40,15 +40,25 @@ async function doBoot() {
     { name: "drop-alerts", noOverlap: true },
   );
 
-  // Every 6 hours: verify actual retailer stock, write 6-hour Pokémon news articles, and run QA auditor
+  // Every 6 hours: verify actual retailer stock, write 6-hour Pokémon news articles, run Discord Outreach Worker, and run QA auditor
   cron.schedule(
     process.env.RETAIL_SCAN_CRON || "0 */6 * * *",
     async () => {
       await runAdapter("retail-stock").catch(() => {});
       await runAdapter("news-feeds").catch(() => {});
+      await runAdapter("discord-outreach").catch(() => {});
       await runAdapter("qa-auditor").catch(() => {});
     },
     { name: "retail-and-news-6h", timezone: tz, noOverlap: true },
+  );
+
+  // Every 2 hours: run Autonomous Discord Conversational & Group Outreach Worker
+  cron.schedule(
+    "30 */2 * * *",
+    async () => {
+      await runAdapter("discord-outreach").catch(() => {});
+    },
+    { name: "discord-outreach-2h", timezone: tz, noOverlap: true },
   );
 
   // Hourly background site QA & link auditor worker bot
@@ -60,10 +70,11 @@ async function doBoot() {
     { name: "hourly-qa-auditor", timezone: tz, noOverlap: true },
   );
 
-  // Run lightweight QA self-heal & baseline news writer shortly after startup
+  // Run lightweight QA self-heal, baseline news writer, and Discord outreach bot shortly after startup
   setTimeout(() => {
     runAdapter("qa-auditor").catch(() => {});
     runAdapter("news-feeds", { perSource: 4, ai: false }).catch(() => {});
+    runAdapter("discord-outreach").catch(() => {});
   }, 2500);
 
   console.log("[boot] PackRadar ready (low-memory mode, continuous retail/news/QA bots active)");
