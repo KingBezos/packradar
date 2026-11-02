@@ -32,7 +32,11 @@ export default async function AlertsPage() {
   const subs: SubView[] = rows.map(({ s, m, p }) => ({
     id: s.id,
     kind: s.kind,
-    title: m ? `${m.retailer} – ${m.street}, ${m.city}` : s.kind === "area_drop" ? `Within ${s.radiusMiles} mi of ${u.homeZip ?? "your location"}` : p?.name ?? s.keyword ?? s.kind,
+    title: m
+      ? `${m.retailer} – ${m.street}, ${m.city}`
+      : s.kind === "area_drop"
+        ? `Within ${s.radiusMiles} mi of ${s.keyword ?? (u.homeZip ? `ZIP ${u.homeZip}` : "your location")}`
+        : p?.name ?? s.keyword ?? s.kind,
     href: m ? `/machines/${m.id}` : undefined,
     lead: s.leadMinutes,
     channels: s.channels,

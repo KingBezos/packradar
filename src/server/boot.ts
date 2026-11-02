@@ -40,15 +40,31 @@ async function doBoot() {
     { name: "drop-alerts", noOverlap: true },
   );
 
-  // 4× daily (every 6 hours): verify actual retailer stock & scrub Reddit/Discord/Facebook for upcoming drops
+  // Every 6 hours: verify actual retailer stock, write 6-hour Pokémon news articles, and run QA auditor
   cron.schedule(
     process.env.RETAIL_SCAN_CRON || "0 */6 * * *",
     async () => {
       await runAdapter("retail-stock").catch(() => {});
       await runAdapter("news-feeds").catch(() => {});
+      await runAdapter("qa-auditor").catch(() => {});
     },
-    { name: "retail-4x-daily", timezone: tz, noOverlap: true },
+    { name: "retail-and-news-6h", timezone: tz, noOverlap: true },
   );
 
-  console.log("[boot] PackRadar ready (low-memory mode, 4x daily retail cron active)");
+  // Hourly background site QA & link auditor worker bot
+  cron.schedule(
+    "15 * * * *",
+    async () => {
+      await runAdapter("qa-auditor").catch(() => {});
+    },
+    { name: "hourly-qa-auditor", timezone: tz, noOverlap: true },
+  );
+
+  // Run lightweight QA self-heal & baseline news writer shortly after startup
+  setTimeout(() => {
+    runAdapter("qa-auditor").catch(() => {});
+    runAdapter("news-feeds", { perSource: 4, ai: false }).catch(() => {});
+  }, 2500);
+
+  console.log("[boot] PackRadar ready (low-memory mode, continuous retail/news/QA bots active)");
 }

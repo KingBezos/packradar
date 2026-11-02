@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Retail Drops & Restock Tracker – Target, Walmart, Best Buy, CVS, Walgreens, Dollar General",
   description:
-    "Verified MSRP Pokémon TCG retail restock tracker (scanned 4× daily) across Pokémon Center, Target, Walmart, Best Buy, GameStop, Costco, CVS, Walgreens, Dollar General, and Barnes & Noble.",
+    "Verified MSRP Pokémon TCG retail restock tracker (scanned continuously throughout the day) across Pokémon Center, Target, Walmart, Best Buy, GameStop, Costco, CVS, Walgreens, Dollar General, and Barnes & Noble.",
 };
 
 const IN_STORE_RETAILERS = new Set(["cvs", "walgreens", "dollargeneral", "barnesandnoble", "costco"]);
@@ -81,16 +81,15 @@ export default async function DropsPage() {
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="max-w-3xl">
           <span className="chip border-volt/30 text-volt">
-            <ShoppingCart className="h-3.5 w-3.5" /> Strict MSRP Stock Verifier · 4× Daily Scan
+            <ShoppingCart className="h-3.5 w-3.5" /> Strict MSRP Stock Verifier · Continuous Live Scanning
           </span>
           <h1 className="mt-2 text-3xl font-black text-white sm:text-4xl">
             Pokémon TCG Retail Drops &amp; Upcoming Restocks
           </h1>
           <p className="mt-1 text-sm text-muted">
-            We scan <b className="text-slate-200">4× daily (every 6 hours)</b> for real MSRP stock across Pokémon
+            We scan <b className="text-slate-200">continuously throughout the day</b> for real MSRP stock across Pokémon
             Center, Target, Walmart, Best Buy, GameStop, Amazon, Costco, CVS, Walgreens &amp; Dollar General — filtering
-            out 3rd-party scalpers and scrubbing <b className="text-slate-200">Reddit, Discord &amp; Facebook</b> for
-            upcoming drop windows.
+            out 3rd-party scalpers and tracking upcoming restock windows.
           </p>
         </div>
         <Link href="/alerts" className="btn-primary">
@@ -98,19 +97,19 @@ export default async function DropsPage() {
         </Link>
       </div>
 
-      {/* Live 4x Daily Scan Bar */}
+      {/* Live Scan Bar */}
       <RetailScanBar lastScanAt={intel.lastScanAt} nextScanAt={intel.nextScanAt} />
 
-      {/* Scrubbed Upcoming Drops & Community Rumors */}
+      {/* Upcoming Drops & Restock Signals */}
       <div className="card border-volt/25 p-5">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <Radar className="h-4 w-4 text-volt" />
             <h2 className="text-sm font-black uppercase tracking-wider text-white">
-              📡 Potential Upcoming Drops &amp; Community Intel (Reddit · Discord · Facebook)
+              📡 Potential Upcoming Drops &amp; Restock Radar
             </h2>
           </div>
-          <span className="text-xs text-muted">Updated during each 4× daily scan</span>
+          <span className="text-xs text-muted">Monitored continuously throughout the day</span>
         </div>
 
         <div className="grid gap-3 md:grid-cols-2">
@@ -194,7 +193,7 @@ export default async function DropsPage() {
                   >
                     {inStockCount > 0
                       ? `🟢 Verified In Stock at ${inStockCount} retailer${inStockCount > 1 ? "s" : ""} (MSRP)`
-                      : "🔴 Sold Out Online at MSRP · Monitoring Next 6h Scan"}
+                      : "🔴 Sold Out Online at MSRP · Continuously Monitored"}
                   </span>
                 </div>
 

@@ -9,8 +9,8 @@ type Item = { id: string; message: string; url: string | null; createdAt?: strin
 const FALLBACK_TICKER_ITEMS: Item[] = [
   {
     id: "init-1",
-    message: "🎯 Confirmed drop window: Fred Meyer Gladstone, OR (Q00450) dropping at :18 past the hour (94% accuracy)",
-    url: "/machines/Q00450",
+    message: "🎯 Confirmed drop window: Fred Meyer Portland, OR (Q01010) dropping at :18 past the hour (94% accuracy)",
+    url: "/machines/Q01010",
   },
   {
     id: "init-2",
@@ -19,8 +19,8 @@ const FALLBACK_TICKER_ITEMS: Item[] = [
   },
   {
     id: "init-3",
-    message: "⚡ Confirmed drop: Safeway Seattle, WA (Q00003) verified on 60m cadence at :35 past the hour",
-    url: "/machines/Q00003",
+    message: "⚡ Confirmed drop: Safeway Seattle, WA (Q00159) verified on 60m cadence at :35 past the hour",
+    url: "/machines/Q00159",
   },
   {
     id: "init-4",
@@ -29,8 +29,8 @@ const FALLBACK_TICKER_ITEMS: Item[] = [
   },
   {
     id: "init-5",
-    message: "📍 Corridor Intelligence: Kroger Columbus, OH (Q00487) calibrated to :42 hourly drop window",
-    url: "/machines/Q00487",
+    message: "📍 Corridor Intelligence: Kroger Cincinnati, OH (Q01038) calibrated to :42 hourly drop window",
+    url: "/machines/Q01038",
   },
   {
     id: "init-6",
@@ -39,13 +39,13 @@ const FALLBACK_TICKER_ITEMS: Item[] = [
   },
   {
     id: "init-7",
-    message: "💊 Drugstore Check: CVS, Walgreens & Dollar General stocked with MJ Holdings 2-Pack Blisters & Knock Out Boxes",
-    url: "/drops",
+    message: "🎯 Spotter Verified: QFC Ballard Seattle, WA (Q00810) confirmed at :12 past the hour",
+    url: "/machines/Q00810",
   },
   {
     id: "init-8",
-    message: "⚡ High-Confidence Window: Vons Los Angeles, CA (Q00612) active on :24 hourly drop timer (93% accuracy)",
-    url: "/machines/Q00612",
+    message: "⚡ High-Confidence Window: Safeway San Francisco, CA (Q02015) active on :24 hourly drop timer (93% accuracy)",
+    url: "/machines/Q02015",
   },
 ];
 

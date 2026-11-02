@@ -4,6 +4,7 @@ import { route, json } from "@/lib/api";
 import { requireUser } from "@/lib/session";
 import { getDb } from "@/db";
 import { user, zipCodes } from "@/db/schema";
+import { lookupZipCentroid } from "@/db/seed";
 import { sendDiscord } from "@/lib/notify/channels";
 
 const Patch = z.object({
@@ -24,7 +25,9 @@ export const PATCH = route(async (req) => {
   if (b.homeZip !== undefined) {
     patch.homeZip = b.homeZip;
     if (b.homeZip) {
-      const [z] = await db.select().from(zipCodes).where(eq(zipCodes.zip, b.homeZip));
+      const zMem = lookupZipCentroid(b.homeZip);
+      const zDb = zMem ? null : (await db.select().from(zipCodes).where(eq(zipCodes.zip, b.homeZip)))[0];
+      const z = zMem ?? zDb;
       patch.homeLat = z?.lat ?? null;
       patch.homeLng = z?.lng ?? null;
     }

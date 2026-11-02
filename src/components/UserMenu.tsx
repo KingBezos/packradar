@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { LogOut, User, Bell } from "lucide-react";
+import { LogOut, User, Bell, Shield } from "lucide-react";
 import { Avatar } from "./ui";
 import { signOut } from "@/lib/auth-client";
 
@@ -11,11 +11,13 @@ export function UserMenu({
   name,
   image,
   reputation,
+  staff,
 }: {
   name: string;
   image: string | null;
   reputation: number;
   plan?: string;
+  staff?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
@@ -34,6 +36,15 @@ export function UserMenu({
           className="absolute right-0 z-50 mt-2 w-48 overflow-hidden rounded-2xl border border-line bg-[#0e1526] p-1 shadow-2xl"
           onMouseLeave={() => setOpen(false)}
         >
+          {staff && (
+            <Link
+              href="/admin"
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-volt hover:bg-panel-2"
+              onClick={() => setOpen(false)}
+            >
+              <Shield className="h-4 w-4" /> Admin Panel
+            </Link>
+          )}
           <Link
             href="/profile"
             className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-panel-2"

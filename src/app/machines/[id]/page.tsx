@@ -87,9 +87,9 @@ export default async function MachinePage({ params }: { params: Promise<{ id: st
               className="chip hover:text-white"
               target="_blank"
               rel="noopener noreferrer"
-              href={`https://www.google.com/maps/dir/?api=1&destination=${m.lat},${m.lng}`}
+              href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${m.retailer}, ${m.street}, ${m.city}, ${m.state} ${m.zip}`)}`}
             >
-              🧭 Directions
+              🧭 Directions ({m.street})
             </a>
             <span className="chip">Stock: {m.stockStatus}{m.stockUpdatedAt ? ` · ${timeAgo(m.stockUpdatedAt)}` : ""}</span>
           </div>

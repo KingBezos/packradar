@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { RefreshCw, ShieldCheck, Radio } from "lucide-react";
 import { timeAgo } from "@/components/ui";
 
-export function RetailScanBar({ lastScanAt, nextScanAt }: { lastScanAt: string; nextScanAt: string }) {
+export function RetailScanBar({ lastScanAt }: { lastScanAt: string; nextScanAt?: string }) {
   const router = useRouter();
   const [scanning, setScanning] = useState(false);
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
@@ -16,10 +16,10 @@ export function RetailScanBar({ lastScanAt, nextScanAt }: { lastScanAt: string; 
     try {
       const r = await fetch("/api/drops/scan", { method: "POST" });
       if (r.ok) {
-        setStatusMsg("Verified retailer MSRP stock & scrubbed Reddit/Discord/Facebook feeds.");
+        setStatusMsg("Verified retailer MSRP stock & updated live drop radar.");
         router.refresh();
       } else {
-        setStatusMsg("Scan cooldown active — stock was verified recently.");
+        setStatusMsg("Stock was verified just moments ago.");
       }
     } catch {
       setStatusMsg("Could not complete scan right now.");
@@ -36,13 +36,10 @@ export function RetailScanBar({ lastScanAt, nextScanAt }: { lastScanAt: string; 
             <ShieldCheck className="h-3.5 w-3.5" /> Strict MSRP Stock Verifier
           </span>
           <span className="inline-flex items-center gap-1.5 rounded-full border border-volt/40 bg-volt/10 px-2.5 py-1 font-bold text-volt">
-            <Radio className="h-3 w-3 animate-pulse" /> Auto-Scans 4× Daily (Every 6 Hours)
+            <Radio className="h-3 w-3 animate-pulse" /> Continuous Live Scanning Throughout the Day
           </span>
           <span className="text-slate-300">
-            Last verified: <b className="text-white">{timeAgo(new Date(lastScanAt))}</b> · Next scheduled scan:{" "}
-            <b className="text-slate-200">
-              {new Date(nextScanAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
-            </b>
+            Last verified: <b className="text-white">{timeAgo(new Date(lastScanAt))}</b>
           </span>
         </div>
 
@@ -53,7 +50,7 @@ export function RetailScanBar({ lastScanAt, nextScanAt }: { lastScanAt: string; 
           className="btn-ghost border border-line bg-bg/80 px-3 py-1.5 text-xs font-bold text-volt hover:border-volt/50"
         >
           <RefreshCw className={`h-3.5 w-3.5 ${scanning ? "animate-spin" : ""}`} />
-          {scanning ? "Verifying Retailers & Scrubbing Feeds…" : "Verify Live Stock Now"}
+          {scanning ? "Verifying Retailers…" : "Verify Live Stock Now"}
         </button>
       </div>
       {statusMsg && <p className="mt-2 text-xs font-medium text-green-400">{statusMsg}</p>}

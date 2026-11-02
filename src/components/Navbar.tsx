@@ -65,7 +65,7 @@ export async function Navbar() {
             <Link href="/alerts" className="rounded-lg p-2 text-muted hover:bg-panel-2 hover:text-white" title="Alerts">
               <Bell className="h-5 w-5" />
             </Link>
-            <UserMenu name={user.name} image={user.image} reputation={user.reputation} plan={user.plan} />
+            <UserMenu name={user.name} image={user.image} reputation={user.reputation} plan={user.plan} staff={isStaff(user)} />
           </div>
         ) : (
           <div className="ml-auto flex items-center gap-2 md:ml-0">

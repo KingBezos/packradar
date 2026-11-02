@@ -80,16 +80,26 @@ export async function sendEmail(to: string, msg: Message): Promise<"sent" | "log
 
 /* ───────── Web Push ───────── */
 
+export const DEFAULT_VAPID_PUBLIC_KEY =
+  "BPovxSR0d6QAzApgRb0cEsXVZITSwa3Xia8Xz54LBUp1R3yeU084qZq6tUvY0Ycc6y1yksZNlzUPsaeZrL5TlSA";
+const DEFAULT_VAPID_PRIVATE_KEY = "zWxFUXB8A88X6L0hxtreyBqJ240z-akEGezHffq_94A";
+
 let vapidReady = false;
+export function getVapidPublicKey() {
+  return process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || DEFAULT_VAPID_PUBLIC_KEY;
+}
+function getVapidPrivateKey() {
+  return process.env.VAPID_PRIVATE_KEY || DEFAULT_VAPID_PRIVATE_KEY;
+}
 export function pushConfigured() {
-  return Boolean(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY);
+  return Boolean(getVapidPublicKey() && getVapidPrivateKey());
 }
 function ensureVapid() {
   if (vapidReady || !pushConfigured()) return;
   webpush.setVapidDetails(
-    process.env.VAPID_SUBJECT || "mailto:admin@packradar.local",
-    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-    process.env.VAPID_PRIVATE_KEY!,
+    process.env.VAPID_SUBJECT || "mailto:alerts@packradar.app",
+    getVapidPublicKey(),
+    getVapidPrivateKey(),
   );
   vapidReady = true;
 }

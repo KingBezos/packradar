@@ -73,7 +73,10 @@ function popupHtml(m: MapMachine, now: number) {
              <div style="height:5px;background:#1e293b;border-radius:9999px;margin-top:4px;overflow:hidden"><div style="height:100%;width:${acc}%;background:${unconf ? "#fb923c" : "#22c55e"}"></div></div>`
           : ""
       }
-      <a href="/machines/${m.id}" style="display:block;margin-top:10px;text-align:center;background:#facc15;color:#0f172a;font-weight:800;border-radius:10px;padding:7px 10px;font-size:13px;text-decoration:none">Open machine →</a>
+      <div style="display:flex;gap:6px;margin-top:10px">
+        <a href="/machines/${m.id}" style="flex:1;text-align:center;background:#facc15;color:#0f172a;font-weight:800;border-radius:10px;padding:7px 8px;font-size:12px;text-decoration:none">Open machine →</a>
+        <a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${m.retailer}, ${m.street}, ${m.city}, ${m.state}`)}" target="_blank" rel="noopener noreferrer" style="text-align:center;background:#1e293b;color:#f8fafc;font-weight:700;border-radius:10px;padding:7px 9px;font-size:12px;text-decoration:none;border:1px solid #334155">🧭 Map</a>
+      </div>
     </div>`;
 }
 

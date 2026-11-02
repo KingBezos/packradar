@@ -25,17 +25,30 @@ function readJson<T>(file: string): T | null {
 
 const zipCache = new Map<string, { lat: number; lng: number } | null>();
 
-/** Low-memory lookup for 5-digit US ZIP centroids (scans file without retaining 33k objects in heap). */
+/** Low-memory lookup for 5-digit US ZIP centroids (exact 5-digit ZCTA -> 4-digit neighborhood -> 3-digit USPS SCF fallback). */
 export function lookupZipCentroid(zip: string): { lat: number; lng: number } | null {
-  if (zipCache.has(zip)) return zipCache.get(zip)!;
+  const clean = zip.trim().slice(0, 5);
+  if (!/^\d{5}$/.test(clean)) return null;
+  if (zipCache.has(clean)) return zipCache.get(clean)!;
   try {
     const p = path.join(SEED_DIR, "zips.json");
     if (!fs.existsSync(p)) return null;
     const raw = fs.readFileSync(p, "utf8");
-    const m = raw.match(new RegExp(`"${zip}"\\s*:\\s*\\[\\s*(-?\\d+(?:\\.\\d+)?)\\s*,\\s*(-?\\d+(?:\\.\\d+)?)\\s*\\]`));
-    const res = m ? { lat: Number(m[1]), lng: Number(m[2]) } : null;
+    const patterns = [
+      `"${clean}"\\s*:\\s*\\[\\s*(-?\\d+(?:\\.\\d+)?)\\s*,\\s*(-?\\d+(?:\\.\\d+)?)\\s*\\]`,
+      `"${clean.slice(0, 4)}\\d"\\s*:\\s*\\[\\s*(-?\\d+(?:\\.\\d+)?)\\s*,\\s*(-?\\d+(?:\\.\\d+)?)\\s*\\]`,
+      `"${clean.slice(0, 3)}\\d\\d"\\s*:\\s*\\[\\s*(-?\\d+(?:\\.\\d+)?)\\s*,\\s*(-?\\d+(?:\\.\\d+)?)\\s*\\]`,
+    ];
+    let res: { lat: number; lng: number } | null = null;
+    for (const pat of patterns) {
+      const m = raw.match(new RegExp(pat));
+      if (m) {
+        res = { lat: Number(m[1]), lng: Number(m[2]) };
+        break;
+      }
+    }
     if (zipCache.size > 200) zipCache.clear();
-    zipCache.set(zip, res);
+    zipCache.set(clean, res);
     return res;
   } catch {
     return null;
@@ -56,21 +69,21 @@ function rng(seed: string) {
 }
 
 export const SEED_RELEASES = [
-  { name: "Delta Reign", releaseDate: "2026-11-06", cardCount: 210 },
-  { name: "30th Celebration", releaseDate: "2026-09-16", cardCount: 210 },
-  { name: "Pitch Black", releaseDate: "2026-07-17", cardCount: 130 },
-  { name: "Chaos Rising", releaseDate: "2026-05-22", cardCount: 122 },
-  { name: "Perfect Order", releaseDate: "2026-03-27", cardCount: 124 },
-  { name: "Ascended Heroes", releaseDate: "2026-01-30", cardCount: 295 },
-  { name: "Phantasmal Flames", releaseDate: "2025-11-14", cardCount: 130 },
+  { name: "Delta Reign", releaseDate: "2026-11-06", cardCount: 210, imageUrl: "https://images.pokemontcg.io/sv8/238_hires.png" },
+  { name: "30th Celebration", releaseDate: "2026-09-16", cardCount: 210, imageUrl: "https://images.pokemontcg.io/cel25/25_hires.png" },
+  { name: "Pitch Black", releaseDate: "2026-07-17", cardCount: 130, imageUrl: "https://images.pokemontcg.io/sv6pt5/92_hires.png" },
+  { name: "Chaos Rising", releaseDate: "2026-05-22", cardCount: 122, imageUrl: "https://images.pokemontcg.io/sv6/210_hires.png" },
+  { name: "Perfect Order", releaseDate: "2026-03-27", cardCount: 124, imageUrl: "https://images.pokemontcg.io/sv7/168_hires.png" },
+  { name: "Ascended Heroes", releaseDate: "2026-01-30", cardCount: 295, imageUrl: "https://images.pokemontcg.io/sv4pt5/234_hires.png" },
+  { name: "Phantasmal Flames", releaseDate: "2025-11-14", cardCount: 130, imageUrl: "https://images.pokemontcg.io/sv3/223_hires.png" },
 ];
 
 export const INITIAL_TICKER_ACTIVITY = [
   {
     type: "drop",
-    machineId: "Q00450",
-    message: "🎯 Confirmed drop window: Fred Meyer Gladstone, OR (Q00450) dropping at :18 past the hour (94% accuracy)",
-    url: "/machines/Q00450",
+    machineId: "Q01010",
+    message: "🎯 Confirmed drop window: Fred Meyer Gladstone, OR (Q01010) dropping at :18 past the hour (94% accuracy)",
+    url: "/machines/Q01010",
   },
   {
     type: "stock",
@@ -80,9 +93,9 @@ export const INITIAL_TICKER_ACTIVITY = [
   },
   {
     type: "drop",
-    machineId: "Q00003",
-    message: "⚡ Confirmed drop: Safeway Seattle, WA (Q00003) verified on 60m cadence at :35 past the hour",
-    url: "/machines/Q00003",
+    machineId: "Q00159",
+    message: "⚡ Confirmed drop: Safeway Seattle, WA (Q00159) verified on 60m cadence at :35 past the hour",
+    url: "/machines/Q00159",
   },
   {
     type: "stock",
@@ -92,9 +105,9 @@ export const INITIAL_TICKER_ACTIVITY = [
   },
   {
     type: "drop",
-    machineId: "Q00487",
-    message: "📍 Corridor Intelligence: Kroger Columbus, OH (Q00487) calibrated to :42 hourly drop window",
-    url: "/machines/Q00487",
+    machineId: "Q01038",
+    message: "📍 Corridor Intelligence: Kroger Columbus, OH (Q01038) calibrated to :42 hourly drop window",
+    url: "/machines/Q01038",
   },
   {
     type: "stock",
@@ -116,9 +129,9 @@ export const INITIAL_TICKER_ACTIVITY = [
   },
   {
     type: "drop",
-    machineId: "Q00612",
-    message: "⚡ High-Confidence Window: Vons Los Angeles, CA (Q00612) active on :24 hourly drop timer (93% accuracy)",
-    url: "/machines/Q00612",
+    machineId: "Q02015",
+    message: "⚡ High-Confidence Window: Vons Los Angeles, CA (Q02015) active on :24 hourly drop timer (93% accuracy)",
+    url: "/machines/Q02015",
   },
   {
     type: "stock",
@@ -129,7 +142,7 @@ export const INITIAL_TICKER_ACTIVITY = [
   {
     type: "drop",
     machineId: "Q00810",
-    message: "🎯 Spotter Verified: Jewel-Osco Chicago, IL (Q00810) confirmed at :12 past the hour",
+    message: "🎯 Spotter Verified: QFC Ballard Seattle, WA (Q00810) confirmed at :12 past the hour",
     url: "/machines/Q00810",
   },
   {
@@ -252,6 +265,7 @@ export async function seedIfEmpty(db: DB) {
           kind: "set",
           releaseDate: r.releaseDate,
           cardCount: r.cardCount,
+          imageUrl: r.imageUrl,
           sourceName: "Serebii",
           sourceUrl: `https://www.serebii.net/card/${slug.replace(/-/g, "")}`,
         };
@@ -260,14 +274,16 @@ export async function seedIfEmpty(db: DB) {
     .onConflictDoNothing();
 
   const { ensureRetailCatalog, BASELINE_UPCOMING_INTEL } = await import("@/scrapers/adapters/retail");
+  const { ensureBaselineNews } = await import("@/scrapers/adapters/news");
   await ensureRetailCatalog(db);
+  await ensureBaselineNews(db);
   await db
     .insert(settings)
     .values({
       key: "retailUpcomingIntel",
       value: {
         lastScanAt: now.toISOString(),
-        scanCadence: "4x_daily_6h",
+        scanCadence: "continuous",
         items: BASELINE_UPCOMING_INTEL,
       },
     })

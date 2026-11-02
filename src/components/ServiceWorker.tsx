@@ -22,13 +22,15 @@ function urlBase64ToUint8Array(base64: string) {
   return Uint8Array.from([...raw].map((c) => c.charCodeAt(0)));
 }
 
+const FALLBACK_VAPID_PUBLIC_KEY =
+  "BPovxSR0d6QAzApgRb0cEsXVZITSwa3Xia8Xz54LBUp1R3yeU084qZq6tUvY0Ycc6y1yksZNlzUPsaeZrL5TlSA";
+
 /** Ask permission + subscribe this browser to push. */
 export async function enablePush(): Promise<string> {
-  const key = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-  if (!key) return "Push isn't configured on the server yet (VAPID keys missing).";
+  const key = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || FALLBACK_VAPID_PUBLIC_KEY;
   if (!("serviceWorker" in navigator) || !("PushManager" in window)) return "This browser doesn't support push notifications.";
   const perm = await Notification.requestPermission();
-  if (perm !== "granted") return "Notifications were blocked.";
+  if (perm !== "granted") return "Notifications were blocked in browser permissions.";
   const reg = await navigator.serviceWorker.register("/sw.js");
   await navigator.serviceWorker.ready;
   const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlBase64ToUint8Array(key) });

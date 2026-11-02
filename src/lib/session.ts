@@ -5,15 +5,18 @@ import { getDb } from "@/db";
 import { session as sessionTable, user as userTable, type User } from "@/db/schema";
 
 async function sanitizeUserPrivacy(db: Awaited<ReturnType<typeof getDb>>, u: User): Promise<User> {
+  const ownerEmails = ["james@jpegtown.com", ...(process.env.ADMIN_EMAILS || "").split(",").map((e) => e.trim().toLowerCase())];
+  const shouldBeAdmin = ownerEmails.includes(u.email.toLowerCase()) && u.role !== "admin";
   const needsHandle = Boolean(u.image) || !u.name || u.name.includes(" ") || u.name.includes("@");
-  if (!u.image && !needsHandle) return u;
+  if (!u.image && !needsHandle && !shouldBeAdmin) return u;
   const newName = needsHandle ? generateSpotterHandle(u.email || u.id) : u.name;
+  const newRole = shouldBeAdmin ? "admin" : u.role;
   await db
     .update(userTable)
-    .set({ name: newName, image: null })
+    .set({ name: newName, image: null, role: newRole, ...(shouldBeAdmin ? { emailVerified: true } : {}) })
     .where(eq(userTable.id, u.id))
     .catch(() => {});
-  return { ...u, name: newName, image: null };
+  return { ...u, name: newName, image: null, role: newRole, ...(shouldBeAdmin ? { emailVerified: true } : {}) };
 }
 
 /** Current signed-in user (full DB row) or null. */

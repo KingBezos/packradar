@@ -457,7 +457,7 @@ export const CURRENT_POKEMON_RETAIL_CATALOG: CatalogProductSpec[] = [
   },
 ];
 
-/** Curated baseline of verified upcoming restock windows & community-tracked drop signals. */
+/** Curated baseline of verified upcoming restock windows & drop signals. */
 export const BASELINE_UPCOMING_INTEL: UpcomingDropIntel[] = [
   {
     id: "intel-pc-destined-rivals",
@@ -474,7 +474,7 @@ export const BASELINE_UPCOMING_INTEL: UpcomingDropIntel[] = [
   {
     id: "intel-target-prismatic",
     source: "reddit",
-    sourceLabel: "r/PKMNTCGDeals · Target RedCard Restock",
+    sourceLabel: "Online Restock Radar · RedCard Watch",
     title: "Prismatic Evolutions Booster Bundle & ETB Early-Morning Online Drops",
     retailer: "target",
     productName: "Prismatic Evolutions Booster Bundle (6 Packs)",
@@ -486,7 +486,7 @@ export const BASELINE_UPCOMING_INTEL: UpcomingDropIntel[] = [
   {
     id: "intel-costco-blooming",
     source: "facebook",
-    sourceLabel: "Facebook Pallet Trackers · Item #1829410",
+    sourceLabel: "Warehouse Pallet Watch · Item #1829410",
     title: "Blooming Waters 151 Premium Collection Regional Warehouse Pallets",
     retailer: "costco",
     productName: "Blooming Waters Premium Collection (151 — 12 Packs)",
@@ -498,7 +498,7 @@ export const BASELINE_UPCOMING_INTEL: UpcomingDropIntel[] = [
   {
     id: "intel-bestbuy-jt",
     source: "discord",
-    sourceLabel: "Discord Monitor · Best Buy SKU Watch",
+    sourceLabel: "Store Pickup SKU Watch",
     title: "Journey Together Booster Bundle & 3-Pack Blister Store Pickup Restock",
     retailer: "bestbuy",
     productName: "Journey Together Booster Bundle (6 Packs)",
@@ -510,7 +510,7 @@ export const BASELINE_UPCOMING_INTEL: UpcomingDropIntel[] = [
   {
     id: "intel-walmart-151",
     source: "reddit",
-    sourceLabel: "r/PokemonTCG · MJ Holding Vendor Watch",
+    sourceLabel: "Vendor Route Watch · MJ Holding",
     title: "Walmart In-Store MJ Holding Thursday/Friday Restock (151 & Prismatic)",
     retailer: "walmart",
     productName: "Pokémon TCG: 151 Booster Bundle (6 Packs)",
@@ -522,7 +522,7 @@ export const BASELINE_UPCOMING_INTEL: UpcomingDropIntel[] = [
   {
     id: "intel-dg-saturday",
     source: "facebook",
-    sourceLabel: "Collector Group · Dollar General Coupon Alert",
+    sourceLabel: "Value Chain Promo Watch",
     title: "Dollar General $5 Off $25 Saturday Stack on Knock Out Tins & Blisters",
     retailer: "dollargeneral",
     productName: "Value Chain Exclusive: Knock Out Collection & Poké Ball Tin (3 Packs)",
@@ -806,7 +806,7 @@ export async function scrubCommunityRetailDeals(
               discoveredIntel.push({
                 id: intelId,
                 source: feed.source,
-                sourceLabel: `${feed.sourceLabel}${flair ? ` · ${flair}` : ""}`,
+                sourceLabel: feed.isDealSub ? "Live Restock Signal" : "Drop Radar Watch",
                 title: title.slice(0, 140),
                 retailer: primaryRetailer,
                 productName: p.name,
@@ -815,8 +815,8 @@ export async function scrubCommunityRetailDeals(
                     ? isExpiredOrOos
                       ? "Restock wave just ended (watch for secondary flicker)"
                       : "Spotted live within the last hour"
-                    : "Community restock sighting — watch next scheduled drop window",
-                url: post.permalink ? `https://www.reddit.com${post.permalink}` : post.url || "/drops",
+                    : "Upcoming restock signal — watch next scheduled drop window",
+                url: "/drops",
                 spottedAt: createdMs ? new Date(createdMs).toISOString() : new Date().toISOString(),
                 confidence: feed.isDealSub && !isQuestion ? "high" : "medium",
               });

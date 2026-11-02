@@ -10,8 +10,9 @@ import { newsFeeds } from "./adapters/news";
 import { serebiiReleases } from "./adapters/releases";
 import { retailStock } from "./adapters/retail";
 import { dailyReport } from "./adapters/daily-report";
+import { qaAuditor } from "./adapters/qa-auditor";
 
-/** Order matters for the daily job: locations → social/video drop times → cluster propagation → releases → retail → news → report. */
+/** Order matters for the daily job: locations → social/video drop times → cluster propagation → releases → retail → news → qa → report. */
 export const ADAPTERS: Adapter[] = [
   officialLocator,
   redditDropTimes,
@@ -20,6 +21,7 @@ export const ADAPTERS: Adapter[] = [
   serebiiReleases,
   retailStock,
   newsFeeds,
+  qaAuditor,
   dailyReport,
 ];
 

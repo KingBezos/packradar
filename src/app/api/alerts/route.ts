@@ -3,7 +3,8 @@ import { z } from "zod";
 import { route, json } from "@/lib/api";
 import { requireUser } from "@/lib/session";
 import { getDb } from "@/db";
-import { alertSubscriptions, machines, notifications, products, zipCodes } from "@/db/schema";
+import { alertSubscriptions, machines, notifications, products, user, zipCodes } from "@/db/schema";
+import { lookupZipCentroid } from "@/db/seed";
 import { effectivePlan, PLAN_LIMITS } from "@/lib/plans";
 
 export const dynamic = "force-dynamic";
@@ -62,12 +63,17 @@ export const POST = route(async (req) => {
   let lat = b.lat ?? null;
   let lng = b.lng ?? null;
   if (b.kind === "area_drop" && b.zip) {
-    const [z] = await db.select().from(zipCodes).where(eq(zipCodes.zip, b.zip));
-    if (!z) throw new Error("Unknown ZIP code");
+    const zMem = lookupZipCentroid(b.zip);
+    const zDb = zMem ? null : (await db.select().from(zipCodes).where(eq(zipCodes.zip, b.zip)))[0];
+    const z = zMem ?? zDb;
+    if (!z) throw new Error(`Could not locate ZIP code ${b.zip}`);
     lat = z.lat;
     lng = z.lng;
+    if (!u.homeZip) {
+      await db.update(user).set({ homeZip: b.zip, homeLat: lat, homeLng: lng }).where(eq(user.id, u.id)).catch(() => {});
+    }
   }
-  if (b.kind === "area_drop" && (lat == null || lng == null)) throw new Error("ZIP or location required");
+  if (b.kind === "area_drop" && (lat == null || lng == null)) throw new Error("Please enter a valid 5-digit US ZIP code");
 
   const [s] = await db
     .insert(alertSubscriptions)
@@ -80,7 +86,7 @@ export const POST = route(async (req) => {
       lat,
       lng,
       radiusMiles: b.radiusMiles ?? (b.kind === "area_drop" ? 10 : null),
-      keyword: b.keyword ?? null,
+      keyword: b.keyword ?? (b.kind === "area_drop" && b.zip ? `ZIP ${b.zip}` : null),
       leadMinutes: b.leadMinutes,
       channels: b.channels,
       maxPerDay: b.maxPerDay,
