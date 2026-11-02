@@ -86,6 +86,7 @@ function buildAuth() {
           google: {
             clientId: googleCreds.clientId,
             clientSecret: googleCreds.clientSecret,
+            prompt: "select_account",
           },
         }
       : {},
