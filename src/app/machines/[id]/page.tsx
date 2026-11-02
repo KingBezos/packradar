@@ -9,7 +9,10 @@ import { buildRouteCorridors } from "@/lib/drops/clusters";
 import { describeSchedule } from "@/lib/drops/schedule";
 import { LiveDropStatus } from "@/components/live";
 import { AccuracyMeter } from "@/components/AccuracyMeter";
-import { CommentForm, MachineActions, StockButtons, type CandidateView } from "@/components/MachineActions";
+import { CommentForm, CommentFlagButton, MachineActions, StockButtons, type CandidateView } from "@/components/MachineActions";
+import { MachineProductsCard } from "@/components/MachineProductsCard";
+import { getMachineVendedProducts } from "@/lib/vending-storage";
+import { getDb } from "@/db";
 import { DropMapClient } from "@/components/DropMapClient";
 import { MachineCard } from "@/components/MachineCard";
 import { SponsorSlot } from "@/components/SponsorSlot";
@@ -36,6 +39,8 @@ export default async function MachinePage({ params }: { params: Promise<{ id: st
   const d = await getMachineDetail(id, user?.id);
   if (!d) notFound();
   const { machine: m } = d;
+  const db = await getDb();
+  const vendedProducts = await getMachineVendedProducts(db, m);
   const sched = machineSchedule(m);
   const corridors = buildRouteCorridors([m, ...d.nearby]);
   const activeCorridor = corridors.find((c) => c.members.some((stop) => stop.id === m.id));
@@ -132,6 +137,12 @@ export default async function MachinePage({ params }: { params: Promise<{ id: st
             isStaff={isStaff(user)}
           />
 
+          <MachineProductsCard
+            machineId={m.id}
+            initialProfileLabel={vendedProducts.profileLabel}
+            initialItems={vendedProducts.items}
+          />
+
           <div className="card p-5">
             <p className="mb-3 font-bold text-white">Recent drop reports</p>
             {d.observations.length === 0 && <p className="text-sm text-muted">No reports yet.</p>}
@@ -176,6 +187,7 @@ export default async function MachinePage({ params }: { params: Promise<{ id: st
                     <p className="text-sm">
                       <b className="text-white">{name}</b> <span className={`text-xs ${reputationBadge(reputation).color}`}>{reputationBadge(reputation).label}</span>{" "}
                       <span className="text-xs text-muted">{timeAgo(c.createdAt)}</span>
+                      <CommentFlagButton commentId={c.id} />
                     </p>
                     <p className="text-sm text-slate-300">{c.body}</p>
                   </div>

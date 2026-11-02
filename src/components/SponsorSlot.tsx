@@ -5,7 +5,7 @@ import { MapPin, Megaphone, Tag } from "lucide-react";
 
 /**
  * Geo-targeted sponsor slot. Shows the nearest local vendor if one covers
- * this location, then affiliate offers, then a house ad. Hidden for Premium.
+ * this location, then affiliate offers, then the "Advertise on PackRadar" house card.
  */
 export async function SponsorSlot({
   lat,
@@ -19,20 +19,21 @@ export async function SponsorSlot({
   className?: string;
 }) {
   const u = await getCurrentUser();
-  if (!PLAN_LIMITS[effectivePlan(u)].ads) return null;
+  if (!PLAN_LIMITS[effectivePlan(u)].ads && u?.role !== "admin") return null;
   const s = await pickSponsor({ lat: lat ?? u?.homeLat, lng: lng ?? u?.homeLng, placement });
   if (!s) return null;
+  const isExternal = s.url.startsWith("http") && s.url !== "https://example.com" && !s.url.includes("localhost");
   const Icon = s.kind === "local_vendor" ? MapPin : s.kind === "affiliate" ? Tag : Megaphone;
   return (
     <a
       href={`/api/sponsor/click?id=${s.id}`}
-      target={s.url.startsWith("http") ? "_blank" : undefined}
-      rel="sponsored noopener"
+      target={isExternal ? "_blank" : undefined}
+      rel={isExternal ? "sponsored noopener noreferrer" : undefined}
       className={`card group block p-4 transition hover:border-volt/50 ${className ?? ""}`}
     >
       <div className="mb-1 flex items-center justify-between text-[10px] font-semibold uppercase tracking-widest text-muted">
-        <span>{s.kind === "local_vendor" ? "Local shop near you" : s.kind === "affiliate" ? "Partner offer" : "Sponsored"}</span>
-        <span>Ad</span>
+        <span>{s.kind === "local_vendor" ? "Local shop near you" : s.kind === "affiliate" ? "Partner offer" : "Advertise on PackRadar"}</span>
+        <span className="text-volt group-hover:underline">Partner with us →</span>
       </div>
       <div className="flex items-start gap-3">
         {s.imageUrl ? (

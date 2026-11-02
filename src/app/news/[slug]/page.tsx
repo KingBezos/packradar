@@ -5,7 +5,7 @@ import { getNewsPost } from "@/lib/queries";
 import { getCurrentUser } from "@/lib/session";
 import { Markdown } from "@/components/Markdown";
 import { CategoryBadge, Avatar, timeAgo } from "@/components/ui";
-import { CommentForm } from "@/components/MachineActions";
+import { CommentForm, CommentFlagButton } from "@/components/MachineActions";
 import { SponsorSlot } from "@/components/SponsorSlot";
 
 export const dynamic = "force-dynamic";
@@ -58,7 +58,10 @@ export default async function NewsPostPage({ params }: { params: Promise<{ slug:
             <li key={c.id} className="flex gap-3">
               <Avatar name={name} image={image} />
               <div>
-                <p className="text-sm"><b className="text-white">{name}</b> <span className="text-xs text-muted">{timeAgo(c.createdAt)}</span></p>
+                <p className="text-sm">
+                  <b className="text-white">{name}</b> <span className="text-xs text-muted">{timeAgo(c.createdAt)}</span>
+                  <CommentFlagButton commentId={c.id} />
+                </p>
                 <p className="text-sm text-slate-300">{c.body}</p>
               </div>
             </li>

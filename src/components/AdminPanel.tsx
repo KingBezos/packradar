@@ -115,6 +115,8 @@ type CommentRow = {
   };
   authorName: string | null;
   authorEmail: string | null;
+  flagCount?: number;
+  flagReasons?: string[];
 };
 
 async function call(url: string, method = "POST", body?: unknown) {
@@ -128,7 +130,7 @@ async function call(url: string, method = "POST", body?: unknown) {
   return j;
 }
 
-type TabKey = "inbox" | "news" | "users" | "machines" | "retail" | "bots";
+type TabKey = "inbox" | "news" | "users" | "machines" | "comments" | "retail" | "bots";
 
 export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
   const [tab, setTab] = useState<TabKey>("inbox");
@@ -165,6 +167,8 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
   const [retail, setRetail] = useState<RetailRow[]>([]);
   const [sponsors, setSponsors] = useState<SponsorRow[]>([]);
   const [comments, setComments] = useState<CommentRow[]>([]);
+  const [commentFilter, setCommentFilter] = useState<"all" | "flagged">("all");
+  const [editingComment, setEditingComment] = useState<Record<string, string>>({});
   const [spForm, setSpForm] = useState({
     name: "",
     tagline: "",
@@ -357,6 +361,23 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
     loadContent();
   };
 
+  const saveCommentBody = async (id: string, body: string) => {
+    await call("/api/admin/content", "PATCH", { entity: "comment", id, body });
+    setMsg("Updated comment text");
+    const next = { ...editingComment };
+    delete next[id];
+    setEditingComment(next);
+    loadContent();
+  };
+
+  const clearCommentFlags = async (commentId: string) => {
+    await call(`/api/comments/flag?commentId=${encodeURIComponent(commentId)}`, "DELETE");
+    setMsg("Cleared flags on comment");
+    loadContent();
+  };
+
+  const flaggedCommentsCount = comments.filter((c) => (c.flagCount ?? 0) >= 2).length;
+
   const createSponsor = async () => {
     try {
       await call("/api/admin", "POST", {
@@ -504,6 +525,24 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
 
         <button
           type="button"
+          onClick={() => setTab("comments")}
+          className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition ${
+            tab === "comments"
+              ? "bg-volt text-slate-950"
+              : "border border-line bg-panel-2 text-slate-200 hover:border-volt/50"
+          }`}
+        >
+          <MessageSquare className="h-4 w-4" />
+          Comments ({comments.length})
+          {flaggedCommentsCount > 0 && (
+            <span className="rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-extrabold text-white">
+              🚩 {flaggedCommentsCount}
+            </span>
+          )}
+        </button>
+
+        <button
+          type="button"
           onClick={() => setTab("retail")}
           className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition ${
             tab === "retail"
@@ -512,7 +551,7 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
           }`}
         >
           <ShoppingCart className="h-4 w-4" />
-          Retail Drops, Sponsors &amp; Comments
+          Retail Drops &amp; Sponsors
         </button>
 
         <button
@@ -1379,33 +1418,168 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
             <h3 className="flex items-center gap-2 text-lg font-bold text-white">
               <MessageSquare className="h-4 w-4 text-volt" /> Recent Community Comments ({comments.length})
             </h3>
-            <div className="card divide-y divide-line">
-              {comments.length === 0 && (
-                <p className="p-4 text-xs text-muted">No comments posted yet.</p>
-              )}
-              {comments.map((c) => (
-                <div key={c.comment.id} className="flex items-center justify-between p-3 text-xs">
-                  <div>
-                    <span className="font-bold text-white">{c.authorName || "Spotter"}</span>{" "}
-                    <span className="text-muted">
-                      on {c.comment.targetType} ({c.comment.targetId}) · {timeAgo(c.comment.createdAt)}
-                    </span>
-                    <p className="mt-0.5 text-slate-200">{c.comment.body}</p>
-                  </div>
-                  {isAdmin && (
-                    <button
-                      type="button"
-                      onClick={() => deleteEntity("comment", c.comment.id, "comment")}
-                      className="text-muted hover:text-red-300"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  )}
-                </div>
-              ))}
-            </div>
+            <p className="text-xs text-muted">
+              Open the <b className="text-volt">Comments</b> tab above for full comment editing &amp; multi-IP flag moderation.
+            </p>
           </section>
         </div>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════════════════
+          TAB 5B: COMMUNITY COMMENTS & FLAGGED MODERATION (2+ UNIQUE IPs)
+         ═══════════════════════════════════════════════════════════════════════ */}
+      {tab === "comments" && (
+        <section className="space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="flex items-center gap-2 text-2xl font-black text-white">
+                <MessageSquare className="h-6 w-6 text-volt" /> Comments &amp; Flagged Moderation ({comments.length})
+              </h2>
+              <p className="text-xs text-muted">
+                Comments flagged by <b className="text-red-300">2 or more unique IPs</b> automatically alert you in the
+                Admin Inbox and appear highlighted in red below.
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setCommentFilter("all")}
+                className={`chip text-xs ${commentFilter === "all" ? "border-volt text-volt" : ""}`}
+              >
+                All Comments ({comments.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => setCommentFilter("flagged")}
+                className={`chip text-xs ${commentFilter === "flagged" ? "border-red-400 text-red-300" : ""}`}
+              >
+                🚩 Flagged 2+ Unique IPs ({flaggedCommentsCount})
+              </button>
+              <button className="btn-ghost py-1.5 text-xs" onClick={loadContent}>
+                <RefreshCw className="h-3.5 w-3.5" /> Refresh
+              </button>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            {comments
+              .filter((c) => (commentFilter === "flagged" ? (c.flagCount ?? 0) >= 2 : true))
+              .map((c) => {
+                const flags = c.flagCount ?? 0;
+                const draftBody = editingComment[c.comment.id];
+                const isEditing = draftBody !== undefined;
+                return (
+                  <div
+                    key={c.comment.id}
+                    className={`card p-4 ${
+                      flags >= 2
+                        ? "border-red-500/60 bg-red-500/5"
+                        : flags === 1
+                          ? "border-amber-400/40"
+                          : ""
+                    }`}
+                  >
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div className="flex-1 space-y-2">
+                        <div className="flex flex-wrap items-center gap-2 text-xs">
+                          <b className="text-white">{c.authorName || "Spotter"}</b>
+                          {c.authorEmail && <span className="text-muted">({c.authorEmail})</span>}
+                          <Link
+                            href={
+                              c.comment.targetType === "machine"
+                                ? `/machines/${c.comment.targetId}`
+                                : `/news`
+                            }
+                            target="_blank"
+                            className="rounded bg-panel-2 px-2 py-0.5 font-mono text-[11px] font-bold text-volt hover:underline"
+                          >
+                            {c.comment.targetType}: {c.comment.targetId} ↗
+                          </Link>
+                          <span className="text-muted">· {timeAgo(c.comment.createdAt)}</span>
+                          {flags >= 2 && (
+                            <span className="rounded-full bg-red-500/20 px-2.5 py-0.5 text-[10px] font-extrabold uppercase text-red-300 border border-red-500/40">
+                              🚨 Flagged by {flags} Unique IPs
+                            </span>
+                          )}
+                          {flags === 1 && (
+                            <span className="rounded-full bg-amber-500/20 px-2 py-0.5 text-[10px] font-bold text-amber-300">
+                              🚩 1 IP Flag
+                            </span>
+                          )}
+                        </div>
+
+                        {isEditing ? (
+                          <div className="flex gap-2">
+                            <input
+                              className="input flex-1 text-xs"
+                              value={draftBody}
+                              onChange={(e) =>
+                                setEditingComment({ ...editingComment, [c.comment.id]: e.target.value })
+                              }
+                            />
+                            <button
+                              type="button"
+                              onClick={() => saveCommentBody(c.comment.id, draftBody)}
+                              className="btn-primary py-1.5 text-xs"
+                            >
+                              Save
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const next = { ...editingComment };
+                                delete next[c.comment.id];
+                                setEditingComment(next);
+                              }}
+                              className="btn-ghost py-1.5 text-xs"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        ) : (
+                          <p className="text-sm text-slate-200">{c.comment.body}</p>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-1.5">
+                        {flags > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => clearCommentFlags(c.comment.id)}
+                            className="btn-ghost py-1 text-xs text-green-300"
+                          >
+                            Clear Flags
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setEditingComment({ ...editingComment, [c.comment.id]: c.comment.body })
+                          }
+                          className="btn-ghost py-1 text-xs"
+                        >
+                          <Edit3 className="h-3.5 w-3.5" /> Edit
+                        </button>
+                        {isAdmin && (
+                          <button
+                            type="button"
+                            onClick={() => deleteEntity("comment", c.comment.id, "comment")}
+                            className="rounded-lg p-1.5 text-muted hover:bg-red-500/15 hover:text-red-300"
+                            title="Delete comment"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            {comments.length === 0 && (
+              <div className="card p-6 text-center text-xs text-muted">No comments posted yet.</div>
+            )}
+          </div>
+        </section>
       )}
 
       {/* ═══════════════════════════════════════════════════════════════════════

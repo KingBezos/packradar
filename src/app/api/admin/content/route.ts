@@ -5,6 +5,7 @@ import { requireRole } from "@/lib/session";
 import { getDb } from "@/db";
 import { comments, machines, newsPosts, products, retailListings, sponsors, user } from "@/db/schema";
 import { slugify } from "@/lib/geo";
+import { loadCommentFlags } from "@/app/api/comments/flag/route";
 
 export const dynamic = "force-dynamic";
 
@@ -45,16 +46,28 @@ export const GET = route(async (req) => {
           .from(comments)
           .leftJoin(user, eq(user.id, comments.userId))
           .orderBy(desc(comments.createdAt))
-          .limit(80)
+          .limit(100)
       : Promise.resolve([]),
   ]);
+
+  const flagsMap = await loadCommentFlags(db);
+  const enrichedComments = commentList
+    .map((c) => {
+      const f = flagsMap[c.comment.id];
+      return {
+        ...c,
+        flagCount: f?.uniqueIpHashes?.length ?? 0,
+        flagReasons: f?.reasons ?? [],
+      };
+    })
+    .sort((a, b) => b.flagCount - a.flagCount);
 
   return {
     news: newsList,
     sponsors: sponsorList,
     machines: machineList,
     retail: retailList,
-    comments: commentList,
+    comments: enrichedComments,
   };
 });
 
@@ -104,6 +117,11 @@ const PatchSchema = z.discriminatedUnion("entity", [
     radiusMiles: z.number().nullable().optional(),
     active: z.boolean().optional(),
     priority: z.number().int().optional(),
+  }),
+  z.object({
+    entity: z.literal("comment"),
+    id: z.string(),
+    body: z.string().min(1).max(1000),
   }),
 ]);
 
@@ -169,6 +187,11 @@ export const PATCH = route(async (req) => {
     if (b.active !== undefined) patch.active = b.active;
     if (b.priority !== undefined) patch.priority = b.priority;
     await db.update(sponsors).set(patch).where(eq(sponsors.id, b.id));
+    return { ok: true };
+  }
+
+  if (b.entity === "comment") {
+    await db.update(comments).set({ body: b.body }).where(eq(comments.id, b.id));
     return { ok: true };
   }
 

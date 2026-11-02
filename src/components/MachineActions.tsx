@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
-import { Heart, Check, X, Plus, Bell, Loader2, Camera } from "lucide-react";
+import { Heart, Check, X, Plus, Bell, Loader2, Camera, Flag } from "lucide-react";
 import clsx from "clsx";
 import { AccuracyMeter } from "./AccuracyMeter";
 import { describeSchedule, formatMinuteOfDay, type DropSchedule } from "@/lib/drops/schedule";
@@ -428,6 +428,56 @@ export function CommentForm({ targetType, targetId, signedIn }: { targetType: "m
         {err && <span className="text-sm text-red-300">{err}</span>}
       </div>
     </form>
+  );
+}
+
+export function CommentFlagButton({ commentId }: { commentId: string }) {
+  const [flagged, setFlagged] = useState(false);
+  const [statusMsg, setStatusMsg] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  const flagComment = async () => {
+    if (flagged || busy) return;
+    setBusy(true);
+    try {
+      let voterKey = "";
+      if (typeof window !== "undefined") {
+        voterKey = localStorage.getItem("pr_voter_key") || "";
+        if (!voterKey) {
+          voterKey = `vk-${Math.random().toString(36).slice(2, 12)}`;
+          localStorage.setItem("pr_voter_key", voterKey);
+        }
+      }
+      const res = await post("/api/comments/flag", {
+        commentId,
+        reason: "Flagged by community",
+        clientVoterKey: voterKey,
+      });
+      setFlagged(true);
+      setStatusMsg(res.triggeredAdminAlert ? "Flagged · Admin Alerted" : "Flagged");
+    } catch {
+      setStatusMsg("Error");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={flagComment}
+      disabled={flagged || busy}
+      title="Flag inappropriate or spam comment (2+ unique IPs alerts Admin)"
+      className={clsx(
+        "ml-2 inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-semibold transition",
+        flagged
+          ? "bg-red-500/15 text-red-300"
+          : "text-muted hover:bg-red-500/10 hover:text-red-300",
+      )}
+    >
+      <Flag className="h-3 w-3" />
+      {statusMsg || "Flag"}
+    </button>
   );
 }
 

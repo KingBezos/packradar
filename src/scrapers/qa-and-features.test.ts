@@ -7,6 +7,12 @@ import { BASELINE_NEWS_ARTICLES, buildOriginalArticleBody, classifyNews } from "
 import { FULL_RELEASE_CATALOG } from "@/app/releases/page";
 import { generateSpotterHandle } from "@/lib/auth";
 import { signIdentityCookie, verifyIdentityCookie } from "@/lib/session";
+import { PLAN_LIMITS } from "@/lib/plans";
+import {
+  VENDED_PRODUCT_CATALOG,
+  deriveBaselineMachineAssortment,
+  extractVendedProductsFromText,
+} from "@/lib/vending-catalog";
 
 describe("PackRadar Production Readiness & QA Verification", () => {
   it("verifies all INITIAL_TICKER_ACTIVITY machine links exist in official-machines.json", () => {
@@ -101,5 +107,29 @@ describe("PackRadar Production Readiness & QA Verification", () => {
     const verified = verifyIdentityCookie(signed);
     expect(verified?.name).toBe("King_Bezos");
     expect(verified?.role).toBe("admin");
+  });
+
+  it("enforces 10 alert limit for free users and loads all vended product possibilities", () => {
+    expect(PLAN_LIMITS.free.maxAlerts).toBe(10);
+    expect(VENDED_PRODUCT_CATALOG.length).toBeGreaterThanOrEqual(40);
+    expect(VENDED_PRODUCT_CATALOG.some((p) => p.productType === "etb")).toBe(true);
+    expect(VENDED_PRODUCT_CATALOG.some((p) => p.productType === "booster_box")).toBe(true);
+    expect(VENDED_PRODUCT_CATALOG.some((p) => p.productType === "bundle")).toBe(true);
+    expect(VENDED_PRODUCT_CATALOG.some((p) => p.productType === "pack")).toBe(true);
+    expect(VENDED_PRODUCT_CATALOG.some((p) => p.productType === "knockout")).toBe(true);
+
+    const assortment = deriveBaselineMachineAssortment({
+      id: "Q00810",
+      retailer: "QFC",
+      city: "Seattle",
+      state: "WA",
+    });
+    expect(assortment.items.length).toBeGreaterThanOrEqual(8);
+
+    const extracted = extractVendedProductsFromText(
+      "Just pulled a Prismatic Evolutions ETB and 151 Booster Bundle from the vending machine!",
+    );
+    expect(extracted.some((e) => e.sku === "pe-etb")).toBe(true);
+    expect(extracted.some((e) => e.sku === "151-bundle")).toBe(true);
   });
 });

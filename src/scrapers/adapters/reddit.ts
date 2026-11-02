@@ -15,6 +15,8 @@ import { fetchText } from "../http";
 import { parseFeed } from "../feed";
 import { extractDropTimers, matchMachines, type MachineRef } from "../extract";
 import { upsertScrapedCandidate, submitObservation } from "@/lib/drops/engine";
+import { extractVendedProductsFromText } from "@/lib/vending-catalog";
+import { reportMachineProduct } from "@/lib/vending-storage";
 import type { Adapter } from "../types";
 
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 PackRadar/1.0";
@@ -534,6 +536,19 @@ export const redditDropTimes: Adapter = {
             observationsAdded++;
           } catch {
             // ignore if already logged
+          }
+        }
+
+        // Also extract & record any vended products (ETBs, Booster Boxes, Bundles, Packs, Tins) mentioned in the report
+        const matchedRef = refs.find((r) => r.id === t.id);
+        const vendedFound = extractVendedProductsFromText(`${report.title} ${report.text}`);
+        if (matchedRef && vendedFound.length > 0) {
+          for (const prod of vendedFound) {
+            await reportMachineProduct(
+              db,
+              { id: matchedRef.id, retailer: matchedRef.retailer, city: matchedRef.city, state: matchedRef.state },
+              { sku: prod.sku, status: "in_stock", source: "scraped", reporterName: `${report.source} Intel` },
+            ).catch(() => {});
           }
         }
 
