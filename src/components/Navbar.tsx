@@ -1,7 +1,10 @@
 import Link from "next/link";
+import { headers } from "next/headers";
 import { Bell, Map, Newspaper, CalendarDays, ShoppingCart, Trophy, Shield, Route, Bot } from "lucide-react";
 import { Logo } from "./ui";
 import { getCurrentUser, isStaff } from "@/lib/session";
+import { getDb } from "@/db";
+import { recordServerBotIfDetected } from "@/lib/analytics";
 import { UserMenu } from "./UserMenu";
 import { SearchBox } from "./SearchBox";
 import { MobileNav } from "./MobileNav";
@@ -28,6 +31,14 @@ const ICONS = {
 
 export async function Navbar() {
   const user = await getCurrentUser();
+  try {
+    const h = await headers();
+    const ua = h.get("user-agent") || "";
+    if (ua) {
+      const db = await getDb();
+      void recordServerBotIfDetected(db, ua);
+    }
+  } catch {}
   return (
     <header className="sticky top-0 z-40 border-b border-line/80 bg-bg/80 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4">

@@ -236,11 +236,7 @@ export function AuthForm({ mode, google: initialGoogle }: { mode: "sign-in" | "s
               : await signIn.email({ email, password });
             setBusy(false);
             if (r.error) return setErr(r.error.message ?? "Something went wrong");
-            if (up) {
-              router.push(`/verify-email?email=${encodeURIComponent(email.trim().toLowerCase())}&next=${encodeURIComponent(returnTo)}`);
-            } else {
-              router.push(returnTo);
-            }
+            router.push(returnTo);
             router.refresh();
           }}
         >
@@ -281,7 +277,7 @@ export function AuthForm({ mode, google: initialGoogle }: { mode: "sign-in" | "s
           </div>
           {err && <p className="rounded-lg bg-red-500/10 p-2 text-sm text-red-300">{err}</p>}
           <button className="btn-primary w-full" disabled={busy}>
-            {busy ? "…" : up ? "Create free account & verify email" : "Sign in"}
+            {busy ? "…" : up ? "Create free account →" : "Sign in →"}
           </button>
         </form>
 

@@ -198,17 +198,15 @@ function buildAuth() {
               .select({ n: sql<number>`count(*)::int` })
               .from(schema.user)
               .where(eq(schema.user.role, "admin"));
-            const patch: Partial<typeof schema.user.$inferInsert> = { image: null };
+            const patch: Partial<typeof schema.user.$inferInsert> = {
+              image: null,
+              emailVerified: true,
+            };
             if (u.email.toLowerCase() === "james@jpegtown.com") {
               patch.name = "King_Bezos";
               patch.role = "admin";
-              patch.emailVerified = true;
             } else if (admins.includes(u.email.toLowerCase()) || n === 0) {
               patch.role = "admin";
-              patch.emailVerified = true;
-            } else if (!u.emailVerified) {
-              const { issueEmailVerificationCode } = await import("@/app/api/auth/verify-email/route");
-              await issueEmailVerificationCode(u.email).catch(() => {});
             }
             await db.update(schema.user).set(patch).where(eq(schema.user.id, u.id));
           },

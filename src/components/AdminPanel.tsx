@@ -21,9 +21,51 @@ import {
   ExternalLink,
   CheckCircle2,
   MessageSquare,
+  BarChart3,
+  Activity,
+  Globe,
+  Smartphone,
+  Monitor,
+  ShieldAlert,
 } from "lucide-react";
 import { Avatar, CATEGORY_LABEL, timeAgo } from "./ui";
 import type { AdminInboxItem } from "@/app/api/contact/route";
+
+type AnalyticsSummary = {
+  liveActiveHumans: number;
+  totalHumanPageviews: number;
+  totalUniqueHumans: number;
+  todayHumanViews: number;
+  todayUniqueHumans: number;
+  views7d: number;
+  unique7d: number;
+  totalBotHitsExcluded: number;
+  botBreakdown: { label: string; count: number }[];
+  deviceBreakdown: { mobile: number; desktop: number; tablet: number };
+  popularPages: { path: string; views: number; uniqueVisitors: number; lastVisitedAt: string }[];
+  topSources: { source: string; visits: number; uniqueVisitors: number; lastSeenAt: string }[];
+  last7Days: { date: string; humanViews: number; uniqueVisitors: number; botHitsBlocked: number }[];
+  recentHumanVisits: {
+    id: string;
+    at: string;
+    path: string;
+    referrer: string;
+    sourceLabel: string;
+    device: "mobile" | "desktop" | "tablet";
+    visitorHash: string;
+    userId: string | null;
+    userName: string | null;
+  }[];
+  funnel: {
+    totalUniqueHumans: number;
+    authPageUniqueVisitors: number;
+    totalRealAccounts: number;
+    signUpsLast24h: number;
+    signUpsLast7d: number;
+    conversionRate: number;
+  };
+  updatedAt: string;
+};
 
 type Adapter = { name: string; label: string; description: string; running: boolean };
 type Run = {
@@ -130,12 +172,15 @@ async function call(url: string, method = "POST", body?: unknown) {
   return j;
 }
 
-type TabKey = "inbox" | "news" | "users" | "machines" | "comments" | "retail" | "bots";
+type TabKey = "stats" | "inbox" | "news" | "users" | "machines" | "comments" | "retail" | "bots";
 
 export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
-  const [tab, setTab] = useState<TabKey>("inbox");
+  const [tab, setTab] = useState<TabKey>("stats");
   const [msg, setMsg] = useState<string | null>(null);
   const router = useRouter();
+
+  // 0. Human-Only Traffic & Conversion Analytics
+  const [analytics, setAnalytics] = useState<AnalyticsSummary | null>(null);
 
   // 1. Inbox (Admin Alerts + Vendor Sales Inquiries)
   const [inbox, setInbox] = useState<AdminInboxItem[]>([]);
@@ -208,12 +253,21 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
       .then(setScrapers)
       .catch((e) => setMsg(e.message));
 
+  const loadAnalytics = () =>
+    call("/api/analytics/track", "GET")
+      .then(setAnalytics)
+      .catch(() => {});
+
   useEffect(() => {
+    loadAnalytics();
     loadInbox();
     loadUsers();
     loadContent();
     loadScrapers();
-    const t = setInterval(loadScrapers, 8000);
+    const t = setInterval(() => {
+      loadScrapers();
+      loadAnalytics();
+    }, 8000);
     return () => clearInterval(t);
   }, []);
 
@@ -468,6 +522,24 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
       <div className="flex flex-wrap gap-2 border-b border-line pb-4">
         <button
           type="button"
+          onClick={() => setTab("stats")}
+          className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition ${
+            tab === "stats"
+              ? "bg-volt text-slate-950"
+              : "border border-line bg-panel-2 text-slate-200 hover:border-volt/50"
+          }`}
+        >
+          <BarChart3 className="h-4 w-4" />
+          Traffic &amp; Stats
+          {analytics && (
+            <span className="rounded-full bg-green-500/20 px-2 py-0.5 font-mono text-[10px] font-extrabold text-green-400">
+              {analytics.totalUniqueHumans} humans
+            </span>
+          )}
+        </button>
+
+        <button
+          type="button"
           onClick={() => setTab("inbox")}
           className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition ${
             tab === "inbox"
@@ -567,6 +639,349 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
           Worker Bots &amp; Scrapers
         </button>
       </div>
+
+      {/* ═══════════════════════════════════════════════════════════════════════
+          TAB 0: HUMAN-ONLY TRAFFIC, POPULAR PAGES & BOT EXCLUSION STATS
+         ═══════════════════════════════════════════════════════════════════════ */}
+      {tab === "stats" && (
+        <section className="space-y-6">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="flex items-center gap-2 text-2xl font-black text-white">
+                <BarChart3 className="h-6 w-6 text-volt" /> Live Human Traffic, Popular Pages &amp; Bot Filtering
+              </h2>
+              <p className="text-xs text-muted">
+                Counts <b className="text-green-400">verified real human browser visits only</b>. Discord link previews
+                (Discordbot), Google/Bing crawlers, headless browsers, and our own QA/scraper bots are automatically
+                excluded from human counts.
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <button type="button" onClick={loadAnalytics} className="btn-ghost py-1.5 text-xs">
+                <RefreshCw className="h-3.5 w-3.5" /> Refresh Stats
+              </button>
+              {isAdmin && (
+                <button
+                  type="button"
+                  onClick={async () => {
+                    if (!confirm("Reset all traffic and pageview counters to zero?")) return;
+                    await call("/api/analytics/track", "DELETE");
+                    setMsg("Traffic stats reset to zero.");
+                    loadAnalytics();
+                  }}
+                  className="btn-ghost py-1.5 text-xs text-red-300 hover:border-red-400/50"
+                >
+                  Reset Counters
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Top 5 KPI Cards */}
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+            <div className="card border-green-500/30 p-4">
+              <div className="flex items-center justify-between text-xs text-muted">
+                <span>Live Active Humans (15m)</span>
+                <Activity className="h-4 w-4 text-green-400 animate-pulse" />
+              </div>
+              <p className="mt-2 font-mono text-3xl font-black text-green-400">
+                {analytics?.liveActiveHumans ?? 0}
+              </p>
+              <p className="mt-1 text-[11px] text-muted">Real browsers browsing right now</p>
+            </div>
+
+            <div className="card p-4">
+              <div className="flex items-center justify-between text-xs text-muted">
+                <span>Today (Human Visits)</span>
+                <Users className="h-4 w-4 text-volt" />
+              </div>
+              <p className="mt-2 font-mono text-3xl font-black text-white">
+                {analytics?.todayUniqueHumans ?? 0}{" "}
+                <span className="text-sm font-normal text-muted">unique</span>
+              </p>
+              <p className="mt-1 text-[11px] text-slate-300">
+                <b>{analytics?.todayHumanViews ?? 0}</b> human pageviews today
+              </p>
+            </div>
+
+            <div className="card p-4">
+              <div className="flex items-center justify-between text-xs text-muted">
+                <span>All-Time Human Traffic</span>
+                <Globe className="h-4 w-4 text-sky-400" />
+              </div>
+              <p className="mt-2 font-mono text-3xl font-black text-white">
+                {analytics?.totalUniqueHumans ?? 0}{" "}
+                <span className="text-sm font-normal text-muted">unique</span>
+              </p>
+              <p className="mt-1 text-[11px] text-slate-300">
+                <b>{analytics?.totalHumanPageviews ?? 0}</b> total human pageviews
+              </p>
+            </div>
+
+            <div className="card border-volt/30 p-4">
+              <div className="flex items-center justify-between text-xs text-muted">
+                <span>Account Conversion</span>
+                <CheckCircle2 className="h-4 w-4 text-volt" />
+              </div>
+              <p className="mt-2 font-mono text-3xl font-black text-volt">
+                {analytics?.funnel.conversionRate ?? 0}%
+              </p>
+              <p className="mt-1 text-[11px] text-slate-300">
+                <b>{analytics?.funnel.totalRealAccounts ?? 0}</b> real accounts ({analytics?.funnel.signUpsLast24h ?? 0} in 24h)
+              </p>
+            </div>
+
+            <div className="card border-amber-500/30 p-4">
+              <div className="flex items-center justify-between text-xs text-muted">
+                <span>Bots Filtered Out</span>
+                <ShieldAlert className="h-4 w-4 text-amber-300" />
+              </div>
+              <p className="mt-2 font-mono text-3xl font-black text-amber-300">
+                {analytics?.totalBotHitsExcluded ?? 0}
+              </p>
+              <p className="mt-1 text-[11px] text-muted">Excluded from human stats</p>
+            </div>
+          </div>
+
+          {/* Sign-Up Conversion Funnel Bar */}
+          <div className="card p-5 space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h3 className="text-sm font-bold text-white">
+                🔒 Visitor → Account Sign-Up Funnel (Human Visitors Only)
+              </h3>
+              <span className="text-xs text-muted">
+                Guests are View-Only; 1-step Email &amp; Google Sign-Up active
+              </span>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-3 text-xs">
+              <div className="rounded-xl border border-line bg-panel-2 p-3">
+                <p className="text-muted">1. Unique Human Visitors</p>
+                <p className="mt-1 font-mono text-xl font-black text-white">
+                  {analytics?.funnel.totalUniqueHumans ?? 0}
+                </p>
+                <p className="text-[11px] text-slate-400">Landed on Map, Machine, or Drops page</p>
+              </div>
+              <div className="rounded-xl border border-line bg-panel-2 p-3">
+                <p className="text-muted">2. Reached /sign-up or /sign-in</p>
+                <p className="mt-1 font-mono text-xl font-black text-volt">
+                  {analytics?.funnel.authPageUniqueVisitors ?? 0}
+                </p>
+                <p className="text-[11px] text-slate-400">Clicked a contribution or alert button</p>
+              </div>
+              <div className="rounded-xl border border-green-500/30 bg-green-500/10 p-3">
+                <p className="text-green-300">3. Registered Real Accounts</p>
+                <p className="mt-1 font-mono text-xl font-black text-green-400">
+                  {analytics?.funnel.totalRealAccounts ?? 0}
+                </p>
+                <p className="text-[11px] text-green-200/80">
+                  +{analytics?.funnel.signUpsLast7d ?? 0} new accounts in last 7 days
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Most Popular Pages + Traffic Sources & Bot Exclusions */}
+          <div className="grid gap-6 lg:grid-cols-3">
+            <div className="card p-5 lg:col-span-2 space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="text-base font-bold text-white">
+                  🔥 Most Popular Pages (Human Visits Only)
+                </h3>
+                <span className="text-xs text-muted">
+                  Sorted by verified human pageviews
+                </span>
+              </div>
+
+              {(!analytics || analytics.popularPages.length === 0) ? (
+                <p className="py-6 text-center text-xs text-muted">
+                  Waiting for first human browser pageviews… Open any page in a normal browser tab to see it appear live!
+                </p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead className="border-b border-line text-[11px] uppercase text-muted">
+                      <tr>
+                        <th className="py-2 pr-3">Page Path</th>
+                        <th className="py-2 px-3 text-right">Human Views</th>
+                        <th className="py-2 px-3 text-right">Unique Humans</th>
+                        <th className="py-2 px-3">Share</th>
+                        <th className="py-2 pl-3 text-right">Last Visited</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-line">
+                      {analytics.popularPages.map((p) => {
+                        const pct =
+                          analytics.totalHumanPageviews > 0
+                            ? Math.round((p.views / analytics.totalHumanPageviews) * 100)
+                            : 0;
+                        return (
+                          <tr key={p.path} className="hover:bg-panel-2/40">
+                            <td className="py-2.5 pr-3 font-mono font-bold text-white">
+                              <Link href={p.path} className="hover:text-volt hover:underline">
+                                {p.path}
+                              </Link>
+                            </td>
+                            <td className="py-2.5 px-3 text-right font-mono font-bold text-volt">
+                              {p.views}
+                            </td>
+                            <td className="py-2.5 px-3 text-right font-mono text-slate-200">
+                              {p.uniqueVisitors}
+                            </td>
+                            <td className="py-2.5 px-3 w-28">
+                              <div className="flex items-center gap-1.5">
+                                <div className="h-2 flex-1 overflow-hidden rounded-full bg-panel-2">
+                                  <div
+                                    className="h-full rounded-full bg-volt"
+                                    style={{ width: `${Math.max(4, pct)}%` }}
+                                  />
+                                </div>
+                                <span className="font-mono text-[10px] text-muted">{pct}%</span>
+                              </div>
+                            </td>
+                            <td className="py-2.5 pl-3 text-right text-muted">
+                              {timeAgo(new Date(p.lastVisitedAt))}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-6">
+              {/* Top Referrers / Traffic Sources */}
+              <div className="card p-5 space-y-3">
+                <h3 className="text-sm font-bold text-white">📣 Traffic Sources &amp; Referrers</h3>
+                {(!analytics || analytics.topSources.length === 0) ? (
+                  <p className="text-xs text-muted">No external human visits recorded yet.</p>
+                ) : (
+                  <ul className="divide-y divide-line text-xs">
+                    {analytics.topSources.map((s) => (
+                      <li key={s.source} className="flex items-center justify-between py-2">
+                        <span className="font-semibold text-slate-200">{s.source}</span>
+                        <span className="font-mono text-volt">
+                          {s.visits} visits ({s.uniqueVisitors} uniq)
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              {/* Device Breakdown */}
+              <div className="card p-5 space-y-3">
+                <h3 className="text-sm font-bold text-white">📱 Human Device Breakdown</h3>
+                <div className="grid grid-cols-3 gap-2 text-center text-xs">
+                  <div className="rounded-xl border border-line bg-panel-2 p-2.5">
+                    <Smartphone className="mx-auto h-4 w-4 text-volt" />
+                    <p className="mt-1 font-mono text-base font-bold text-white">
+                      {analytics?.deviceBreakdown.mobile ?? 0}
+                    </p>
+                    <p className="text-[10px] text-muted">Mobile</p>
+                  </div>
+                  <div className="rounded-xl border border-line bg-panel-2 p-2.5">
+                    <Monitor className="mx-auto h-4 w-4 text-sky-400" />
+                    <p className="mt-1 font-mono text-base font-bold text-white">
+                      {analytics?.deviceBreakdown.desktop ?? 0}
+                    </p>
+                    <p className="text-[10px] text-muted">Desktop</p>
+                  </div>
+                  <div className="rounded-xl border border-line bg-panel-2 p-2.5">
+                    <Globe className="mx-auto h-4 w-4 text-purple-400" />
+                    <p className="mt-1 font-mono text-base font-bold text-white">
+                      {analytics?.deviceBreakdown.tablet ?? 0}
+                    </p>
+                    <p className="text-[10px] text-muted">Tablet</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Filtered Bots Breakdown */}
+              <div className="card border-amber-500/30 p-5 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-amber-300">🤖 Bots Caught &amp; Ignored</h3>
+                  <span className="font-mono text-xs font-bold text-amber-300">
+                    {analytics?.totalBotHitsExcluded ?? 0} blocked
+                  </span>
+                </div>
+                <p className="text-[11px] text-muted">
+                  These automated requests hit PackRadar (e.g. when Discord previews your link or our QA bot scans pages) and were excluded from your human visit counts:
+                </p>
+                <ul className="divide-y divide-line text-xs">
+                  {(analytics?.botBreakdown ?? []).map((b) => (
+                    <li key={b.label} className="flex items-center justify-between py-1.5">
+                      <span className="text-slate-300">{b.label}</span>
+                      <span className="font-mono font-bold text-amber-300">{b.count}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Live Stream of Recent Real Human Visits */}
+          <div className="card p-5 space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-bold text-white">
+                👀 Live Human Visitor Stream (Last 40 Human Pageviews)
+              </h3>
+              <span className="text-xs text-muted">Auto-refreshes every 8 seconds</span>
+            </div>
+            {(!analytics || analytics.recentHumanVisits.length === 0) ? (
+              <p className="py-4 text-center text-xs text-muted">
+                No human pageviews recorded in this window yet.
+              </p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="border-b border-line text-[11px] uppercase text-muted">
+                    <tr>
+                      <th className="py-2 pr-3">Time</th>
+                      <th className="py-2 px-3">Visitor</th>
+                      <th className="py-2 px-3">Page Viewed</th>
+                      <th className="py-2 px-3">Source / Referrer</th>
+                      <th className="py-2 pl-3 text-right">Device</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-line">
+                    {analytics.recentHumanVisits.map((v) => (
+                      <tr key={v.id} className="hover:bg-panel-2/40">
+                        <td className="py-2 pr-3 text-muted whitespace-nowrap">
+                          {timeAgo(new Date(v.at))}
+                        </td>
+                        <td className="py-2 px-3">
+                          {v.userName ? (
+                            <span className="rounded bg-volt/15 px-2 py-0.5 font-bold text-volt">
+                              @{v.userName}
+                            </span>
+                          ) : (
+                            <span className="font-mono text-slate-400">
+                              Guest #{v.visitorHash}
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-2 px-3 font-mono font-bold text-white">
+                          <Link href={v.path} className="hover:text-volt hover:underline">
+                            {v.path}
+                          </Link>
+                        </td>
+                        <td className="py-2 px-3 text-slate-300">
+                          {v.sourceLabel}
+                        </td>
+                        <td className="py-2 pl-3 text-right uppercase text-[10px] font-bold text-muted">
+                          {v.device}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* ═══════════════════════════════════════════════════════════════════════
           TAB 1: ADMIN ALERTS & VENDOR SALES INBOX

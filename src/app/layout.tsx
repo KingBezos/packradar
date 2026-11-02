@@ -5,6 +5,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { LiveTicker } from "@/components/LiveTicker";
 import { ServiceWorker } from "@/components/ServiceWorker";
+import { AnalyticsTracker } from "@/components/AnalyticsTracker";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
@@ -44,6 +45,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <LiveTicker />
         <main className="flex-1">{children}</main>
         <Footer />
+        <AnalyticsTracker />
         <ServiceWorker />
       </body>
     </html>
