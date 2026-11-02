@@ -4,7 +4,11 @@ import webpush from "web-push";
 
 export type Message = { title: string; body: string; url?: string | null };
 
-const SITE_URL = () => process.env.SITE_URL || "http://localhost:3000";
+const SITE_URL = () =>
+  process.env.SITE_URL ||
+  process.env.RENDER_EXTERNAL_URL ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined) ||
+  "http://localhost:3000";
 
 function absolute(url?: string | null) {
   if (!url) return SITE_URL();

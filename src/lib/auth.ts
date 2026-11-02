@@ -45,6 +45,7 @@ function buildAuth() {
   const inferredSiteUrl =
     process.env.BETTER_AUTH_URL ||
     process.env.SITE_URL ||
+    process.env.RENDER_EXTERNAL_URL ||
     (process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : undefined) ||
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined) ||
     "http://localhost:3000";
@@ -64,6 +65,7 @@ function buildAuth() {
       "https://*.netlify.app",
       ...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
       ...(process.env.SITE_URL ? [process.env.SITE_URL] : []),
+      ...(process.env.RENDER_EXTERNAL_URL ? [process.env.RENDER_EXTERNAL_URL] : []),
       ...(process.env.VERCEL_URL ? [`https://${process.env.VERCEL_URL}`] : []),
       ...(process.env.RAILWAY_PUBLIC_DOMAIN ? [`https://${process.env.RAILWAY_PUBLIC_DOMAIN}`] : []),
     ],

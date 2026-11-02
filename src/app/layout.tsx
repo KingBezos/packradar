@@ -9,7 +9,11 @@ import { ServiceWorker } from "@/components/ServiceWorker";
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
-const SITE = process.env.SITE_URL || "http://localhost:3000";
+const SITE =
+  process.env.SITE_URL ||
+  process.env.RENDER_EXTERNAL_URL ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined) ||
+  "http://localhost:3000";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
