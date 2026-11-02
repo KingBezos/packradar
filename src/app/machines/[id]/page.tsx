@@ -98,7 +98,7 @@ export default async function MachinePage({ params }: { params: Promise<{ id: st
               🧭 Directions ({m.street})
             </a>
             <span className="chip">Stock: {m.stockStatus}{m.stockUpdatedAt ? ` · ${timeAgo(m.stockUpdatedAt)}` : ""}</span>
-            <AlertAdminButton machineId={m.id} label="Alert Admin (Wrong Time / Dead Machine)" />
+            <AlertAdminButton machineId={m.id} label="Report issue" />
           </div>
         </div>
       </div>

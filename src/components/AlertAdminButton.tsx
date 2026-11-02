@@ -85,16 +85,14 @@ export function AlertAdminButton({
   };
 
   const btnClass =
-    variant === "nav"
-      ? "flex items-center gap-1.5 rounded-lg border border-amber-400/30 bg-amber-500/10 px-2.5 py-1.5 text-xs font-bold text-amber-300 transition hover:border-amber-400 hover:bg-amber-500/20"
-      : variant === "footer"
-        ? "inline-flex items-center gap-1.5 text-amber-300 hover:text-amber-200 font-semibold"
-        : "chip border-amber-400/40 bg-amber-500/10 text-amber-300 hover:border-amber-400 hover:text-white cursor-pointer";
+    variant === "footer"
+      ? "inline-flex items-center gap-1.5 text-muted hover:text-white transition"
+      : "chip text-muted hover:text-white hover:border-line cursor-pointer text-xs";
 
   return (
     <>
       <button type="button" onClick={() => setOpen(true)} className={btnClass}>
-        <AlertTriangle className="h-3.5 w-3.5" />
+        <AlertTriangle className="h-3 w-3 opacity-75" />
         {label}
       </button>
 

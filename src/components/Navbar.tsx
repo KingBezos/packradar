@@ -5,7 +5,6 @@ import { getCurrentUser, isStaff } from "@/lib/session";
 import { UserMenu } from "./UserMenu";
 import { SearchBox } from "./SearchBox";
 import { MobileNav } from "./MobileNav";
-import { AlertAdminButton } from "./AlertAdminButton";
 
 export const NAV = [
   { href: "/map", label: "Map", icon: "map" },
@@ -60,9 +59,6 @@ export async function Navbar() {
         </nav>
         <div className="ml-auto hidden w-56 md:block">
           <SearchBox compact />
-        </div>
-        <div className="hidden sm:block">
-          <AlertAdminButton variant="nav" label="Alert Admin" />
         </div>
         {user ? (
           <div className="flex items-center gap-2">
