@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "./ui";
+import { AlertAdminButton } from "./AlertAdminButton";
 
 export function Footer() {
   return (
@@ -26,8 +27,9 @@ export function Footer() {
           <ul className="space-y-1.5 text-muted">
             <li><Link className="hover:text-white" href="/about">How it works</Link></li>
             <li><Link className="hover:text-white" href="/drive-plan">Drive Plan (Coming Soon)</Link></li>
-            <li><Link className="hover:text-white" href="/advertise">Advertise / local shops</Link></li>
-            <li><Link className="hover:text-white" href="/terms">Terms & disclaimer</Link></li>
+            <li><Link className="hover:text-white" href="/advertise">Advertise / Vendor &amp; Sales Contact</Link></li>
+            <li><AlertAdminButton variant="footer" label="Alert Admin (Report Issue)" /></li>
+            <li><Link className="hover:text-white" href="/terms">Terms &amp; disclaimer</Link></li>
             <li><Link className="hover:text-white" href="/privacy">Privacy</Link></li>
           </ul>
         </div>

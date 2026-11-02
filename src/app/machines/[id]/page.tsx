@@ -13,6 +13,7 @@ import { CommentForm, MachineActions, StockButtons, type CandidateView } from "@
 import { DropMapClient } from "@/components/DropMapClient";
 import { MachineCard } from "@/components/MachineCard";
 import { SponsorSlot } from "@/components/SponsorSlot";
+import { AlertAdminButton } from "@/components/AlertAdminButton";
 import { Avatar, SectionTitle, reputationBadge, timeAgo } from "@/components/ui";
 import { toMapMachine } from "@/lib/queries";
 
@@ -92,6 +93,7 @@ export default async function MachinePage({ params }: { params: Promise<{ id: st
               🧭 Directions ({m.street})
             </a>
             <span className="chip">Stock: {m.stockStatus}{m.stockUpdatedAt ? ` · ${timeAgo(m.stockUpdatedAt)}` : ""}</span>
+            <AlertAdminButton machineId={m.id} label="Alert Admin (Wrong Time / Dead Machine)" />
           </div>
         </div>
       </div>

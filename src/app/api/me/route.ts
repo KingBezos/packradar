@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { route, json } from "@/lib/api";
-import { requireUser } from "@/lib/session";
+import { persistIdentityCookie, requireUser } from "@/lib/session";
 import { getDb } from "@/db";
 import { user, zipCodes } from "@/db/schema";
 import { lookupZipCentroid } from "@/db/seed";
@@ -35,7 +35,11 @@ export const PATCH = route(async (req) => {
   if (b.discordWebhookUrl !== undefined) patch.discordWebhookUrl = b.discordWebhookUrl || null;
   if (b.quietHoursStart !== undefined) patch.quietHoursStart = b.quietHoursStart;
   if (b.quietHoursEnd !== undefined) patch.quietHoursEnd = b.quietHoursEnd;
-  if (Object.keys(patch).length) await db.update(user).set(patch).where(eq(user.id, u.id));
+  if (Object.keys(patch).length) {
+    await db.update(user).set(patch).where(eq(user.id, u.id));
+    const [fresh] = await db.select().from(user).where(eq(user.id, u.id));
+    if (fresh) await persistIdentityCookie(fresh);
+  }
   if (b.testDiscord) {
     const url = (patch.discordWebhookUrl ?? u.discordWebhookUrl) as string | null;
     if (!url) throw new Error("Add a Discord webhook URL first");

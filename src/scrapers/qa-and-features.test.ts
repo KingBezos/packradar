@@ -6,6 +6,7 @@ import { getVapidPublicKey, pushConfigured } from "@/lib/notify/channels";
 import { BASELINE_NEWS_ARTICLES, buildOriginalArticleBody, classifyNews } from "./adapters/news";
 import { FULL_RELEASE_CATALOG } from "@/app/releases/page";
 import { generateSpotterHandle } from "@/lib/auth";
+import { signIdentityCookie, verifyIdentityCookie } from "@/lib/session";
 
 describe("PackRadar Production Readiness & QA Verification", () => {
   it("verifies all INITIAL_TICKER_ACTIVITY machine links exist in official-machines.json", () => {
@@ -79,11 +80,26 @@ describe("PackRadar Production Readiness & QA Verification", () => {
     expect(generated).toContain("$26.94");
   });
 
-  it("generates privacy-safe spotter handles without exposing real names", () => {
+  it("generates privacy-safe spotter handles and preserves King_Bezos permanently", () => {
     const h1 = generateSpotterHandle("seed-user-1");
     const h2 = generateSpotterHandle("seed-user-2");
     expect(h1).toMatch(/^[A-Za-z]+\d{3}$/);
     expect(h2).toMatch(/^[A-Za-z]+\d{3}$/);
     expect(h1).not.toBe(h2);
+    expect(generateSpotterHandle("james@jpegtown.com")).toBe("King_Bezos");
+
+    const signed = signIdentityCookie({
+      id: "owner-1",
+      email: "james@jpegtown.com",
+      name: "King_Bezos",
+      role: "admin",
+      plan: "premium",
+      reputation: 100,
+      homeZip: "97201",
+      sessionToken: "tok123",
+    });
+    const verified = verifyIdentityCookie(signed);
+    expect(verified?.name).toBe("King_Bezos");
+    expect(verified?.role).toBe("admin");
   });
 });

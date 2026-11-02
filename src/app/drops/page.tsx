@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ShoppingCart, Bell, ExternalLink, Store, Clock, Radar, Flame } from "lucide-react";
 import { getProductsWithListings, getRetailDropIntel } from "@/lib/queries";
 import { RetailScanBar } from "@/components/RetailScanBar";
+import { AlertAdminButton } from "@/components/AlertAdminButton";
 import { timeAgo } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
@@ -92,9 +93,12 @@ export default async function DropsPage() {
             out 3rd-party scalpers and tracking upcoming restock windows.
           </p>
         </div>
-        <Link href="/alerts" className="btn-primary">
-          <Bell className="h-4 w-4" /> Set Restock Alerts
-        </Link>
+        <div className="flex flex-wrap items-center gap-2">
+          <AlertAdminButton label="Alert Admin (Stock / Link Issue)" />
+          <Link href="/alerts" className="btn-primary">
+            <Bell className="h-4 w-4" /> Set Restock Alerts
+          </Link>
+        </div>
       </div>
 
       {/* Live Scan Bar */}

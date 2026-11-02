@@ -10,7 +10,7 @@
  *  6. Live HTTP route smoke tests when local server is listening
  */
 import { eq } from "drizzle-orm";
-import { activity, machines, newsPosts, retailListings, settings } from "@/db/schema";
+import { activity, machines, newsPosts, retailListings, settings, user } from "@/db/schema";
 import { lookupZipCentroid } from "@/db/seed";
 import { getVapidPublicKey, pushConfigured } from "@/lib/notify/channels";
 import { ensureRetailCatalog } from "./retail";
@@ -146,6 +146,21 @@ export const qaAuditor: Adapter = {
     report.newsArticlesCount = allNews.length;
     checksRun += allNews.length;
 
+    // 4b. Ensure owner account (james@jpegtown.com) keeps King_Bezos handle and admin role
+    const [ownerRow] = await db.select().from(user).where(eq(user.email, "james@jpegtown.com"));
+    if (ownerRow && (ownerRow.name === "LugiaScout892" || !ownerRow.name || ownerRow.role !== "admin")) {
+      await db
+        .update(user)
+        .set({
+          name: ownerRow.name && ownerRow.name !== "LugiaScout892" ? ownerRow.name : "King_Bezos",
+          role: "admin",
+          emailVerified: true,
+        })
+        .where(eq(user.id, ownerRow.id));
+      issuesHealed++;
+      log("Restored owner handle King_Bezos & admin role for james@jpegtown.com");
+    }
+
     // 5. Simulated user HTTP route smoke test against local server if running
     const baseUrl = `http://127.0.0.1:${process.env.PORT || 3000}`;
     const pathsToProbe = [
@@ -155,6 +170,8 @@ export const qaAuditor: Adapter = {
       "/news",
       "/alerts",
       "/leaderboard",
+      "/advertise",
+      "/contact",
       "/machines/Q00810",
       "/machines/Q00159",
       "/machines/Q00003",
