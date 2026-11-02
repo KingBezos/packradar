@@ -1,5 +1,31 @@
 import { describe, expect, it } from "vitest";
 import { extractDropTimers, matchMachines, type MachineRef } from "./extract";
+import { detectStock } from "./adapters/retail";
+
+describe("detectStock strict MSRP verifier", () => {
+  it("never marks search result pages as in stock from generic Add to Cart text", () => {
+    const html = `<html><body><div>Search results for Journey Together Booster Bundle. <button>Add to Cart</button></div>` + "x".repeat(400) + `</body></html>`;
+    const r1 = detectStock(html, "https://www.pokemoncenter.com/search/journey-together-booster-bundle", 26.94);
+    expect(r1.inStock).toBe(false);
+
+    const r2 = detectStock(html, "https://www.amazon.com/s?k=pokemon+prismatic+evolutions+booster+bundle", 26.94);
+    expect(r2.inStock).toBe(false);
+  });
+
+  it("rejects 3rd-party scalper prices above MSRP even when JSON-LD says InStock", () => {
+    const html = `<html><head><script type="application/ld+json">{"@type":"Product","offers":{"availability":"https://schema.org/InStock","price":"78.99"}}</script></head><body>` + "x".repeat(300) + `</body></html>`;
+    const r = detectStock(html, "https://www.amazon.com/dp/B0DT45XYZ", 26.94);
+    expect(r.inStock).toBe(false);
+    expect(r.reason).toBe("above_msrp_scalper");
+  });
+
+  it("accepts verified JSON-LD InStock when price is at MSRP", () => {
+    const html = `<html><head><script type="application/ld+json">{"@type":"Product","offers":{"availability":"https://schema.org/InStock","price":"26.94"}}</script></head><body>` + "x".repeat(300) + `</body></html>`;
+    const r = detectStock(html, "https://www.target.com/p/pokemon-booster-bundle/-/A-91234567", 26.94);
+    expect(r.inStock).toBe(true);
+    expect(r.reason).toBe("verified_msrp");
+  });
+});
 
 describe("extractDropTimers", () => {
   it("finds ':37' hourly timers", () => {

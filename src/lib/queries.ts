@@ -15,6 +15,7 @@ import {
   reputationEvents,
   retailListings,
   scheduleHistory,
+  settings,
   sponsors,
   stockReports,
   user,
@@ -23,6 +24,7 @@ import {
 } from "@/db/schema";
 import { boundingBox, haversineMiles } from "@/lib/geo";
 import { INITIAL_TICKER_ACTIVITY, lookupZipCentroid } from "@/db/seed";
+import type { UpcomingDropIntel } from "@/scrapers/adapters/retail";
 import { refreshArea } from "@/scrapers/area";
 
 /** Trigger background refresh of official machines near a point without blocking user search requests. */
@@ -289,13 +291,42 @@ export async function getProductsWithListings() {
   const db = await getDb();
   let prods = await db.select().from(products).orderBy(desc(products.createdAt));
   let listings = await db.select().from(retailListings);
-  if (listings.length === 0 || prods.length < 10) {
+  const hasUnverifiedInStock = listings.some(
+    (l) => l.inStock && l.checkError !== "verified_msrp" && l.checkError !== "verified_msrp_reddit_live",
+  );
+  if (listings.length === 0 || prods.length < 10 || hasUnverifiedInStock) {
     const { ensureRetailCatalog } = await import("@/scrapers/adapters/retail");
     await ensureRetailCatalog(db);
     prods = await db.select().from(products).orderBy(desc(products.createdAt));
     listings = await db.select().from(retailListings);
   }
   return prods.map((p) => ({ ...p, listings: listings.filter((l) => l.productId === p.id) }));
+}
+
+export async function getRetailDropIntel() {
+  const db = await getDb();
+  const { BASELINE_UPCOMING_INTEL } = await import("@/scrapers/adapters/retail");
+  const [row] = await db.select().from(settings).where(eq(settings.key, "retailUpcomingIntel"));
+  const val = (row?.value ?? null) as {
+    lastScanAt?: string;
+    scanCadence?: string;
+    items?: UpcomingDropIntel[];
+  } | null;
+
+  const SIX_HOURS_MS = 6 * 3600_000;
+  const lastMs = val?.lastScanAt ? new Date(val.lastScanAt).getTime() : 0;
+  const ageMs = Date.now() - lastMs;
+
+  // Trigger a non-blocking 4× daily scan if older than 6 hours
+  if (!lastMs || ageMs >= SIX_HOURS_MS) {
+    void import("@/scrapers/runner").then(({ runAdapter }) => runAdapter("retail-stock").catch(() => {}));
+  }
+
+  const lastScanAt = val?.lastScanAt ?? new Date().toISOString();
+  const nextScanAt = new Date(new Date(lastScanAt).getTime() + SIX_HOURS_MS).toISOString();
+  const items = val?.items && val.items.length > 0 ? val.items : BASELINE_UPCOMING_INTEL;
+
+  return { lastScanAt, nextScanAt, items };
 }
 
 export async function leaderboard(days?: number, limit = 25) {

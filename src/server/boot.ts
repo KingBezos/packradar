@@ -50,18 +50,20 @@ async function doBoot() {
     { name: "daily-job", timezone: tz, noOverlap: true },
   );
 
+  // 4× daily (every 6 hours): verify actual retailer stock & scrub Reddit/Discord/Facebook for upcoming drops
   cron.schedule(
-    "15 */2 * * *",
+    process.env.RETAIL_SCAN_CRON || "0 */6 * * *",
     async () => {
-      await runAdapter("news-feeds").catch(() => {});
       await runAdapter("retail-stock").catch(() => {});
+      await runAdapter("news-feeds").catch(() => {});
     },
-    { name: "refresh", timezone: tz, noOverlap: true },
+    { name: "retail-4x-daily", timezone: tz, noOverlap: true },
   );
 
-  // Fresh install: pull live news/releases & run corridor intelligence right away (non-blocking).
+  // Fresh install: pull live news/releases, verify retail stock & run corridor intelligence right away (non-blocking).
   if (seeded && process.env.RUN_SCRAPERS_ON_BOOT !== "false") {
     void (async () => {
+      await runAdapter("retail-stock").catch(() => {});
       await runAdapter("youtube-drop-times").catch(() => {});
       await runAdapter("cluster-intel").catch(() => {});
       await runAdapter("serebii-releases").catch(() => {});

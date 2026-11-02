@@ -1,15 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ShoppingCart, Bell, ExternalLink, Store, Clock } from "lucide-react";
-import { getProductsWithListings } from "@/lib/queries";
+import { ShoppingCart, Bell, ExternalLink, Store, Clock, Radar, Flame } from "lucide-react";
+import { getProductsWithListings, getRetailDropIntel } from "@/lib/queries";
+import { RetailScanBar } from "@/components/RetailScanBar";
 import { timeAgo } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Retail Drops & Restock Tracker – Target, Walmart, Best Buy, CVS, Walgreens, Dollar General",
   description:
-    "Live Pokémon TCG retail restock tracker across Pokémon Center, Target, Walmart, Best Buy, GameStop, Costco, CVS, Walgreens, Dollar General, and Barnes & Noble.",
+    "Verified MSRP Pokémon TCG retail restock tracker (scanned 4× daily) across Pokémon Center, Target, Walmart, Best Buy, GameStop, Costco, CVS, Walgreens, Dollar General, and Barnes & Noble.",
 };
+
+const IN_STORE_RETAILERS = new Set(["cvs", "walgreens", "dollargeneral", "barnesandnoble", "costco"]);
 
 const RETAILER_META: Record<string, { label: string; badgeCls: string; scheduleHint: string }> = {
   pokemon_center: {
@@ -55,7 +58,7 @@ const RETAILER_META: Record<string, { label: string; badgeCls: string; scheduleH
   dollargeneral: {
     label: "Dollar General",
     badgeCls: "border-volt/50 bg-volt/15 text-volt",
-    scheduleHint: "Knock Out collections, tins & $5.50 blisters (often BOGO 50% off Sat)",
+    scheduleHint: "Knock Out collections, tins & $5.50 blisters ($5 off $25 Sat)",
   },
   barnesandnoble: {
     label: "Barnes & Noble",
@@ -63,31 +66,31 @@ const RETAILER_META: Record<string, { label: string; badgeCls: string; scheduleH
     scheduleHint: "Behind customer service counter · 2-item limit per collector",
   },
   amazon: {
-    label: "Amazon (Shipped/Sold by Amazon)",
+    label: "Amazon (Sold by Amazon MSRP Only)",
     badgeCls: "border-amber-400/40 bg-amber-400/10 text-amber-200",
-    scheduleHint: "Invite-only & MSRP lightning restocks",
+    scheduleHint: "Invite-only & MSRP lightning restocks (3rd-party scalpers filtered out)",
   },
 };
 
 export default async function DropsPage() {
-  const products = await getProductsWithListings();
+  const [products, intel] = await Promise.all([getProductsWithListings(), getRetailDropIntel()]);
 
   return (
-    <div className="mx-auto max-w-6xl space-y-8 px-4 py-10">
+    <div className="mx-auto max-w-6xl space-y-6 px-4 py-8">
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="max-w-2xl">
+        <div className="max-w-3xl">
           <span className="chip border-volt/30 text-volt">
-            <ShoppingCart className="h-3.5 w-3.5" /> Live Multi-Retailer Restock Monitor
+            <ShoppingCart className="h-3.5 w-3.5" /> Strict MSRP Stock Verifier · 4× Daily Scan
           </span>
           <h1 className="mt-2 text-3xl font-black text-white sm:text-4xl">
-            Pokémon TCG Retail Drops &amp; Restocks
+            Pokémon TCG Retail Drops &amp; Upcoming Restocks
           </h1>
           <p className="mt-1 text-sm text-muted">
-            Scrubbed from <b className="text-slate-200">Pokémon Center</b>,{" "}
-            <b className="text-slate-200">r/PKMNTCGDeals</b>, <b className="text-slate-200">Facebook restock groups</b>,
-            and direct retailer feeds across Target, Walmart, Best Buy, CVS, Walgreens, Dollar General, Costco &amp;
-            GameStop.
+            We scan <b className="text-slate-200">4× daily (every 6 hours)</b> for real MSRP stock across Pokémon
+            Center, Target, Walmart, Best Buy, GameStop, Amazon, Costco, CVS, Walgreens &amp; Dollar General — filtering
+            out 3rd-party scalpers and scrubbing <b className="text-slate-200">Reddit, Discord &amp; Facebook</b> for
+            upcoming drop windows.
           </p>
         </div>
         <Link href="/alerts" className="btn-primary">
@@ -95,25 +98,68 @@ export default async function DropsPage() {
         </Link>
       </div>
 
-      {/* Major Retailer Restock Cadence Cheat Sheet */}
-      <div className="card p-5">
-        <div className="mb-3 flex items-center gap-2">
-          <Clock className="h-4 w-4 text-volt" />
-          <h2 className="text-sm font-bold uppercase tracking-wider text-white">
-            Major Retailer Restock Windows &amp; Vendor Schedules
-          </h2>
+      {/* Live 4x Daily Scan Bar */}
+      <RetailScanBar lastScanAt={intel.lastScanAt} nextScanAt={intel.nextScanAt} />
+
+      {/* Scrubbed Upcoming Drops & Community Rumors */}
+      <div className="card border-volt/25 p-5">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <Radar className="h-4 w-4 text-volt" />
+            <h2 className="text-sm font-black uppercase tracking-wider text-white">
+              📡 Potential Upcoming Drops &amp; Community Intel (Reddit · Discord · Facebook)
+            </h2>
+          </div>
+          <span className="text-xs text-muted">Updated during each 4× daily scan</span>
         </div>
-        <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
-          {Object.entries(RETAILER_META)
-            .slice(0, 9)
-            .map(([key, r]) => (
-              <div key={key} className="rounded-xl border border-line bg-panel-2 p-3 text-xs">
-                <span className={`inline-block rounded-full border px-2 py-0.5 text-[10px] font-bold ${r.badgeCls}`}>
-                  {r.label}
-                </span>
-                <p className="mt-1.5 text-slate-300">{r.scheduleHint}</p>
-              </div>
-            ))}
+
+        <div className="grid gap-3 md:grid-cols-2">
+          {intel.items.map((item) => {
+            const rMeta = RETAILER_META[item.retailer] ?? {
+              label: item.retailer,
+              badgeCls: "border-line bg-panel-2 text-slate-200",
+            };
+            return (
+              <a
+                key={item.id}
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex flex-col justify-between rounded-xl border border-line bg-panel-2/80 p-3.5 transition hover:border-volt/40"
+              >
+                <div>
+                  <div className="flex flex-wrap items-center justify-between gap-2 text-[11px]">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className={`rounded-full border px-2 py-0.5 font-bold ${rMeta.badgeCls}`}>
+                        {rMeta.label}
+                      </span>
+                      <span className="rounded-full bg-bg px-2 py-0.5 font-medium text-slate-300">
+                        {item.sourceLabel}
+                      </span>
+                    </div>
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${
+                        item.confidence === "high"
+                          ? "bg-green-500/15 text-green-400"
+                          : "bg-amber-500/15 text-amber-300"
+                      }`}
+                    >
+                      {item.confidence === "high" ? "High Signal" : "Community Watch"}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-sm font-bold text-white group-hover:text-volt">{item.title}</p>
+                  <p className="mt-0.5 text-xs text-slate-400">{item.productName}</p>
+                </div>
+
+                <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-line/60 pt-2 text-xs">
+                  <span className="inline-flex items-center gap-1 font-semibold text-amber-200">
+                    <Flame className="h-3.5 w-3.5 text-volt" /> {item.expectedWindow}
+                  </span>
+                  <span className="text-[11px] text-muted">{timeAgo(new Date(item.spottedAt))}</span>
+                </div>
+              </a>
+            );
+          })}
         </div>
       </div>
 
@@ -140,13 +186,15 @@ export default async function DropsPage() {
 
                 <div className="mt-2 flex items-center gap-2 text-xs">
                   <span
-                    className={`rounded-full px-2 py-0.5 font-bold ${
-                      inStockCount > 0 ? "bg-green-500/15 text-green-400" : "bg-slate-800 text-muted"
+                    className={`rounded-full px-2.5 py-0.5 font-bold ${
+                      inStockCount > 0
+                        ? "border border-green-500/40 bg-green-500/15 text-green-400"
+                        : "border border-line bg-panel-2 text-slate-300"
                     }`}
                   >
                     {inStockCount > 0
-                      ? `🟢 Available at ${inStockCount} retailer${inStockCount > 1 ? "s" : ""}`
-                      : "Watching for next restock wave"}
+                      ? `🟢 Verified In Stock at ${inStockCount} retailer${inStockCount > 1 ? "s" : ""} (MSRP)`
+                      : "🔴 Sold Out Online at MSRP · Monitoring Next 6h Scan"}
                   </span>
                 </div>
 
@@ -157,6 +205,7 @@ export default async function DropsPage() {
                       badgeCls: "border-line bg-panel-2 text-slate-200",
                       scheduleHint: "",
                     };
+                    const isInStoreOnly = !l.inStock && IN_STORE_RETAILERS.has(l.retailer);
                     return (
                       <li key={l.id} className="flex items-center justify-between gap-2 py-2.5 text-sm">
                         <a
@@ -171,16 +220,22 @@ export default async function DropsPage() {
                         </a>
                         <div className="flex items-center gap-2.5">
                           {l.price != null && (
-                            <span className="font-mono text-xs text-slate-300">${l.price.toFixed(2)}</span>
+                            <span className="font-mono text-xs text-slate-400">MSRP ${l.price.toFixed(2)}</span>
                           )}
                           <span
                             className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${
                               l.inStock
                                 ? "border border-green-500/40 bg-green-500/15 text-green-400"
-                                : "bg-panel-2 text-muted"
+                                : isInStoreOnly
+                                  ? "border border-amber-400/30 bg-amber-500/10 text-amber-200"
+                                  : "bg-panel-2 text-muted"
                             }`}
                           >
-                            {l.inStock == null ? "Checking" : l.inStock ? "IN STOCK" : "Out of stock"}
+                            {l.inStock
+                              ? "IN STOCK (MSRP)"
+                              : isInStoreOnly
+                                ? "In-Store Check Only"
+                                : "Sold Out (MSRP)"}
                           </span>
                           {l.lastCheckedAt && (
                             <span className="hidden text-[10px] text-muted sm:inline">
@@ -196,6 +251,28 @@ export default async function DropsPage() {
             </div>
           );
         })}
+      </div>
+
+      {/* Major Retailer Restock Cadence Cheat Sheet */}
+      <div className="card p-5">
+        <div className="mb-3 flex items-center gap-2">
+          <Clock className="h-4 w-4 text-volt" />
+          <h2 className="text-sm font-bold uppercase tracking-wider text-white">
+            Major Retailer Restock Windows &amp; Vendor Schedules
+          </h2>
+        </div>
+        <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+          {Object.entries(RETAILER_META)
+            .slice(0, 9)
+            .map(([key, r]) => (
+              <div key={key} className="rounded-xl border border-line bg-panel-2 p-3 text-xs">
+                <span className={`inline-block rounded-full border px-2 py-0.5 text-[10px] font-bold ${r.badgeCls}`}>
+                  {r.label}
+                </span>
+                <p className="mt-1.5 text-slate-300">{r.scheduleHint}</p>
+              </div>
+            ))}
+        </div>
       </div>
     </div>
   );
