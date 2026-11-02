@@ -6,36 +6,35 @@ import { session as sessionTable, user as userTable, type User } from "@/db/sche
 
 /** Current signed-in user (full DB row) or null. */
 export async function getCurrentUser(): Promise<User | null> {
-  const db = await getDb();
-  const h = await headers();
-  const session = await auth.api.getSession({ headers: h }).catch(() => null);
-  if (session?.user?.id) {
-    const [u] = await db.select().from(userTable).where(eq(userTable.id, session.user.id));
-    if (u) return u;
-  }
-
-  // Fallback for HTTPS Cloudflare tunnel / LAN proxy cookie prefix differences (__Secure- vs standard)
   try {
     const jar = await cookies();
     const rawCookie =
       jar.get("better-auth.session_token")?.value ??
       jar.get("__Secure-better-auth.session_token")?.value;
-    if (rawCookie) {
-      const decoded = decodeURIComponent(rawCookie);
-      const tokenPrefix = decoded.split(".")[0];
-      if (tokenPrefix) {
-        const [sess] = await db
-          .select()
-          .from(sessionTable)
-          .where(and(eq(sessionTable.token, tokenPrefix), gt(sessionTable.expiresAt, new Date())));
-        if (sess) {
-          const [u] = await db.select().from(userTable).where(eq(userTable.id, sess.userId));
-          if (u) return u;
-        }
+    if (!rawCookie) return null;
+
+    const db = await getDb();
+    const decoded = decodeURIComponent(rawCookie);
+    const tokenPrefix = decoded.split(".")[0];
+    if (tokenPrefix) {
+      const [sess] = await db
+        .select()
+        .from(sessionTable)
+        .where(and(eq(sessionTable.token, tokenPrefix), gt(sessionTable.expiresAt, new Date())));
+      if (sess) {
+        const [u] = await db.select().from(userTable).where(eq(userTable.id, sess.userId));
+        if (u) return u;
       }
     }
+
+    const h = await headers();
+    const session = await auth.api.getSession({ headers: h }).catch(() => null);
+    if (session?.user?.id) {
+      const [u] = await db.select().from(userTable).where(eq(userTable.id, session.user.id));
+      if (u) return u;
+    }
   } catch {
-    // ignore cookie parse errors
+    // ignore cookie parse or static generation errors
   }
 
   return null;

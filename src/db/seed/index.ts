@@ -20,7 +20,7 @@ const SEED_DIR = path.join(process.cwd(), "src", "db", "seed");
 function readJson<T>(file: string): T | null {
   const p = path.join(SEED_DIR, file);
   if (!fs.existsSync(p)) return null;
-  return JSON.parse(fs.readFileSync(p, "utf8")) as T;
+  return JSON.parse(fs.readFileSync(p, "utf8").replace(/^\uFEFF/, "")) as T;
 }
 
 /** Deterministic PRNG so demo data is stable across resets. */
