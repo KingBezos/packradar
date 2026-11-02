@@ -60,7 +60,7 @@ export const db: DB = new Proxy({} as DB, {
   },
 });
 
-/** Run pending migrations exactly once per process. */
+/** Run pending migrations and initial seed exactly once per process. */
 export function ensureMigrated(): Promise<void> {
   const h = holder();
   if (!h.ready) {
@@ -70,6 +70,8 @@ export function ensureMigrated(): Promise<void> {
       } else {
         await migratePostgres(h.db as never, { migrationsFolder: migrationsFolder() });
       }
+      const { seedIfEmpty } = await import("./seed");
+      await seedIfEmpty(h.db);
     })().catch((e) => {
       h.ready = undefined;
       throw e;

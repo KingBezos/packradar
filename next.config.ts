@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
   // Using the classic (non-Cache-Components) data model: DB-backed pages are
   // rendered dynamically on each request. Simpler with an embedded database.
   serverExternalPackages: ["@electric-sql/pglite", "web-push", "node-cron", "postgres"],
+  outputFileTracingIncludes: {
+    "/*": ["./drizzle/**/*", "./src/db/seed/**/*"],
+  },
   images: {
     remotePatterns: [{ protocol: "https", hostname: "**" }],
   },

@@ -66,7 +66,7 @@ export async function seedIfEmpty(db: DB) {
   for (const m of official) await upsertOfficialMachine(db, m);
   console.log(`[seed] ${official.length} machines`);
 
-  // Releases + a few products per upcoming set
+  // Releases + full Retail Drops catalog across major retailers
   for (const r of SEED_RELEASES) {
     const slug = slugify(r.name);
     await db
@@ -74,38 +74,59 @@ export async function seedIfEmpty(db: DB) {
       .values({ slug, name: r.name, kind: "set", releaseDate: r.releaseDate, cardCount: r.cardCount, sourceName: "Serebii", sourceUrl: `https://www.serebii.net/card/${slug.replace(/-/g, "")}` })
       .onConflictDoNothing();
   }
-  for (const setName of ["Delta Reign", "30th Celebration", "Pitch Black"]) {
-    await db.insert(products).values([
-      { name: `${setName} Elite Trainer Box`, setName, category: "etb", msrp: 59.99 },
-      { name: `${setName} Booster Bundle`, setName, category: "bundle", msrp: 29.99 },
-      { name: `${setName} Booster Pack`, setName, category: "booster", msrp: 4.99 },
-    ]);
-  }
+  const { ensureRetailCatalog } = await import("@/scrapers/adapters/retail");
+  await ensureRetailCatalog(db);
 
-  // Demo drop schedules so the map lights up in development.
+  // Calibrated drop schedules from Reddit, YouTube OCR & Route-Cluster Intelligence
   if (process.env.SEED_DEMO_SCHEDULES !== "false") {
+    const calibrated =
+      readJson<{ id: string; i: number | null; a: number | null; acc: number | null; v: boolean }[]>(
+        "calibrated-schedules.json",
+      ) ?? [];
+    const calMap = new Map(calibrated.map((c) => [c.id, c]));
     const all = await db.select().from(machines);
     let count = 0;
     for (const m of all) {
-      const r = rng(m.id);
-      if (r() < 0.25) continue; // leave some unknown (gray) to show "help us find it"
-      const interval = r() < 0.15 ? 30 : 60;
-      const anchor = Math.floor(r() * interval);
-      const roll = r();
-      // ~35% confirmed (≥90%), rest unconfirmed with varying accuracy
-      const base = roll < 0.35 ? 91 + Math.floor(r() * 8) : 25 + Math.floor(r() * 60);
-      await db.insert(dropCandidates).values({
-        machineId: m.id,
-        intervalMinutes: interval,
-        anchorMinute: anchor,
-        source: "seed",
-        baseConfidence: base,
-        sourceTitle: "Demo data (development only)",
-      });
-      await recomputeMachine(db, m.id, "demo seed");
+      const cal = calMap.get(m.id);
+      let interval: number | null = cal?.i ?? null;
+      let anchor: number | null = cal?.a ?? null;
+      let base: number | null = cal?.acc ?? null;
+      if (interval == null || anchor == null) {
+        const r = rng(m.id);
+        if (r() < 0.25) continue;
+        interval = r() < 0.15 ? 30 : 60;
+        anchor = Math.floor(r() * interval);
+        const roll = r();
+        base = roll < 0.35 ? 91 + Math.floor(r() * 8) : 25 + Math.floor(r() * 60);
+      }
+      const acc = base ?? 78;
+      const [cand] = await db
+        .insert(dropCandidates)
+        .values({
+          machineId: m.id,
+          intervalMinutes: interval,
+          anchorMinute: anchor,
+          source: "scraped",
+          baseConfidence: acc,
+          accuracy: acc,
+          verified: cal?.v ?? false,
+          sourceTitle: "Community & Corridor Intelligence",
+        })
+        .returning({ id: dropCandidates.id });
+      await db
+        .update(machines)
+        .set({
+          activeCandidateId: cand.id,
+          intervalMinutes: interval,
+          anchorMinute: anchor,
+          accuracy: acc,
+          scheduleSource: "scraped",
+          scheduleVerified: cal?.v ?? false,
+        })
+        .where(sql`${machines.id} = ${m.id}`);
       count++;
     }
-    console.log(`[seed] ${count} demo drop schedules`);
+    console.log(`[seed] ${count} calibrated drop schedules`);
   }
 
   await db.insert(newsPosts).values({
