@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: packradar
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: BETTER_AUTH_SECRET
+        generateValue: true
+      - key: CRON_SECRET
+        generateValue: true
+      - key: EMAIL_FROM
+        value: "PackRadar <onboarding@resend.dev>"
+      - key: RESEND_API_KEY
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
