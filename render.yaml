@@ -8,6 +8,10 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: NODE_OPTIONS
+        value: "--max-old-space-size=256"
+      - key: RUN_SCRAPERS_ON_BOOT
+        value: "false"
       - key: BETTER_AUTH_SECRET
         generateValue: true
       - key: CRON_SECRET

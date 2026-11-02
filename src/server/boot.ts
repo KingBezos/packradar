@@ -1,12 +1,13 @@
 /**
- * Server boot: migrations → first-run seed → background schedulers.
+ * Server boot: migrations → first-run seed → lightweight background schedulers.
  *
- *  - every minute:   drop alerts ("machine X drops in 5 min")
- *  - daily (6 AM PT): full scrape → drop times → releases → retail → news → Daily Drop Report
- *  - every 2 hours:  news + retail refresh (keeps the site feeling live)
+ *  - every 5 minutes: drop alerts ("machine X drops in N min")
+ *  - 4× daily (every 6 hours): retail MSRP stock verifier + Reddit/Discord/Facebook upcoming drop intel + news
+ *  - daily (4 AM PT): release calendar refresh
  *
- * In production behind a serverless host, disable with ENABLE_CRON=false and
- * hit /api/cron/* from an external scheduler instead.
+ * Note: We do NOT run heavy scrapers on server boot because `seedIfEmpty` already
+ * bulk-loads all 610 machines, 385 calibrated schedules, retail catalog, and initial news/intel.
+ * This keeps startup RAM well under 250 MB on 512 MB free-tier containers (Render, Railway, etc.).
  */
 import { ensureMigrated, getDb } from "@/db";
 
@@ -20,17 +21,15 @@ export function boot() {
 async function doBoot() {
   await ensureMigrated();
   const db = await getDb();
-  const { seedIfEmpty } = await import("@/db/seed");
-  const seeded = await seedIfEmpty(db);
 
   if (process.env.ENABLE_CRON === "false") return;
   const cron = (await import("node-cron")).default;
   const { runDropAlerts } = await import("@/lib/notify/dispatch");
-  const { runAdapter, runDailyJob } = await import("@/scrapers/runner");
+  const { runAdapter } = await import("@/scrapers/runner");
   const tz = process.env.DAILY_JOB_TZ || "America/Los_Angeles";
 
   cron.schedule(
-    "* * * * *",
+    "*/5 * * * *",
     async () => {
       try {
         await runDropAlerts(db);
@@ -39,15 +38,6 @@ async function doBoot() {
       }
     },
     { name: "drop-alerts", noOverlap: true },
-  );
-
-  cron.schedule(
-    process.env.DAILY_JOB_CRON || "0 6 * * *",
-    async () => {
-      console.log("[cron] daily job starting");
-      await runDailyJob().catch((e) => console.error("[cron] daily job failed", e));
-    },
-    { name: "daily-job", timezone: tz, noOverlap: true },
   );
 
   // 4× daily (every 6 hours): verify actual retailer stock & scrub Reddit/Discord/Facebook for upcoming drops
@@ -60,16 +50,5 @@ async function doBoot() {
     { name: "retail-4x-daily", timezone: tz, noOverlap: true },
   );
 
-  // Fresh install: pull live news/releases, verify retail stock & run corridor intelligence right away (non-blocking).
-  if (seeded && process.env.RUN_SCRAPERS_ON_BOOT !== "false") {
-    void (async () => {
-      await runAdapter("retail-stock").catch(() => {});
-      await runAdapter("youtube-drop-times").catch(() => {});
-      await runAdapter("cluster-intel").catch(() => {});
-      await runAdapter("serebii-releases").catch(() => {});
-      await runAdapter("news-feeds").catch(() => {});
-      await runAdapter("daily-report").catch(() => {});
-    })();
-  }
-  console.log("[boot] PackRadar ready (cron enabled)");
+  console.log("[boot] PackRadar ready (low-memory mode, 4x daily retail cron active)");
 }

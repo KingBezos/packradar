@@ -33,7 +33,7 @@ function migrationsFolder() {
 function create(): Holder {
   const url = process.env.DATABASE_URL;
   if (url && /^postgres(ql)?:\/\//.test(url)) {
-    const client = postgres(url, { max: 10, prepare: false });
+    const client = postgres(url, { max: 5, prepare: false });
     const db = drizzlePostgres(client, { schema }) as unknown as DB;
     return { db, kind: "postgres" };
   }
@@ -41,7 +41,7 @@ function create(): Holder {
     process.env.PGLITE_DIR ||
     (process.env.VERCEL ? "/tmp/packradar-pglite" : path.join(process.cwd(), "data", "pglite"));
   fs.mkdirSync(dir, { recursive: true });
-  const client = new PGlite(dir);
+  const client = new PGlite(dir, { relaxedDurability: true });
   const db = drizzlePglite(client, { schema });
   return { db, kind: "pglite" };
 }

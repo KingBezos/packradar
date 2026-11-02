@@ -11,7 +11,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { sql } from "drizzle-orm";
 import type { DB } from "@/db";
-import { activity, dropCandidates, machines, newsPosts, releases, sponsors } from "@/db/schema";
+import { activity, dropCandidates, machines, newsPosts, releases, settings, sponsors } from "@/db/schema";
 import { titleCase, type OfficialMachine } from "@/lib/machines";
 import { slugify, timezoneFor } from "@/lib/geo";
 
@@ -23,15 +23,23 @@ function readJson<T>(file: string): T | null {
   return JSON.parse(fs.readFileSync(p, "utf8").replace(/^\uFEFF/, "")) as T;
 }
 
-let cachedZips: Record<string, [number, number]> | null = null;
+const zipCache = new Map<string, { lat: number; lng: number } | null>();
 
-/** Fast in-memory lookup for 5-digit US ZIP centroids (avoids 33,144 SQL inserts on cold start). */
+/** Low-memory lookup for 5-digit US ZIP centroids (scans file without retaining 33k objects in heap). */
 export function lookupZipCentroid(zip: string): { lat: number; lng: number } | null {
-  if (!cachedZips) {
-    cachedZips = readJson<Record<string, [number, number]>>("zips.json") ?? {};
+  if (zipCache.has(zip)) return zipCache.get(zip)!;
+  try {
+    const p = path.join(SEED_DIR, "zips.json");
+    if (!fs.existsSync(p)) return null;
+    const raw = fs.readFileSync(p, "utf8");
+    const m = raw.match(new RegExp(`"${zip}"\\s*:\\s*\\[\\s*(-?\\d+(?:\\.\\d+)?)\\s*,\\s*(-?\\d+(?:\\.\\d+)?)\\s*\\]`));
+    const res = m ? { lat: Number(m[1]), lng: Number(m[2]) } : null;
+    if (zipCache.size > 200) zipCache.clear();
+    zipCache.set(zip, res);
+    return res;
+  } catch {
+    return null;
   }
-  const hit = cachedZips[zip];
-  return hit ? { lat: hit[0], lng: hit[1] } : null;
 }
 
 /** Deterministic PRNG so demo data is stable across resets. */
@@ -224,15 +232,15 @@ export async function seedIfEmpty(db: DB) {
     });
   }
 
-  // Bulk insert machines and candidates in chunks of 250
-  for (let i = 0; i < machineRows.length; i += 250) {
-    await db.insert(machines).values(machineRows.slice(i, i + 250)).onConflictDoNothing();
+  // Bulk insert machines and candidates in chunks of 150 to keep WASM buffer tiny
+  for (let i = 0; i < machineRows.length; i += 150) {
+    await db.insert(machines).values(machineRows.slice(i, i + 150)).onConflictDoNothing();
   }
-  for (let i = 0; i < candidateRows.length; i += 250) {
-    await db.insert(dropCandidates).values(candidateRows.slice(i, i + 250)).onConflictDoNothing();
+  for (let i = 0; i < candidateRows.length; i += 150) {
+    await db.insert(dropCandidates).values(candidateRows.slice(i, i + 150)).onConflictDoNothing();
   }
 
-  // 2. Bulk insert Releases + Retail Drops catalog
+  // 2. Bulk insert Releases + Retail Drops catalog + Initial Upcoming Intel
   await db
     .insert(releases)
     .values(
@@ -251,8 +259,19 @@ export async function seedIfEmpty(db: DB) {
     )
     .onConflictDoNothing();
 
-  const { ensureRetailCatalog } = await import("@/scrapers/adapters/retail");
+  const { ensureRetailCatalog, BASELINE_UPCOMING_INTEL } = await import("@/scrapers/adapters/retail");
   await ensureRetailCatalog(db);
+  await db
+    .insert(settings)
+    .values({
+      key: "retailUpcomingIntel",
+      value: {
+        lastScanAt: now.toISOString(),
+        scanCadence: "4x_daily_6h",
+        items: BASELINE_UPCOMING_INTEL,
+      },
+    })
+    .onConflictDoNothing();
 
   // 3. Seed Live Ticker Activity Feed
   await db.insert(activity).values(
