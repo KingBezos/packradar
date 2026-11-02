@@ -21,9 +21,10 @@ import {
   dropObservations,
   machines,
   type DropCandidate,
-  type DropObservation,
   type Machine,
 } from "@/db/schema";
+
+type DropObservation = typeof dropObservations.$inferSelect;
 import { haversineMiles } from "@/lib/geo";
 import { addReputation, hasReputationEventTag, logActivity, REP } from "@/lib/activity";
 import { observationMatches } from "./inference";

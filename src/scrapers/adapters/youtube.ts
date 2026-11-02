@@ -176,7 +176,7 @@ const YOUTUBE_FRAME_DETECTIONS: VideoFrameDetection[] = [
 /** Parse YouTube initial search JSON embedded in HTML */
 function parseYtSearchHtml(html: string): { videoId: string; title: string; snippet: string }[] {
   const results: { videoId: string; title: string; snippet: string }[] = [];
-  const m = html.match(/var ytInitialData\s*=\s*(\{.+?\});<\/script>/s);
+  const m = html.match(/var ytInitialData\s*=\s*(\{[\s\S]+?\});<\/script>/);
   if (!m) return results;
   try {
     const raw = m[1];

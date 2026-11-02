@@ -179,7 +179,7 @@ export async function POST(req: Request) {
             : st.status === "dropped"
               ? `🟢 Dropped ${formatCountdown(st.secondsSincePrev)} ago`
               : `⏱️ Next in **${formatCountdown(st.secondsToNext)}** (:‍${String(m.anchorMinute ?? 0).padStart(2, "0")})`;
-        const dist = m.distanceMiles != null ? ` · ${m.distanceMiles.toFixed(1)} mi` : "";
+        const dist = m.distance != null ? ` · ${m.distance.toFixed(1)} mi` : "";
         return `• **${m.retailer}** \`${m.id}\` (${m.city}, ${m.state}${dist}) — ${timerText}`;
       });
 
@@ -188,7 +188,7 @@ export async function POST(req: Request) {
         data: {
           embeds: [
             {
-              title: `📡 PackRadar Live Drops for "${search.label || q}"`,
+              title: `📡 PackRadar Live Drops for "${search.center?.label || q}"`,
               description: lines.join("\n"),
               color: 0xfacc15,
             },
