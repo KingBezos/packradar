@@ -20,6 +20,7 @@ import type { DB } from "@/db";
 import {
   dropObservations,
   machines,
+  user,
   type DropCandidate,
   type Machine,
 } from "@/db/schema";
@@ -77,6 +78,17 @@ export async function evaluateObservationSafeguards(
 ): Promise<SafeguardCheckResult> {
   const now = Date.now();
   const { userId, machine, observedAt, kind, candidates } = input;
+
+  // 0. Email verification anti-spam gate for new regular accounts (Google accounts are auto-verified)
+  const [uRow] = await db
+    .select({ emailVerified: user.emailVerified, role: user.role, reputation: user.reputation })
+    .from(user)
+    .where(eq(user.id, userId));
+  if (uRow && !uRow.emailVerified && uRow.role === "user" && uRow.reputation <= 0) {
+    throw new Error(
+      "Anti-spam safeguard: Please verify your email at /verify-email (or sign in with Google) before submitting drop reports and earning Leaderboard Reputation.",
+    );
+  }
 
   // 1. Same-machine cooldown check (last 30 minutes)
   const cooldownSince = new Date(now - SAME_MACHINE_COOLDOWN_MS);

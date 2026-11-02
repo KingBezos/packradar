@@ -203,7 +203,11 @@ export function AuthForm({ mode, google: initialGoogle }: { mode: "sign-in" | "s
               : await signIn.email({ email, password });
             setBusy(false);
             if (r.error) return setErr(r.error.message ?? "Something went wrong");
-            router.push("/map");
+            if (up) {
+              router.push(`/verify-email?email=${encodeURIComponent(email.trim().toLowerCase())}`);
+            } else {
+              router.push("/map");
+            }
             router.refresh();
           }}
         >
@@ -226,18 +230,27 @@ export function AuthForm({ mode, google: initialGoogle }: { mode: "sign-in" | "s
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-          <input
-            className="input"
-            type="password"
-            placeholder="Password (8+ characters)"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            minLength={8}
-          />
+          <div className="space-y-1">
+            {!up && (
+              <div className="flex justify-end">
+                <Link href="/forgot-password" className="text-xs font-semibold text-volt hover:underline">
+                  Forgot password?
+                </Link>
+              </div>
+            )}
+            <input
+              className="input"
+              type="password"
+              placeholder="Password (8+ characters)"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={8}
+            />
+          </div>
           {err && <p className="rounded-lg bg-red-500/10 p-2 text-sm text-red-300">{err}</p>}
           <button className="btn-primary w-full" disabled={busy}>
-            {busy ? "…" : up ? "Create free account" : "Sign in"}
+            {busy ? "…" : up ? "Create free account & verify email" : "Sign in"}
           </button>
         </form>
 

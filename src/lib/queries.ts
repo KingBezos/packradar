@@ -272,8 +272,14 @@ export async function upcomingReleases(limit = 6) {
 
 export async function getProductsWithListings() {
   const db = await getDb();
-  const prods = await db.select().from(products).orderBy(desc(products.createdAt));
-  const listings = await db.select().from(retailListings);
+  let prods = await db.select().from(products).orderBy(desc(products.createdAt));
+  let listings = await db.select().from(retailListings);
+  if (listings.length === 0 || prods.length < 10) {
+    const { ensureRetailCatalog } = await import("@/scrapers/adapters/retail");
+    await ensureRetailCatalog(db);
+    prods = await db.select().from(products).orderBy(desc(products.createdAt));
+    listings = await db.select().from(retailListings);
+  }
   return prods.map((p) => ({ ...p, listings: listings.filter((l) => l.productId === p.id) }));
 }
 

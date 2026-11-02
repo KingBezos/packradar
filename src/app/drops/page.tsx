@@ -1,44 +1,201 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { ShoppingCart, Bell, ExternalLink, Store, Clock } from "lucide-react";
 import { getProductsWithListings } from "@/lib/queries";
 import { timeAgo } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "Retail Drops & Restock Tracker" };
+export const metadata: Metadata = {
+  title: "Retail Drops & Restock Tracker – Target, Walmart, Best Buy, CVS, Walgreens, Dollar General",
+  description:
+    "Live Pokémon TCG retail restock tracker across Pokémon Center, Target, Walmart, Best Buy, GameStop, Costco, CVS, Walgreens, Dollar General, and Barnes & Noble.",
+};
 
-const RETAILER: Record<string, string> = {
-  pokemon_center: "Pokémon Center", target: "Target", walmart: "Walmart", bestbuy: "Best Buy", gamestop: "GameStop", amazon: "Amazon",
+const RETAILER_META: Record<string, { label: string; badgeCls: string; scheduleHint: string }> = {
+  pokemon_center: {
+    label: "Pokémon Center",
+    badgeCls: "border-red-500/40 bg-red-500/10 text-red-200",
+    scheduleHint: "Queue drops Tue–Thu 9:00 AM–11:00 AM PT",
+  },
+  target: {
+    label: "Target",
+    badgeCls: "border-rose-500/40 bg-rose-500/10 text-rose-200",
+    scheduleHint: "Online restocks Thu/Fri 6:00–8:00 AM CT · In-store Excell vendor Tue–Fri",
+  },
+  walmart: {
+    label: "Walmart",
+    badgeCls: "border-sky-500/40 bg-sky-500/10 text-sky-200",
+    scheduleHint: "Online drops Wed/Thu 12:00 PM ET · In-store MJ Holding restocks Thu/Fri",
+  },
+  bestbuy: {
+    label: "Best Buy",
+    badgeCls: "border-yellow-400/40 bg-yellow-400/10 text-yellow-200",
+    scheduleHint: "Online drops Tue/Thu mornings · Store pickup allocations Fri",
+  },
+  gamestop: {
+    label: "GameStop",
+    badgeCls: "border-slate-400/40 bg-slate-400/10 text-slate-200",
+    scheduleHint: "Pre-order & release day allocations Fri 10:00 AM local",
+  },
+  costco: {
+    label: "Costco",
+    badgeCls: "border-blue-400/40 bg-blue-400/10 text-blue-200",
+    scheduleHint: "Pallet drops (Blooming Waters / 151 Tins) 9:30 AM warehouse open",
+  },
+  cvs: {
+    label: "CVS Pharmacy",
+    badgeCls: "border-red-400/40 bg-red-400/10 text-red-200",
+    scheduleHint: "Behind-counter blisters & tins restocked on weekly tote truck days",
+  },
+  walgreens: {
+    label: "Walgreens",
+    badgeCls: "border-orange-400/40 bg-orange-400/10 text-orange-200",
+    scheduleHint: "Mystery packs, tins & 2-pack blisters restocked Tue/Thu truck deliveries",
+  },
+  dollargeneral: {
+    label: "Dollar General",
+    badgeCls: "border-volt/50 bg-volt/15 text-volt",
+    scheduleHint: "Knock Out collections, tins & $5.50 blisters (often BOGO 50% off Sat)",
+  },
+  barnesandnoble: {
+    label: "Barnes & Noble",
+    badgeCls: "border-emerald-400/40 bg-emerald-400/10 text-emerald-200",
+    scheduleHint: "Behind customer service counter · 2-item limit per collector",
+  },
+  amazon: {
+    label: "Amazon (Shipped/Sold by Amazon)",
+    badgeCls: "border-amber-400/40 bg-amber-400/10 text-amber-200",
+    scheduleHint: "Invite-only & MSRP lightning restocks",
+  },
 };
 
 export default async function DropsPage() {
   const products = await getProductsWithListings();
+
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10">
-      <h1 className="text-3xl font-black text-white">Retail drops</h1>
-      <p className="mt-1 text-muted">Online restocks we monitor. Set a “product restock” alert to get pinged the moment something comes back.</p>
-      <div className="mt-6 grid gap-4 md:grid-cols-2">
-        {products.map((p) => (
-          <div key={p.id} className="card p-5">
-            <p className="font-bold text-white">{p.name}</p>
-            <p className="text-xs text-muted">{p.setName}{p.msrp ? ` · MSRP $${p.msrp.toFixed(2)}` : ""}</p>
-            {p.listings.length === 0 ? (
-              <p className="mt-3 text-xs text-muted">Not monitored at any retailer yet.</p>
-            ) : (
-              <ul className="mt-3 space-y-2">
-                {p.listings.map((l) => (
-                  <li key={l.id} className="flex items-center justify-between text-sm">
-                    <a href={l.affiliateUrl ?? l.url} target="_blank" rel="sponsored noopener noreferrer" className="text-slate-200 hover:text-volt">
-                      {RETAILER[l.retailer] ?? l.retailer} ↗
-                    </a>
-                    <span className={l.inStock ? "font-bold text-green-400" : "text-muted"}>
-                      {l.inStock == null ? "unknown" : l.inStock ? "IN STOCK" : "out of stock"}
-                      {l.lastCheckedAt && <span className="ml-2 text-[10px] text-muted">{timeAgo(l.lastCheckedAt)}</span>}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        ))}
+    <div className="mx-auto max-w-6xl space-y-8 px-4 py-10">
+      {/* Header */}
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="max-w-2xl">
+          <span className="chip border-volt/30 text-volt">
+            <ShoppingCart className="h-3.5 w-3.5" /> Live Multi-Retailer Restock Monitor
+          </span>
+          <h1 className="mt-2 text-3xl font-black text-white sm:text-4xl">
+            Pokémon TCG Retail Drops &amp; Restocks
+          </h1>
+          <p className="mt-1 text-sm text-muted">
+            Scrubbed from <b className="text-slate-200">Pokémon Center</b>,{" "}
+            <b className="text-slate-200">r/PKMNTCGDeals</b>, <b className="text-slate-200">Facebook restock groups</b>,
+            and direct retailer feeds across Target, Walmart, Best Buy, CVS, Walgreens, Dollar General, Costco &amp;
+            GameStop.
+          </p>
+        </div>
+        <Link href="/alerts" className="btn-primary">
+          <Bell className="h-4 w-4" /> Set Restock Alerts
+        </Link>
+      </div>
+
+      {/* Major Retailer Restock Cadence Cheat Sheet */}
+      <div className="card p-5">
+        <div className="mb-3 flex items-center gap-2">
+          <Clock className="h-4 w-4 text-volt" />
+          <h2 className="text-sm font-bold uppercase tracking-wider text-white">
+            Major Retailer Restock Windows &amp; Vendor Schedules
+          </h2>
+        </div>
+        <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+          {Object.entries(RETAILER_META)
+            .slice(0, 9)
+            .map(([key, r]) => (
+              <div key={key} className="rounded-xl border border-line bg-panel-2 p-3 text-xs">
+                <span className={`inline-block rounded-full border px-2 py-0.5 text-[10px] font-bold ${r.badgeCls}`}>
+                  {r.label}
+                </span>
+                <p className="mt-1.5 text-slate-300">{r.scheduleHint}</p>
+              </div>
+            ))}
+        </div>
+      </div>
+
+      {/* Product Grid */}
+      <div className="grid gap-5 md:grid-cols-2">
+        {products.map((p) => {
+          const inStockCount = p.listings.filter((l) => l.inStock).length;
+          return (
+            <div key={p.id} className="card flex flex-col justify-between p-5">
+              <div>
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <div>
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-volt">{p.setName}</span>
+                    <h3 className="text-lg font-bold text-white">{p.name}</h3>
+                  </div>
+                  <div className="text-right">
+                    {p.msrp && (
+                      <span className="rounded-lg border border-line bg-panel-2 px-2 py-1 font-mono text-xs font-bold text-slate-200">
+                        MSRP ${p.msrp.toFixed(2)}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="mt-2 flex items-center gap-2 text-xs">
+                  <span
+                    className={`rounded-full px-2 py-0.5 font-bold ${
+                      inStockCount > 0 ? "bg-green-500/15 text-green-400" : "bg-slate-800 text-muted"
+                    }`}
+                  >
+                    {inStockCount > 0
+                      ? `🟢 Available at ${inStockCount} retailer${inStockCount > 1 ? "s" : ""}`
+                      : "Watching for next restock wave"}
+                  </span>
+                </div>
+
+                <ul className="mt-4 divide-y divide-line/70">
+                  {p.listings.map((l) => {
+                    const meta = RETAILER_META[l.retailer] ?? {
+                      label: l.retailer,
+                      badgeCls: "border-line bg-panel-2 text-slate-200",
+                      scheduleHint: "",
+                    };
+                    return (
+                      <li key={l.id} className="flex items-center justify-between gap-2 py-2.5 text-sm">
+                        <a
+                          href={l.affiliateUrl ?? l.url}
+                          target="_blank"
+                          rel="sponsored noopener noreferrer"
+                          className="group flex items-center gap-2 font-medium text-slate-200 hover:text-volt"
+                        >
+                          <Store className="h-3.5 w-3.5 text-muted group-hover:text-volt" />
+                          <span>{meta.label}</span>
+                          <ExternalLink className="h-3 w-3 opacity-60 group-hover:opacity-100" />
+                        </a>
+                        <div className="flex items-center gap-2.5">
+                          {l.price != null && (
+                            <span className="font-mono text-xs text-slate-300">${l.price.toFixed(2)}</span>
+                          )}
+                          <span
+                            className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${
+                              l.inStock
+                                ? "border border-green-500/40 bg-green-500/15 text-green-400"
+                                : "bg-panel-2 text-muted"
+                            }`}
+                          >
+                            {l.inStock == null ? "Checking" : l.inStock ? "IN STOCK" : "Out of stock"}
+                          </span>
+                          {l.lastCheckedAt && (
+                            <span className="hidden text-[10px] text-muted sm:inline">
+                              {timeAgo(l.lastCheckedAt)}
+                            </span>
+                          )}
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

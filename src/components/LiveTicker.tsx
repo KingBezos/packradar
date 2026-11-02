@@ -58,10 +58,17 @@ export function LiveTicker() {
             <Radio className="h-3.5 w-3.5 animate-pulse" /> Live
           </span>
           <div className="relative overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_4%,black_96%,transparent)]">
-            <div className="animate-ticker flex w-max gap-8 py-2">
+            <div className="animate-ticker flex w-max items-center gap-10 py-2">
               {loop.map((it, i) => (
-                <Link key={`${it.id}-${i}`} href={it.url ?? "#"} className="whitespace-nowrap text-xs text-slate-300 hover:text-white">
-                  {it.message}
+                <Link
+                  key={`${it.id}-${i}`}
+                  href={it.url ?? "#"}
+                  className="inline-flex items-center gap-3 whitespace-nowrap text-xs text-slate-300 hover:text-white"
+                >
+                  <span>{it.message}</span>
+                  <span className="text-slate-600" aria-hidden>
+                    •
+                  </span>
                 </Link>
               ))}
             </div>

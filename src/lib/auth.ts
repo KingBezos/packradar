@@ -103,7 +103,10 @@ function buildAuth() {
               .from(schema.user)
               .where(eq(schema.user.role, "admin"));
             if (admins.includes(u.email.toLowerCase()) || n === 0) {
-              await db.update(schema.user).set({ role: "admin" }).where(eq(schema.user.id, u.id));
+              await db.update(schema.user).set({ role: "admin", emailVerified: true }).where(eq(schema.user.id, u.id));
+            } else if (!u.emailVerified) {
+              const { issueEmailVerificationCode } = await import("@/app/api/auth/verify-email/route");
+              await issueEmailVerificationCode(u.email).catch(() => {});
             }
           },
         },

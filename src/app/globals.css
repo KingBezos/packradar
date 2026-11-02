@@ -84,7 +84,7 @@ body {
   to { transform: translateX(-50%); }
 }
 .animate-ticker {
-  animation: ticker 60s linear infinite;
+  animation: ticker 165s linear infinite;
 }
 .animate-ticker:hover {
   animation-play-state: paused;
