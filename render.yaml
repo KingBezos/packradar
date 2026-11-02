@@ -9,7 +9,7 @@ services:
       - key: NODE_ENV
         value: production
       - key: NODE_OPTIONS
-        value: "--max-old-space-size=256"
+        value: "--max-old-space-size=160"
       - key: RUN_SCRAPERS_ON_BOOT
         value: "false"
       - key: BETTER_AUTH_SECRET

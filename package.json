@@ -7,7 +7,9 @@
     "dev": "next dev",
     "prebuild": "node scripts/copy-maplibre-worker.mjs",
     "build": "next build",
-    "start": "node --max-old-space-size=256 ./node_modules/next/dist/bin/next start",
+    "postbuild": "node --no-wasm-tier-up --max-old-space-size=192 ./node_modules/tsx/dist/cli.mjs scripts/preseed-db.ts",
+    "prestart": "node --no-wasm-tier-up --max-old-space-size=192 ./node_modules/tsx/dist/cli.mjs scripts/preseed-db.ts",
+    "start": "node --no-wasm-tier-up --max-old-space-size=160 ./node_modules/next/dist/bin/next start",
     "lint": "eslint"
   },
   "dependencies": {
