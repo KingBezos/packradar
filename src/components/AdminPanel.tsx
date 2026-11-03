@@ -44,6 +44,10 @@ type AnalyticsSummary = {
   todayUniqueHumans: number;
   views7d: number;
   unique7d: number;
+  totalSearches?: number;
+  todaySearches?: number;
+  uniqueSearchers?: number;
+  topSearches?: { query: string; searches: number; uniqueVisitors: number; lastSearchedAt: string }[];
   totalBotHitsExcluded: number;
   botBreakdown: { label: string; count: number }[];
   deviceBreakdown: { mobile: number; desktop: number; tablet: number };
@@ -753,8 +757,8 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
             </div>
           </div>
 
-          {/* Top 5 KPI Cards */}
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          {/* Top 6 KPI Cards */}
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
             <div className="card border-green-500/30 p-4">
               <div className="flex items-center justify-between text-xs text-muted">
                 <span>Live Active Humans (15m)</span>
@@ -791,6 +795,19 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
               </p>
               <p className="mt-1 text-[11px] text-slate-300">
                 <b>{analytics?.totalHumanPageviews ?? 0}</b> total human pageviews
+              </p>
+            </div>
+
+            <div className="card border-sky-500/30 p-4">
+              <div className="flex items-center justify-between text-xs text-muted">
+                <span>User Searches</span>
+                <Search className="h-4 w-4 text-sky-400" />
+              </div>
+              <p className="mt-2 font-mono text-3xl font-black text-sky-400">
+                {analytics?.totalSearches ?? 0}
+              </p>
+              <p className="mt-1 text-[11px] text-slate-300">
+                <b>{analytics?.todaySearches ?? 0}</b> today · <b>{analytics?.uniqueSearchers ?? 0}</b> unique searchers
               </p>
             </div>
 
@@ -927,6 +944,34 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
             </div>
 
             <div className="space-y-6">
+              {/* User Searches Breakdown */}
+              <div className="card border-sky-500/30 p-5 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-white">🔍 User Searches ({analytics?.totalSearches ?? 0})</h3>
+                  <span className="font-mono text-xs font-bold text-sky-400">
+                    {analytics?.uniqueSearchers ?? 0} searchers
+                  </span>
+                </div>
+                {(!analytics?.topSearches || analytics.topSearches.length === 0) ? (
+                  <p className="text-xs text-muted">
+                    {analytics?.totalSearches
+                      ? `${analytics.totalSearches} searches recorded on /search. Specific search queries (ZIPs, cities, Q-codes) will appear here as users search.`
+                      : "No user searches recorded yet."}
+                  </p>
+                ) : (
+                  <ul className="divide-y divide-line text-xs">
+                    {analytics.topSearches.map((q) => (
+                      <li key={q.query} className="flex items-center justify-between py-2">
+                        <span className="font-mono font-semibold text-slate-200">&ldquo;{q.query}&rdquo;</span>
+                        <span className="font-mono text-sky-400">
+                          {q.searches}x ({q.uniqueVisitors} uniq)
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
               {/* Top Referrers / Traffic Sources */}
               <div className="card p-5 space-y-3">
                 <h3 className="text-sm font-bold text-white">📣 Traffic Sources &amp; Referrers</h3>

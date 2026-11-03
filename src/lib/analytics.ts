@@ -37,6 +37,14 @@ export type DailyTrafficPoint = {
   uniqueVisitorHashes: string[];
   botHitsBlocked: number;
   signUps: number;
+  searches?: number;
+};
+
+export type SearchQueryStatRow = {
+  query: string;
+  searches: number;
+  uniqueVisitorHashes: string[];
+  lastSearchedAt: string;
 };
 
 export type AnalyticsStore = {
@@ -54,6 +62,8 @@ export type AnalyticsStore = {
   daily: Record<string, DailyTrafficPoint>;
   recentHumanVisits: VisitorEvent[];
   activeVisitorsMap: Record<string, number>; // visitorHash -> lastEpochMs
+  totalSearches?: number;
+  searchQueries?: Record<string, SearchQueryStatRow>;
   updatedAt: string;
 };
 
@@ -198,6 +208,8 @@ function defaultStore(): AnalyticsStore {
     daily: {},
     recentHumanVisits: [],
     activeVisitorsMap: {},
+    totalSearches: 0,
+    searchQueries: {},
     updatedAt: new Date().toISOString(),
   };
 }
@@ -311,6 +323,7 @@ export async function recordAnalyticsHit(
     path: string;
     referrer?: string;
     utmSource?: string | null;
+    searchQuery?: string | null;
     userAgent: string;
     ip: string;
     clientVisitorId?: string;
@@ -389,6 +402,33 @@ export async function recordAnalyticsHit(
     pageRow.uniqueVisitorHashes.push(vHash);
     if (pageRow.uniqueVisitorHashes.length > 2000) {
       pageRow.uniqueVisitorHashes = pageRow.uniqueVisitorHashes.slice(-2000);
+    }
+  }
+
+  // Track user searches (/search or explicit searchQuery)
+  const rawSearch = (input.searchQuery || "").trim();
+  if (cleanPath === "/search" || rawSearch.length > 0) {
+    const existingSearchPageViews = store.pages["/search"]?.views ?? 1;
+    store.totalSearches = Math.max((store.totalSearches ?? 0) + 1, existingSearchPageViews);
+    dayBucket.searches = (dayBucket.searches ?? 0) + 1;
+
+    if (rawSearch.length > 0) {
+      store.searchQueries ??= {};
+      const normKey = rawSearch.toLowerCase().slice(0, 80);
+      const qRow = (store.searchQueries[normKey] ??= {
+        query: rawSearch.slice(0, 80),
+        searches: 0,
+        uniqueVisitorHashes: [],
+        lastSearchedAt: new Date().toISOString(),
+      });
+      qRow.searches += 1;
+      qRow.lastSearchedAt = new Date().toISOString();
+      if (!qRow.uniqueVisitorHashes.includes(vHash)) {
+        qRow.uniqueVisitorHashes.push(vHash);
+        if (qRow.uniqueVisitorHashes.length > 1000) {
+          qRow.uniqueVisitorHashes = qRow.uniqueVisitorHashes.slice(-1000);
+        }
+      }
     }
   }
 
@@ -532,6 +572,20 @@ export async function getAdminAnalyticsSummary(db: DB) {
   const conversionRate =
     totalUniqueHumans > 0 ? Math.min(100, Number(((realUsers.length / totalUniqueHumans) * 100).toFixed(1))) : 0;
 
+  const searchPageRow = store.pages["/search"];
+  const totalSearches = Math.max(store.totalSearches ?? 0, searchPageRow?.views ?? 0);
+  const todaySearches = Math.max(todayBucket.searches ?? 0, searchPageRow?.views ?? 0);
+  const uniqueSearchers = searchPageRow?.uniqueVisitorHashes.length ?? 0;
+  const topSearches = Object.values(store.searchQueries ?? {})
+    .map((q) => ({
+      query: q.query,
+      searches: q.searches,
+      uniqueVisitors: q.uniqueVisitorHashes.length,
+      lastSearchedAt: q.lastSearchedAt,
+    }))
+    .sort((a, b) => b.searches - a.searches)
+    .slice(0, 20);
+
   return {
     liveActiveHumans,
     totalHumanPageviews: store.totalHumanPageviews,
@@ -540,6 +594,10 @@ export async function getAdminAnalyticsSummary(db: DB) {
     todayUniqueHumans: todayBucket.uniqueVisitorHashes.length,
     views7d,
     unique7d: unique7dSet.size,
+    totalSearches,
+    todaySearches,
+    uniqueSearchers,
+    topSearches,
     totalBotHitsExcluded: store.totalBotHitsExcluded,
     botBreakdown: Object.entries(store.botBreakdown)
       .map(([label, count]) => ({ label, count }))

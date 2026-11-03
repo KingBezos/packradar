@@ -1,42 +1,64 @@
 {
-  "totalHumanPageviews": 8,
+  "totalHumanPageviews": 30,
   "allTimeUniqueVisitorHashes": [
     "9a3d1f0b2c8e4511",
     "4c7b82e10f9d32a6",
-    "0d1dd19288169b75"
+    "0d1dd19288169b75",
+    "5bb365893501aca0",
+    "a58a2d94d082288b",
+    "692f65999f08d194",
+    "1b78fe8791b59c3b",
+    "4c61408b0d9751e3",
+    "425e08eb2de5d278",
+    "118b619d39b6d34e",
+    "cebc97d640fbd992",
+    "4ad046a9706bfa29",
+    "bb117ff2addac445"
   ],
-  "totalBotHitsExcluded": 78,
+  "totalBotHitsExcluded": 146,
   "botBreakdown": {
-    "Internal QA & Health Checks": 66,
+    "Internal QA & Health Checks": 105,
     "Discord Link Preview (Discordbot)": 3,
     "Search Engine Crawler (Google/Bing/DuckDuckGo)": 1,
-    "Headless Browser / Automation (Puppeteer/Playwright/Curl/Node)": 3,
-    "Empty or Synthetic User-Agent": 1,
-    "Social Preview Bot (Twitter/FB/Slack/Telegram/Reddit)": 4
+    "Headless Browser / Automation (Puppeteer/Playwright/Curl/Node)": 4,
+    "Empty or Synthetic User-Agent": 2,
+    "Social Preview Bot (Twitter/FB/Slack/Telegram/Reddit)": 29,
+    "Non-Browser HTTP Client": 2
   },
   "deviceBreakdown": {
-    "mobile": 3,
+    "mobile": 25,
     "desktop": 5,
     "tablet": 0
   },
   "pages": {
     "/": {
       "path": "/",
-      "views": 2,
+      "views": 14,
       "uniqueVisitorHashes": [
         "9a3d1f0b2c8e4511",
-        "4c7b82e10f9d32a6"
+        "4c7b82e10f9d32a6",
+        "5bb365893501aca0",
+        "a58a2d94d082288b",
+        "692f65999f08d194",
+        "1b78fe8791b59c3b",
+        "4c61408b0d9751e3",
+        "425e08eb2de5d278",
+        "cebc97d640fbd992",
+        "4ad046a9706bfa29",
+        "bb117ff2addac445"
       ],
-      "lastVisitedAt": "2026-11-03T02:09:44.000Z"
+      "lastVisitedAt": "2026-11-03T06:02:52.289Z"
     },
     "/map": {
       "path": "/map",
-      "views": 2,
+      "views": 5,
       "uniqueVisitorHashes": [
         "9a3d1f0b2c8e4511",
-        "4c7b82e10f9d32a6"
+        "4c7b82e10f9d32a6",
+        "4c61408b0d9751e3",
+        "5bb365893501aca0"
       ],
-      "lastVisitedAt": "2026-11-03T02:09:45.000Z"
+      "lastVisitedAt": "2026-11-03T03:56:48.016Z"
     },
     "/machines/Q01168": {
       "path": "/machines/Q01168",
@@ -64,11 +86,39 @@
     },
     "/drops": {
       "path": "/drops",
+      "views": 2,
+      "uniqueVisitorHashes": [
+        "0d1dd19288169b75",
+        "5bb365893501aca0"
+      ],
+      "lastVisitedAt": "2026-11-03T03:55:34.225Z"
+    },
+    "/search": {
+      "path": "/search",
+      "views": 4,
+      "uniqueVisitorHashes": [
+        "5bb365893501aca0",
+        "692f65999f08d194",
+        "118b619d39b6d34e",
+        "4ad046a9706bfa29"
+      ],
+      "lastVisitedAt": "2026-11-03T04:47:23.844Z"
+    },
+    "/machines/Q02071": {
+      "path": "/machines/Q02071",
       "views": 1,
       "uniqueVisitorHashes": [
-        "0d1dd19288169b75"
+        "5bb365893501aca0"
       ],
-      "lastVisitedAt": "2026-11-03T03:08:46.728Z"
+      "lastVisitedAt": "2026-11-03T03:53:11.274Z"
+    },
+    "/machines/Q02319": {
+      "path": "/machines/Q02319",
+      "views": 1,
+      "uniqueVisitorHashes": [
+        "118b619d39b6d34e"
+      ],
+      "lastVisitedAt": "2026-11-03T04:12:10.846Z"
     }
   },
   "sources": {
@@ -80,22 +130,298 @@
         "4c7b82e10f9d32a6"
       ],
       "lastSeenAt": "2026-11-03T02:09:48.000Z"
+    },
+    "Facebook": {
+      "source": "Facebook",
+      "visits": 11,
+      "uniqueVisitorHashes": [
+        "5bb365893501aca0",
+        "a58a2d94d082288b",
+        "1b78fe8791b59c3b",
+        "cebc97d640fbd992",
+        "4ad046a9706bfa29",
+        "bb117ff2addac445"
+      ],
+      "lastSeenAt": "2026-11-03T05:03:41.438Z"
+    },
+    "Direct / Shared Link (Discord/SMS/App)": {
+      "source": "Direct / Shared Link (Discord/SMS/App)",
+      "visits": 11,
+      "uniqueVisitorHashes": [
+        "692f65999f08d194",
+        "4c61408b0d9751e3",
+        "425e08eb2de5d278",
+        "118b619d39b6d34e"
+      ],
+      "lastSeenAt": "2026-11-03T06:02:52.289Z"
     }
   },
   "daily": {
     "2026-11-03": {
       "date": "2026-11-03",
-      "humanViews": 8,
+      "humanViews": 30,
       "uniqueVisitorHashes": [
         "9a3d1f0b2c8e4511",
         "4c7b82e10f9d32a6",
-        "0d1dd19288169b75"
+        "0d1dd19288169b75",
+        "5bb365893501aca0",
+        "a58a2d94d082288b",
+        "692f65999f08d194",
+        "1b78fe8791b59c3b",
+        "4c61408b0d9751e3",
+        "425e08eb2de5d278",
+        "118b619d39b6d34e",
+        "cebc97d640fbd992",
+        "4ad046a9706bfa29",
+        "bb117ff2addac445"
       ],
-      "botHitsBlocked": 78,
+      "botHitsBlocked": 146,
       "signUps": 1
     }
   },
   "recentHumanVisits": [
+    {
+      "id": "v-1793685772289-ah0o",
+      "at": "2026-11-03T06:02:52.289Z",
+      "path": "/",
+      "referrer": "",
+      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
+      "device": "mobile",
+      "visitorHash": "4c61408b",
+      "userId": "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+      "userName": "King_Bezos"
+    },
+    {
+      "id": "v-1793682221438-h4wv",
+      "at": "2026-11-03T05:03:41.438Z",
+      "path": "/",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "bb117ff2",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793681243844-3xhv",
+      "at": "2026-11-03T04:47:23.844Z",
+      "path": "/search",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "4ad046a9",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793681232287-yqnx",
+      "at": "2026-11-03T04:47:12.287Z",
+      "path": "/",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "4ad046a9",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793679815891-kh6x",
+      "at": "2026-11-03T04:23:35.891Z",
+      "path": "/",
+      "referrer": "",
+      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
+      "device": "mobile",
+      "visitorHash": "4c61408b",
+      "userId": "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+      "userName": "King_Bezos"
+    },
+    {
+      "id": "v-1793679743106-ods8",
+      "at": "2026-11-03T04:22:23.106Z",
+      "path": "/",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "cebc97d6",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793679130846-mzeq",
+      "at": "2026-11-03T04:12:10.846Z",
+      "path": "/machines/Q02319",
+      "referrer": "",
+      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
+      "device": "mobile",
+      "visitorHash": "118b619d",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793679095508-jw6l",
+      "at": "2026-11-03T04:11:35.508Z",
+      "path": "/search",
+      "referrer": "",
+      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
+      "device": "mobile",
+      "visitorHash": "118b619d",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793679082750-7wpi",
+      "at": "2026-11-03T04:11:22.750Z",
+      "path": "/",
+      "referrer": "",
+      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
+      "device": "mobile",
+      "visitorHash": "425e08eb",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793678901606-fj7l",
+      "at": "2026-11-03T04:08:21.606Z",
+      "path": "/",
+      "referrer": "",
+      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
+      "device": "mobile",
+      "visitorHash": "4c61408b",
+      "userId": "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+      "userName": "King_Bezos"
+    },
+    {
+      "id": "v-1793678208016-dl9w",
+      "at": "2026-11-03T03:56:48.016Z",
+      "path": "/map",
+      "referrer": "https://lm.facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "5bb36589",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793678134225-05lj",
+      "at": "2026-11-03T03:55:34.225Z",
+      "path": "/drops",
+      "referrer": "https://lm.facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "5bb36589",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793678124225-rp2v",
+      "at": "2026-11-03T03:55:24.225Z",
+      "path": "/map",
+      "referrer": "",
+      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
+      "device": "mobile",
+      "visitorHash": "4c61408b",
+      "userId": "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+      "userName": "King_Bezos"
+    },
+    {
+      "id": "v-1793678118887-5okr",
+      "at": "2026-11-03T03:55:18.887Z",
+      "path": "/map",
+      "referrer": "",
+      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
+      "device": "mobile",
+      "visitorHash": "4c61408b",
+      "userId": "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+      "userName": "King_Bezos"
+    },
+    {
+      "id": "v-1793678097985-haxi",
+      "at": "2026-11-03T03:54:57.985Z",
+      "path": "/",
+      "referrer": "",
+      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
+      "device": "mobile",
+      "visitorHash": "4c61408b",
+      "userId": "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+      "userName": "King_Bezos"
+    },
+    {
+      "id": "v-1793678019416-k2i1",
+      "at": "2026-11-03T03:53:39.416Z",
+      "path": "/",
+      "referrer": "https://lm.facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "1b78fe87",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793677991274-el34",
+      "at": "2026-11-03T03:53:11.274Z",
+      "path": "/machines/Q02071",
+      "referrer": "https://lm.facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "5bb36589",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793677978527-jbpd",
+      "at": "2026-11-03T03:52:58.527Z",
+      "path": "/search",
+      "referrer": "",
+      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
+      "device": "mobile",
+      "visitorHash": "692f6599",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793677967282-sx6a",
+      "at": "2026-11-03T03:52:47.282Z",
+      "path": "/",
+      "referrer": "",
+      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
+      "device": "mobile",
+      "visitorHash": "692f6599",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793677941734-v0dl",
+      "at": "2026-11-03T03:52:21.734Z",
+      "path": "/",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "a58a2d94",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793677938535-ht5i",
+      "at": "2026-11-03T03:52:18.535Z",
+      "path": "/search",
+      "referrer": "https://lm.facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "5bb36589",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793677931102-ayd6",
+      "at": "2026-11-03T03:52:11.102Z",
+      "path": "/",
+      "referrer": "https://lm.facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "5bb36589",
+      "userId": null,
+      "userName": null
+    },
     {
       "id": "v-1793675326728-25i0",
       "at": "2026-11-03T03:08:46.728Z",
@@ -163,6 +489,8 @@
       "userName": "King_Bezos"
     }
   ],
-  "activeVisitorsMap": {},
-  "updatedAt": "2026-11-03T03:08:46.728Z"
+  "activeVisitorsMap": {
+    "4c61408b0d9751e3": 1793685772289
+  },
+  "updatedAt": "2026-11-03T06:02:52.289Z"
 }

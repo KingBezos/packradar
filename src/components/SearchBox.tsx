@@ -11,8 +11,27 @@ export function SearchBox({ compact, initial = "", autoFocus }: { compact?: bool
   const [locating, setLocating] = useState(false);
 
   const go = (query: string) => {
-    if (!query.trim()) return;
-    router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+    const clean = query.trim();
+    if (!clean) return;
+    try {
+      if (typeof window !== "undefined" && window.location.pathname === "/search") {
+        const vid = localStorage.getItem("pr_vid") || "";
+        void fetch("/api/analytics/track", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            path: "/search",
+            referrer: document.referrer || "",
+            searchQuery: clean,
+            clientVisitorId: vid,
+            isWebdriver: Boolean(navigator.webdriver),
+            screenWidth: window.screen?.width ?? window.innerWidth ?? 0,
+          }),
+          keepalive: true,
+        }).catch(() => {});
+      }
+    } catch {}
+    router.push(`/search?q=${encodeURIComponent(clean)}`);
   };
 
   const locate = () => {

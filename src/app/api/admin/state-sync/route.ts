@@ -45,6 +45,8 @@ export function mergeAnalyticsStores(
     daily: { ...current.daily },
     recentHumanVisits: [...(current.recentHumanVisits ?? [])],
     activeVisitorsMap: { ...(incoming.activeVisitorsMap ?? {}), ...(current.activeVisitorsMap ?? {}) },
+    totalSearches: Math.max(current.totalSearches ?? 0, incoming.totalSearches ?? 0),
+    searchQueries: { ...(incoming.searchQueries ?? {}), ...(current.searchQueries ?? {}) },
     updatedAt: new Date().toISOString(),
   };
 

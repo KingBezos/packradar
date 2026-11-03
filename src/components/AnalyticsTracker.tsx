@@ -26,6 +26,7 @@ export function AnalyticsTracker() {
 
     const sp = new URLSearchParams(window.location.search);
     const utmSource = sp.get("utm_source") || sp.get("ref") || sp.get("source") || null;
+    const searchQuery = sp.get("q") || null;
     const isWebdriver = Boolean(navigator.webdriver);
     const screenWidth = window.screen?.width ?? window.innerWidth ?? 0;
 
@@ -36,6 +37,7 @@ export function AnalyticsTracker() {
         path: pathname,
         referrer: document.referrer || "",
         utmSource,
+        searchQuery,
         clientVisitorId: vid,
         isWebdriver,
         screenWidth,
