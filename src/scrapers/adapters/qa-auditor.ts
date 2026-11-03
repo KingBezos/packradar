@@ -146,19 +146,27 @@ export const qaAuditor: Adapter = {
     report.newsArticlesCount = allNews.length;
     checksRun += allNews.length;
 
-    // 4b. Ensure owner account (james@jpegtown.com) keeps King_Bezos handle and admin role
+    // 4b. Ensure owner account (james@jpegtown.com) keeps King_Bezos handle, admin role, and >=100 reputation
     const [ownerRow] = await db.select().from(user).where(eq(user.email, "james@jpegtown.com"));
-    if (ownerRow && (ownerRow.name === "LugiaScout892" || !ownerRow.name || ownerRow.role !== "admin")) {
+    if (
+      ownerRow &&
+      (ownerRow.name === "LugiaScout892" ||
+        !ownerRow.name ||
+        ownerRow.role !== "admin" ||
+        (ownerRow.reputation ?? 0) < 100)
+    ) {
       await db
         .update(user)
         .set({
           name: ownerRow.name && ownerRow.name !== "LugiaScout892" ? ownerRow.name : "King_Bezos",
           role: "admin",
+          plan: "premium",
+          reputation: Math.max(ownerRow.reputation ?? 0, 100),
           emailVerified: true,
         })
         .where(eq(user.id, ownerRow.id));
       issuesHealed++;
-      log("Restored owner handle King_Bezos & admin role for james@jpegtown.com");
+      log("Restored owner handle King_Bezos, admin role & >=100 reputation for james@jpegtown.com");
     }
 
     // 5. Simulated user HTTP route smoke test against local server if running

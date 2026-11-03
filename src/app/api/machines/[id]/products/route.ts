@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { route, json } from "@/lib/api";
-import { requireUser } from "@/lib/session";
+import { persistIdentityCookie, requireUser } from "@/lib/session";
 import { getDb } from "@/db";
 import { machines, user } from "@/db/schema";
 import {
@@ -59,11 +59,13 @@ export const POST = route(async (req, ctx: { params: Promise<{ id: string }> }) 
       reporterName: u?.name || "Spotter",
     });
     if (u) {
+      const nextRep = (u.reputation ?? 0) + 2;
       await db
         .update(user)
-        .set({ reputation: (u.reputation ?? 0) + 2 })
+        .set({ reputation: nextRep })
         .where(eq(user.id, u.id))
         .catch(() => {});
+      await persistIdentityCookie({ ...u, reputation: nextRep });
     }
     return {
       ok: true,

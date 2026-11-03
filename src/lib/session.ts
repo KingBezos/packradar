@@ -9,6 +9,9 @@ const IDENTITY_COOKIE = "packradar.identity";
 const OWNER_DEFAULT_HANDLES: Record<string, string> = {
   "james@jpegtown.com": "King_Bezos",
 };
+const OWNER_MIN_REPUTATION: Record<string, number> = {
+  "james@jpegtown.com": 100,
+};
 
 function identitySecret(): string {
   return process.env.BETTER_AUTH_SECRET || "dev-only-insecure-secret-change-me-in-production-0123456789";
@@ -107,27 +110,42 @@ async function sanitizeUserPrivacy(
 
   const nameChanged = desiredName !== u.name;
   const hasImage = Boolean(u.image);
-  if (!hasImage && !nameChanged && !shouldBeAdmin) return u;
+  const minOwnerRep = OWNER_MIN_REPUTATION[emailLower] ?? 0;
+  const cookieRep =
+    cookieProfile && cookieProfile.email.toLowerCase() === emailLower
+      ? (cookieProfile.reputation ?? 0)
+      : 0;
+  const desiredRep = Math.max(u.reputation ?? 0, cookieRep, minOwnerRep);
+  const repChanged = desiredRep !== (u.reputation ?? 0);
+
+  if (!hasImage && !nameChanged && !shouldBeAdmin && !repChanged) return u;
 
   const newRole = shouldBeAdmin ? "admin" : u.role;
+  const newPlan = ownerEmails.includes(emailLower) ? "premium" : u.plan;
   await db
     .update(userTable)
     .set({
       name: desiredName,
       image: null,
       role: newRole,
+      plan: newPlan,
+      reputation: desiredRep,
       ...(shouldBeAdmin ? { emailVerified: true } : {}),
     })
     .where(eq(userTable.id, u.id))
     .catch(() => {});
 
-  return {
+  const updatedUser: User = {
     ...u,
     name: desiredName,
     image: null,
     role: newRole,
+    plan: newPlan,
+    reputation: desiredRep,
     ...(shouldBeAdmin ? { emailVerified: true } : {}),
   };
+  await persistIdentityCookie(updatedUser);
+  return updatedUser;
 }
 
 /** Current signed-in user (full DB row) or null. Self-heals across container restarts. */
@@ -168,16 +186,18 @@ export async function getCurrentUser(): Promise<User | null> {
     if (identity?.email) {
       let [u] = await db.select().from(userTable).where(eq(userTable.email, identity.email));
       if (!u) {
+        const emailLower = identity.email.toLowerCase();
+        const initialRep = Math.max(identity.reputation || 0, OWNER_MIN_REPUTATION[emailLower] ?? 0);
         const [inserted] = await db
           .insert(userTable)
           .values({
             id: identity.id,
             email: identity.email,
-            name: identity.name || OWNER_DEFAULT_HANDLES[identity.email.toLowerCase()] || generateSpotterHandle(identity.email),
+            name: identity.name || OWNER_DEFAULT_HANDLES[emailLower] || generateSpotterHandle(identity.email),
             emailVerified: true,
-            role: identity.email.toLowerCase() === "james@jpegtown.com" ? "admin" : identity.role || "user",
-            plan: identity.plan || "free",
-            reputation: identity.reputation || 0,
+            role: emailLower === "james@jpegtown.com" ? "admin" : identity.role || "user",
+            plan: emailLower === "james@jpegtown.com" ? "premium" : identity.plan || "free",
+            reputation: initialRep,
             homeZip: identity.homeZip || null,
           })
           .onConflictDoNothing()

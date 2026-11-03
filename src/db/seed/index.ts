@@ -11,7 +11,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { sql } from "drizzle-orm";
 import type { DB } from "@/db";
-import { activity, dropCandidates, machines, newsPosts, releases, settings, sponsors } from "@/db/schema";
+import { activity, dropCandidates, machines, newsPosts, releases, reputationEvents, settings, sponsors, user } from "@/db/schema";
 import { titleCase, type OfficialMachine } from "@/lib/machines";
 import { slugify, timezoneFor } from "@/lib/geo";
 
@@ -299,6 +299,31 @@ export async function seedIfEmpty(db: DB) {
       createdAt: new Date(now.getTime() - idx * 45_000),
     })),
   );
+
+  // 3b. Seed Owner Account (King_Bezos) with baseline reputation so container restarts never reset to 0
+  await db
+    .insert(user)
+    .values({
+      id: "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+      name: "King_Bezos",
+      email: "james@jpegtown.com",
+      emailVerified: true,
+      role: "admin",
+      plan: "premium",
+      reputation: 100,
+      homeZip: "97027",
+    })
+    .onConflictDoNothing();
+
+  await db
+    .insert(reputationEvents)
+    .values({
+      id: "rep-owner-seed-100",
+      userId: "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+      delta: 100,
+      reason: "Verified vending drop & product spotter",
+    })
+    .onConflictDoNothing();
 
   // 4. Welcome News & Sponsors
   await db
