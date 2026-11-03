@@ -5,6 +5,7 @@ import { eq, ne } from "drizzle-orm";
 import { route, json } from "@/lib/api";
 import { getDb } from "@/db";
 import { machines, settings } from "@/db/schema";
+import { requireRole } from "@/lib/session";
 import { extractDropTimers, matchMachines, type MachineRef } from "@/scrapers/extract";
 import { submitObservation, upsertScrapedCandidate } from "@/lib/drops/engine";
 import {
@@ -135,6 +136,7 @@ export const POST = route(async (req) => {
   const db = await getDb();
 
   if (b.action === "run_outreach_worker") {
+    await requireRole(["admin", "mod"]);
     await runAdapter("discord-outreach");
     const updated = await getBotConfig();
     return {
@@ -183,6 +185,7 @@ export const POST = route(async (req) => {
   }
 
   if (b.action === "update_config" && b.config) {
+    await requireRole(["admin", "mod"]);
     const next: DiscordBotConfig = {
       ...current,
       ...b.config,
@@ -252,6 +255,7 @@ export const POST = route(async (req) => {
   }
 
   if (b.action === "register_commands") {
+    await requireRole(["admin", "mod"]);
     const token = process.env.DISCORD_BOT_TOKEN;
     const clientId = current.clientId;
     if (!token) {
@@ -281,6 +285,7 @@ export const POST = route(async (req) => {
   }
 
   if (b.action === "ingest_message" && b.message) {
+    await requireRole(["admin", "mod"]);
     const refs: MachineRef[] = await db
       .select({
         id: machines.id,

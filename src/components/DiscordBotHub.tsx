@@ -286,21 +286,20 @@ export function DiscordBotHub({
           <div className="max-w-2xl space-y-2.5">
             <div className="flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-500/20 px-3 py-1 text-xs font-bold text-indigo-300 ring-1 ring-indigo-400/30">
-                <Bot className="h-3.5 w-3.5" /> Conversational Discord Bot &amp; Auto-Outreach Worker
+                <Bot className="h-3.5 w-3.5" /> PackRadar Conversational Discord Drop Bot
               </span>
               <span className="inline-flex items-center gap-1 rounded-full bg-green-500/15 px-2.5 py-0.5 text-[11px] font-bold text-green-300">
-                <Radio className="h-3 w-3 animate-pulse" /> Auto-Launching Every 2 Hours Across {config.connectedGuilds.length} Groups
+                <Radio className="h-3 w-3 animate-pulse" /> Active in {config.connectedGuilds.length} Pokémon TCG Groups
               </span>
             </div>
             <h1 className="text-2xl font-black text-white sm:text-3xl">
-              Natural Conversational Drop Bot for Pokémon TCG Discord Groups
+              Live Vending Machine Drop &amp; Restock Bot for Your Discord Server
             </h1>
             <p className="text-sm text-slate-300">
-              Works directly inside Pokémon Discord conversations (<code className="text-volt">#vending-chat</code>,{" "}
+              Add the PackRadar bot to your Pokémon TCG Discord server (<code className="text-volt">#vending-chat</code>,{" "}
               <code className="text-volt">#restocks</code>, <code className="text-volt">/ask</code>,{" "}
-              <code className="text-volt">/drop</code>, <code className="text-volt">/products</code>) to answer live
-              questions about drop windows, ETBs, and Booster Bundles — automatically driving collectors to create a
-              free PackRadar account for alerts and monthly ETB prizes.
+              <code className="text-volt">/drop</code>, <code className="text-volt">/products</code>) to check live
+              kiosk drop timers, spotted ETBs &amp; Booster Bundles, and regional restock alerts right inside Discord.
             </p>
           </div>
 
@@ -327,19 +326,21 @@ export function DiscordBotHub({
               {copied ? <Check className="h-4 w-4 text-green-400" /> : <Copy className="h-4 w-4" />}
               {copied ? "Copied Invite Link" : "Copy Bot Invite URL"}
             </button>
-            <button
-              type="button"
-              onClick={triggerOutreachWorker}
-              disabled={busy !== null}
-              className="btn-green text-xs font-bold"
-            >
-              {busy === "worker" ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Zap className="h-4 w-4" />
-              )}
-              Auto-Post to Connected Groups Now
-            </button>
+            {isStaff && (
+              <button
+                type="button"
+                onClick={triggerOutreachWorker}
+                disabled={busy !== null}
+                className="btn-green text-xs font-bold"
+              >
+                {busy === "worker" ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Zap className="h-4 w-4" />
+                )}
+                Auto-Post to Connected Groups Now (Admin)
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -373,7 +374,7 @@ export function DiscordBotHub({
           </div>
           <p className="text-xs text-muted">
             Type any question a collector would ask in a Pokémon Discord server — the bot answers naturally with live
-            vending timers &amp; vended products and includes a direct sign-up link back to PackRadar:
+            vending timers &amp; spotted products:
           </p>
 
           <div className="flex flex-wrap gap-1.5">
@@ -526,18 +527,18 @@ export function DiscordBotHub({
         </div>
       </div>
 
-      {/* 2. Autonomous Worker Outreach Feed Across Connected Pokémon Discord Groups */}
+      {/* 2. Live Feed of Recent Bot Replies Across Connected Pokémon Discord Groups */}
       <div className="card space-y-4 p-6">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
             <h2 className="flex items-center gap-2 text-lg font-black text-white">
-              <Radio className="h-5 w-5 text-green-400" /> Autonomous Worker Conversational Posts Across Pokémon Discord Groups
+              <Radio className="h-5 w-5 text-green-400" /> Recent Live Bot Answers in Connected Pokémon Discord Servers
             </h2>
             <p className="text-xs text-muted">
-              Our background worker automatically participates in connected Pokémon TCG Discord channels every 2 hours with live drop windows, vended product intel, and PackRadar sign-up links.
+              Live examples of the PackRadar bot answering drop time &amp; vended product questions across connected Pokémon TCG Discord channels.
             </p>
           </div>
-          <Link href="/sign-up?next=%2Fdiscord" className="btn-primary py-1.5 text-xs font-bold">
+          <Link href={signedIn ? "/alerts" : "/sign-up?next=%2Fdiscord"} className="btn-primary py-1.5 text-xs font-bold">
             {signedIn ? "Manage Alerts →" : "Create Free Account →"}
           </Link>
         </div>
@@ -653,48 +654,48 @@ export function DiscordBotHub({
           </div>
         </div>
 
-        <div className="space-y-6">
-          <div className="card space-y-4 p-6">
-            <div className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-volt" />
-              <h2 className="text-lg font-bold text-white">Passive Discord Channel Harvester</h2>
-            </div>
-            <p className="text-xs text-muted">
-              When invited with <b className="text-white">Full Harvester</b> permissions, the bot watches{" "}
-              <code className="text-white">#{config.autoHarvestChannels[0] ?? "vending-chat"}</code>, extracts Q-codes
-              &amp; minute marks from natural chat messages, and replies with a PackRadar link:
-            </p>
-
-            <div className="space-y-3">
-              <div className="flex gap-2">
-                <span className="inline-flex items-center rounded-lg border border-line bg-panel-2 px-3 font-mono text-xs text-muted">
-                  #{harvestChannel}
-                </span>
-                <input
-                  className="input font-mono text-xs"
-                  placeholder="Channel name"
-                  value={harvestChannel}
-                  onChange={(e) => setHarvestChannel(e.target.value)}
-                />
+        {isStaff && (
+          <div className="space-y-6">
+            <div className="card space-y-4 border-volt/40 p-6">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-volt" />
+                <h2 className="text-lg font-bold text-white">Admin: Passive Discord Channel Harvester</h2>
               </div>
-              <textarea
-                rows={3}
-                className="input text-xs"
-                value={harvestText}
-                onChange={(e) => setHarvestText(e.target.value)}
-              />
-              <button className="btn-green w-full text-xs font-bold" disabled={busy !== null} onClick={runHarvest}>
-                {busy === "harvest" ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <MessageSquarePlus className="h-4 w-4" />
-                )}{" "}
-                Harvest Discord Message Into PackRadar DB
-              </button>
-            </div>
-          </div>
+              <p className="text-xs text-muted">
+                When invited with <b className="text-white">Full Harvester</b> permissions, the bot watches{" "}
+                <code className="text-white">#{config.autoHarvestChannels[0] ?? "vending-chat"}</code>, extracts Q-codes
+                &amp; minute marks from natural chat messages, and updates PackRadar:
+              </p>
 
-          {isStaff && (
+              <div className="space-y-3">
+                <div className="flex gap-2">
+                  <span className="inline-flex items-center rounded-lg border border-line bg-panel-2 px-3 font-mono text-xs text-muted">
+                    #{harvestChannel}
+                  </span>
+                  <input
+                    className="input font-mono text-xs"
+                    placeholder="Channel name"
+                    value={harvestChannel}
+                    onChange={(e) => setHarvestChannel(e.target.value)}
+                  />
+                </div>
+                <textarea
+                  rows={3}
+                  className="input text-xs"
+                  value={harvestText}
+                  onChange={(e) => setHarvestText(e.target.value)}
+                />
+                <button className="btn-green w-full text-xs font-bold" disabled={busy !== null} onClick={runHarvest}>
+                  {busy === "harvest" ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <MessageSquarePlus className="h-4 w-4" />
+                  )}{" "}
+                  Harvest Discord Message Into PackRadar DB (Admin)
+                </button>
+              </div>
+            </div>
+
             <div className="card space-y-4 border-volt/40 p-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -727,8 +728,8 @@ export function DiscordBotHub({
                 </button>
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

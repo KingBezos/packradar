@@ -5,12 +5,14 @@
     "4c7b82e10f9d32a6",
     "0d1dd19288169b75"
   ],
-  "totalBotHitsExcluded": 59,
+  "totalBotHitsExcluded": 78,
   "botBreakdown": {
-    "Internal QA & Health Checks": 53,
+    "Internal QA & Health Checks": 66,
     "Discord Link Preview (Discordbot)": 3,
     "Search Engine Crawler (Google/Bing/DuckDuckGo)": 1,
-    "Headless Browser / Automation (Puppeteer/Playwright/Curl/Node)": 2
+    "Headless Browser / Automation (Puppeteer/Playwright/Curl/Node)": 3,
+    "Empty or Synthetic User-Agent": 1,
+    "Social Preview Bot (Twitter/FB/Slack/Telegram/Reddit)": 4
   },
   "deviceBreakdown": {
     "mobile": 3,
@@ -89,7 +91,7 @@
         "4c7b82e10f9d32a6",
         "0d1dd19288169b75"
       ],
-      "botHitsBlocked": 59,
+      "botHitsBlocked": 78,
       "signUps": 1
     }
   },
@@ -161,8 +163,6 @@
       "userName": "King_Bezos"
     }
   ],
-  "activeVisitorsMap": {
-    "0d1dd19288169b75": 1793675326728
-  },
+  "activeVisitorsMap": {},
   "updatedAt": "2026-11-03T03:08:46.728Z"
 }
