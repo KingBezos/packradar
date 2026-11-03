@@ -19,8 +19,18 @@ export const GET = route(async (req) => {
   const refresh = searchParams.get("refresh") === "1";
 
   const [row] = await db.select().from(settings).where(eq(settings.key, "redditOpportunitiesV1"));
-  if (!refresh && Array.isArray(row?.value) && row.value.length > 0) {
-    return { opportunities: row.value as RedditOpportunity[] };
+  const cached = Array.isArray(row?.value) ? (row.value as RedditOpportunity[]) : [];
+  const hasLegacyCache =
+    cached.length === 0 ||
+    cached.some(
+      (item) =>
+        !item.permalink?.includes("/comments/") ||
+        item.helpfulReplyDraft?.includes("utm_source=reddit") ||
+        item.helpfulReplyDraft?.toLowerCase().includes("we track"),
+    );
+
+  if (!refresh && !hasLegacyCache) {
+    return { opportunities: cached };
   }
 
   const opportunities = await scanLiveRedditOpportunities(db);

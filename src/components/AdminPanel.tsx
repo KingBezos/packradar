@@ -1031,13 +1031,12 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="flex items-center gap-2 text-2xl font-black text-white">
-                <Sparkles className="h-6 w-6 text-volt" /> Reddit Opportunity Radar &amp; Data-Backed Reply Drafter
+                <Sparkles className="h-6 w-6 text-volt" /> Reddit Thread Finder &amp; Casual Reply Drafter
               </h2>
               <p className="text-xs text-muted">
-                Scans Pokémon TCG subreddits (<code className="text-white">r/PokemonTCG</code>,{" "}
-                <code className="text-white">r/PKMNTCGDeals</code>) for vending machine &amp; restock questions and
-                drafts data-first replies with real machine addresses, <code className="text-volt">:XX</code> drop
-                cadences, and <code className="text-volt">?utm_source=reddit</code> tracking links.
+                Pulls direct Reddit comment threads (<code className="text-white">/r/PokemonTCG/comments/…</code>) about
+                Pokémon vending machines and drafts casual, collector-to-collector replies you can copy and paste right
+                into the thread.
               </p>
             </div>
             <button
@@ -1055,10 +1054,10 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
           <div className="card border-volt/30 p-5 space-y-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h3 className="text-sm font-bold text-white">
-                ⚡ Instant Custom Reddit Reply Drafter (Paste Any Reddit Question or City / State / Q-Code)
+                ⚡ Custom Thread Reply Generator (Paste Any Reddit Question, Thread Title, or City / State / Q-Code)
               </h3>
               <span className="text-xs text-muted">
-                Auto-pulls real machine addresses &amp; drop windows from PackRadar DB
+                Writes a natural, nonchalant reply matched to the topic + local kiosks
               </span>
             </div>
             <div className="grid gap-2 sm:grid-cols-3">
@@ -1081,7 +1080,7 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                 }}
                 className="btn-primary justify-center py-2 text-xs font-bold"
               >
-                <Sparkles className="h-3.5 w-3.5" /> Generate Data-Backed Reply
+                <Sparkles className="h-3.5 w-3.5" /> Generate Casual Reply
               </button>
             </div>
 
@@ -1097,7 +1096,8 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                     onClick={() => {
                       navigator.clipboard.writeText(customRedditDraft.helpfulReplyDraft);
                       setCopiedReplyId("custom-full");
-                      setTimeout(() => setCopiedReplyId(null), 2000);
+                      setMsg("Copied reply to clipboard! Paste it directly into the Reddit comment box.");
+                      setTimeout(() => setCopiedReplyId(null), 2500);
                     }}
                     className="btn-primary py-1 text-xs font-bold"
                   >
@@ -1106,108 +1106,157 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                     ) : (
                       <Copy className="h-3.5 w-3.5" />
                     )}
-                    {copiedReplyId === "custom-full" ? "Copied Reply!" : "Copy Full Data Reply"}
+                    {copiedReplyId === "custom-full" ? "Copied Reply!" : "Copy Casual Reply"}
                   </button>
                 </div>
-                <pre className="whitespace-pre-wrap rounded-lg bg-bg p-3 font-sans text-xs leading-relaxed text-slate-200">
-                  {customRedditDraft.helpfulReplyDraft}
-                </pre>
+                <textarea
+                  rows={5}
+                  className="input w-full bg-bg font-sans text-xs leading-relaxed text-slate-200"
+                  value={customRedditDraft.helpfulReplyDraft}
+                  onChange={(e) =>
+                    setCustomRedditDraft({
+                      ...customRedditDraft,
+                      helpfulReplyDraft: e.target.value,
+                    })
+                  }
+                />
               </div>
             )}
           </div>
 
           {/* Live Scanned Reddit Threads */}
           <div className="space-y-4">
-            {redditOpps.map((opp) => (
-              <div
-                key={opp.id}
-                className={`card p-5 space-y-3 ${
-                  opp.status === "replied"
-                    ? "border-green-500/40 bg-green-500/5"
-                    : opp.status === "dismissed"
-                      ? "opacity-50"
-                      : "border-line"
-                }`}
-              >
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div className="space-y-1">
-                    <div className="flex flex-wrap items-center gap-2 text-xs">
-                      <span className="rounded-full bg-orange-500/20 px-2.5 py-0.5 font-bold text-orange-300">
-                        {opp.subreddit}
-                      </span>
-                      <span className="rounded-full bg-volt/15 px-2.5 py-0.5 font-bold text-volt">
-                        📍 {opp.matchedLocationLabel} ({opp.matchedMachinesCount} machines)
-                      </span>
-                      <span className="text-muted">
-                        by {opp.author} · {timeAgo(new Date(opp.postedAt))}
-                      </span>
-                      {opp.status === "replied" && (
-                        <span className="rounded-full bg-green-500/20 px-2 py-0.5 font-bold text-green-400">
-                          ✓ Replied
+            {redditOpps.map((opp) => {
+              const copyAndOpenThread = () => {
+                navigator.clipboard.writeText(opp.helpfulReplyDraft);
+                setCopiedReplyId(opp.id);
+                setMsg("Reply copied to clipboard! Opening the Reddit thread so you can paste it.");
+                setTimeout(() => setCopiedReplyId(null), 3000);
+                window.open(opp.permalink, "_blank", "noopener,noreferrer");
+                void call("/api/admin/reddit-radar", "POST", {
+                  action: "set_status",
+                  id: opp.id,
+                  status: "replied",
+                }).then((r) => setRedditOpps(r.opportunities ?? []));
+              };
+
+              return (
+                <div
+                  key={opp.id}
+                  className={`card p-5 space-y-3 ${
+                    opp.status === "replied"
+                      ? "border-green-500/40 bg-green-500/5"
+                      : opp.status === "dismissed"
+                        ? "opacity-50"
+                        : "border-line"
+                  }`}
+                >
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div className="space-y-1">
+                      <div className="flex flex-wrap items-center gap-2 text-xs">
+                        <span className="rounded-full bg-orange-500/20 px-2.5 py-0.5 font-bold text-orange-300">
+                          {opp.subreddit}
                         </span>
+                        <span className="rounded-full bg-volt/15 px-2.5 py-0.5 font-bold text-volt">
+                          📍 {opp.matchedLocationLabel} ({opp.matchedMachinesCount} machines)
+                        </span>
+                        <span className="text-muted">
+                          by {opp.author} · {timeAgo(new Date(opp.postedAt))}
+                        </span>
+                        {opp.status === "replied" && (
+                          <span className="rounded-full bg-green-500/20 px-2 py-0.5 font-bold text-green-400">
+                            ✓ Opened &amp; Copied
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="text-base font-bold text-white">
+                        <a
+                          href={opp.permalink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            copyAndOpenThread();
+                          }}
+                          className="hover:text-volt hover:underline"
+                        >
+                          {opp.title}
+                        </a>
+                      </h3>
+                      {opp.excerpt && opp.excerpt !== opp.title && (
+                        <p className="text-xs text-slate-300">{opp.excerpt}</p>
                       )}
+                      <p className="font-mono text-[11px] text-slate-400 break-all">
+                        Thread: {opp.permalink}
+                      </p>
                     </div>
-                    <h3 className="text-base font-bold text-white">{opp.title}</h3>
-                    {opp.excerpt && opp.excerpt !== opp.title && (
-                      <p className="text-xs text-slate-300">{opp.excerpt}</p>
-                    )}
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={copyAndOpenThread}
+                        className="btn-primary py-1.5 text-xs font-bold"
+                      >
+                        {copiedReplyId === opp.id ? (
+                          <Check className="h-3.5 w-3.5" />
+                        ) : (
+                          <Copy className="h-3.5 w-3.5" />
+                        )}
+                        {copiedReplyId === opp.id
+                          ? "Reply Copied! Paste in Thread ↗"
+                          : "Copy Reply & Open Thread ↗"}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(opp.shortReplyDraft);
+                          setCopiedReplyId(`${opp.id}-short`);
+                          setMsg("Short reply copied! Opening Reddit thread…");
+                          setTimeout(() => setCopiedReplyId(null), 2500);
+                          window.open(opp.permalink, "_blank", "noopener,noreferrer");
+                        }}
+                        className="btn-ghost py-1.5 text-xs"
+                      >
+                        {copiedReplyId === `${opp.id}-short`
+                          ? "Copied Short! Opening…"
+                          : "Copy Short & Open ↗"}
+                      </button>
+                    </div>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        navigator.clipboard.writeText(opp.helpfulReplyDraft);
-                        setCopiedReplyId(opp.id);
-                        setTimeout(() => setCopiedReplyId(null), 2500);
-                        window.open(opp.permalink, "_blank", "noopener,noreferrer");
-                        void call("/api/admin/reddit-radar", "POST", {
-                          action: "set_status",
-                          id: opp.id,
-                          status: "replied",
-                        }).then((r) => setRedditOpps(r.opportunities ?? []));
+                  <div className="rounded-xl border border-line bg-panel-2/70 p-3.5 text-xs space-y-2">
+                    <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-bold uppercase tracking-wider text-muted">
+                      <span>Casual Collector Reply (Editable before copying — auto-copies when you open thread)</span>
+                      <a
+                        href={opp.permalink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          copyAndOpenThread();
+                        }}
+                        className="text-volt hover:underline"
+                      >
+                        View on Reddit (Auto-Copies Reply) ↗
+                      </a>
+                    </div>
+                    <textarea
+                      rows={5}
+                      className="input w-full bg-bg/90 font-sans text-xs leading-relaxed text-slate-200"
+                      value={opp.helpfulReplyDraft}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setRedditOpps((prev) =>
+                          prev.map((item) =>
+                            item.id === opp.id ? { ...item, helpfulReplyDraft: val } : item,
+                          ),
+                        );
                       }}
-                      className="btn-primary py-1.5 text-xs font-bold"
-                    >
-                      {copiedReplyId === opp.id ? (
-                        <Check className="h-3.5 w-3.5" />
-                      ) : (
-                        <Copy className="h-3.5 w-3.5" />
-                      )}
-                      {copiedReplyId === opp.id ? "Copied! Opening Reddit…" : "Copy Data Reply & Open Thread ↗"}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        navigator.clipboard.writeText(opp.shortReplyDraft);
-                        setCopiedReplyId(`${opp.id}-short`);
-                        setTimeout(() => setCopiedReplyId(null), 2000);
-                      }}
-                      className="btn-ghost py-1.5 text-xs"
-                    >
-                      {copiedReplyId === `${opp.id}-short` ? "Copied Short!" : "Copy Short Version"}
-                    </button>
+                    />
                   </div>
                 </div>
-
-                <div className="rounded-xl border border-line bg-panel-2/70 p-3.5 text-xs">
-                  <div className="mb-1.5 flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-muted">
-                    <span>Drafted Helpful Reply (Includes Real PackRadar Machine Stats + ?utm_source=reddit)</span>
-                    <a
-                      href={opp.permalink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-volt hover:underline"
-                    >
-                      View on Reddit ↗
-                    </a>
-                  </div>
-                  <pre className="whitespace-pre-wrap font-sans text-xs leading-relaxed text-slate-200">
-                    {opp.helpfulReplyDraft}
-                  </pre>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </section>
       )}
