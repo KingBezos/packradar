@@ -48,6 +48,27 @@ type AnalyticsSummary = {
   todaySearches?: number;
   uniqueSearchers?: number;
   topSearches?: { query: string; searches: number; uniqueVisitors: number; lastSearchedAt: string }[];
+  last10SearchedZips?: { id: string; zip: string; locationLabel: string; at: string; visitorHash: string }[];
+  mostSearchedZipsAllTime?: {
+    zip: string;
+    locationLabel: string;
+    searches: number;
+    uniqueVisitors: number;
+    lastSearchedAt: string;
+  }[];
+  popularMachines?: {
+    machineId: string;
+    retailer: string;
+    street: string;
+    city: string;
+    state: string;
+    zip: string;
+    views: number;
+    searches: number;
+    totalInteractions: number;
+    uniqueVisitors: number;
+    lastVisitedAt: string;
+  }[];
   totalBotHitsExcluded: number;
   botBreakdown: { label: string; count: number }[];
   deviceBreakdown: { mobile: number; desktop: number; tablet: number };
@@ -870,6 +891,114 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                   +{analytics?.funnel.signUpsLast7d ?? 0} new accounts in last 7 days
                 </p>
               </div>
+            </div>
+          </div>
+
+          {/* ZIP Code Search Intelligence + Most Popular Machines Visited / Searched */}
+          <div className="grid gap-6 lg:grid-cols-3">
+            {/* Last 10 Searched ZIP Codes */}
+            <div className="card border-sky-500/30 p-5 space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-bold text-white">📍 Last 10 Searched ZIP Codes</h3>
+                <span className="font-mono text-[11px] font-bold text-sky-400">Live Stream</span>
+              </div>
+              {(!analytics?.last10SearchedZips || analytics.last10SearchedZips.length === 0) ? (
+                <p className="py-4 text-center text-xs text-muted">No ZIP codes searched yet.</p>
+              ) : (
+                <ul className="divide-y divide-line text-xs">
+                  {analytics.last10SearchedZips.map((z) => (
+                    <li key={z.id} className="flex items-center justify-between gap-2 py-2">
+                      <div className="flex items-center gap-2">
+                        <Link
+                          href={`/search?q=${encodeURIComponent(z.zip)}`}
+                          className="rounded bg-sky-500/15 px-2 py-0.5 font-mono font-bold text-sky-300 hover:bg-sky-500/25"
+                        >
+                          {z.zip}
+                        </Link>
+                        <span className="font-semibold text-slate-200">{z.locationLabel}</span>
+                      </div>
+                      <span className="text-[11px] text-muted whitespace-nowrap">
+                        {timeAgo(new Date(z.at))}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            {/* Most Searched ZIP Codes of All Time */}
+            <div className="card border-volt/30 p-5 space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-bold text-white">🏆 Most Searched ZIP Codes (All-Time)</h3>
+                <span className="font-mono text-[11px] font-bold text-volt">
+                  {(analytics?.mostSearchedZipsAllTime ?? []).length} ZIPs
+                </span>
+              </div>
+              {(!analytics?.mostSearchedZipsAllTime || analytics.mostSearchedZipsAllTime.length === 0) ? (
+                <p className="py-4 text-center text-xs text-muted">No ZIP code rankings yet.</p>
+              ) : (
+                <ul className="divide-y divide-line text-xs">
+                  {analytics.mostSearchedZipsAllTime.map((z, idx) => (
+                    <li key={z.zip} className="flex items-center justify-between gap-2 py-2">
+                      <div className="flex items-center gap-2">
+                        <span className="w-4 font-mono text-[11px] text-muted">#{idx + 1}</span>
+                        <Link
+                          href={`/search?q=${encodeURIComponent(z.zip)}`}
+                          className="rounded bg-volt/15 px-2 py-0.5 font-mono font-bold text-volt hover:bg-volt/25"
+                        >
+                          {z.zip}
+                        </Link>
+                        <span className="font-semibold text-slate-200">{z.locationLabel}</span>
+                      </div>
+                      <span className="font-mono font-bold text-volt whitespace-nowrap">
+                        {z.searches} searches ({z.uniqueVisitors} uniq)
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            {/* Most Popular Machines Visited / Searched */}
+            <div className="card border-green-500/30 p-5 space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-bold text-white">🎯 Most Popular Machines Visited / Searched</h3>
+                <span className="font-mono text-[11px] font-bold text-green-400">
+                  {(analytics?.popularMachines ?? []).length} kiosks
+                </span>
+              </div>
+              {(!analytics?.popularMachines || analytics.popularMachines.length === 0) ? (
+                <p className="py-4 text-center text-xs text-muted">No machine pages visited yet.</p>
+              ) : (
+                <ul className="divide-y divide-line text-xs">
+                  {analytics.popularMachines.map((m, idx) => (
+                    <li key={m.machineId} className="flex items-center justify-between gap-2 py-2">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-mono text-[11px] text-muted">#{idx + 1}</span>
+                          <Link
+                            href={`/machines/${m.machineId}`}
+                            className="font-mono font-bold text-green-400 hover:underline"
+                          >
+                            {m.machineId}
+                          </Link>
+                          <span className="truncate font-semibold text-white">· {m.retailer}</span>
+                        </div>
+                        <p className="truncate text-[11px] text-slate-400">
+                          {m.street ? `${m.street}, ` : ""}
+                          {m.city}, {m.state} {m.zip}
+                        </p>
+                      </div>
+                      <div className="shrink-0 text-right">
+                        <p className="font-mono font-bold text-green-400">
+                          {m.totalInteractions} {m.totalInteractions === 1 ? "visit" : "visits"}
+                        </p>
+                        <p className="text-[10px] text-muted">{m.uniqueVisitors} uniq</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </div>
 

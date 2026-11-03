@@ -47,6 +47,8 @@ export function mergeAnalyticsStores(
     activeVisitorsMap: { ...(incoming.activeVisitorsMap ?? {}), ...(current.activeVisitorsMap ?? {}) },
     totalSearches: Math.max(current.totalSearches ?? 0, incoming.totalSearches ?? 0),
     searchQueries: { ...(incoming.searchQueries ?? {}), ...(current.searchQueries ?? {}) },
+    recentZipSearches: [...(current.recentZipSearches ?? []), ...(incoming.recentZipSearches ?? [])].slice(0, 30),
+    zipStats: { ...(incoming.zipStats ?? {}), ...(current.zipStats ?? {}) },
     updatedAt: new Date().toISOString(),
   };
 

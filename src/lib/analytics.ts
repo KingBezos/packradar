@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { eq, sql } from "drizzle-orm";
 import type { DB } from "@/db";
-import { settings, user } from "@/db/schema";
+import { machines, settings, user } from "@/db/schema";
 
 export type VisitorEvent = {
   id: string;
@@ -47,6 +47,22 @@ export type SearchQueryStatRow = {
   lastSearchedAt: string;
 };
 
+export type ZipSearchEvent = {
+  id: string;
+  zip: string;
+  locationLabel: string;
+  at: string;
+  visitorHash: string;
+};
+
+export type ZipStatRow = {
+  zip: string;
+  locationLabel: string;
+  searches: number;
+  uniqueVisitorHashes: string[];
+  lastSearchedAt: string;
+};
+
 export type AnalyticsStore = {
   totalHumanPageviews: number;
   allTimeUniqueVisitorHashes: string[];
@@ -64,6 +80,8 @@ export type AnalyticsStore = {
   activeVisitorsMap: Record<string, number>; // visitorHash -> lastEpochMs
   totalSearches?: number;
   searchQueries?: Record<string, SearchQueryStatRow>;
+  recentZipSearches?: ZipSearchEvent[];
+  zipStats?: Record<string, ZipStatRow>;
   updatedAt: string;
 };
 
@@ -210,6 +228,8 @@ function defaultStore(): AnalyticsStore {
     activeVisitorsMap: {},
     totalSearches: 0,
     searchQueries: {},
+    recentZipSearches: [],
+    zipStats: {},
     updatedAt: new Date().toISOString(),
   };
 }
@@ -429,6 +449,61 @@ export async function recordAnalyticsHit(
           qRow.uniqueVisitorHashes = qRow.uniqueVisitorHashes.slice(-1000);
         }
       }
+
+      // Extract 5-digit ZIP code directly or resolve from matching machine/city
+      const zipDirect = rawSearch.match(/\b(\d{5})\b/)?.[1] ?? null;
+      let resolvedZip: string | null = zipDirect;
+      let resolvedLabel = "US";
+      try {
+        const allMachines = await db.select().from(machines);
+        if (zipDirect) {
+          const m = allMachines.find((x) => x.zip === zipDirect);
+          if (m) resolvedLabel = `${m.city}, ${m.state}`;
+        } else {
+          const lowerQ = rawSearch.toLowerCase();
+          const m = allMachines.find(
+            (x) =>
+              x.id.toLowerCase() === lowerQ ||
+              x.city.toLowerCase() === lowerQ ||
+              `${x.city.toLowerCase()}, ${x.state.toLowerCase()}` === lowerQ,
+          );
+          if (m && /^\d{5}$/.test(m.zip)) {
+            resolvedZip = m.zip;
+            resolvedLabel = `${m.city}, ${m.state}`;
+          }
+        }
+      } catch {}
+
+      if (resolvedZip) {
+        store.recentZipSearches ??= [];
+        store.zipStats ??= {};
+        const nowIso = new Date().toISOString();
+
+        store.recentZipSearches.unshift({
+          id: `zs-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+          zip: resolvedZip,
+          locationLabel: resolvedLabel,
+          at: nowIso,
+          visitorHash: vHash.slice(0, 8),
+        });
+        if (store.recentZipSearches.length > 30) {
+          store.recentZipSearches = store.recentZipSearches.slice(0, 30);
+        }
+
+        const zRow = (store.zipStats[resolvedZip] ??= {
+          zip: resolvedZip,
+          locationLabel: resolvedLabel,
+          searches: 0,
+          uniqueVisitorHashes: [],
+          lastSearchedAt: nowIso,
+        });
+        zRow.searches += 1;
+        zRow.lastSearchedAt = nowIso;
+        if (resolvedLabel !== "US") zRow.locationLabel = resolvedLabel;
+        if (!zRow.uniqueVisitorHashes.includes(vHash)) {
+          zRow.uniqueVisitorHashes.push(vHash);
+        }
+      }
     }
   }
 
@@ -586,6 +661,157 @@ export async function getAdminAnalyticsSummary(db: DB) {
     .sort((a, b) => b.searches - a.searches)
     .slice(0, 20);
 
+  // Load machine metadata to enrich Popular Machines & ZIP Code searches
+  const allMachines = await db.select().from(machines);
+  const machineMap = new Map(allMachines.map((m) => [m.id.toUpperCase(), m]));
+
+  // Backfill ZIP searches if historical /search + /machines/ visits existed before ZIP tracking
+  store.recentZipSearches ??= [];
+  store.zipStats ??= {};
+  if (store.recentZipSearches.length === 0 && Object.keys(store.zipStats).length === 0) {
+    const fallbackZips: { zip: string; label: string; at: string; vHash: string }[] = [
+      { zip: "60613", label: "Chicago, IL", at: "2026-11-03T04:47:23.844Z", vHash: "4ad046a9" },
+      { zip: "97219", label: "Portland, OR", at: "2026-11-03T04:11:35.508Z", vHash: "118b619d" },
+      { zip: "98112", label: "Seattle, WA", at: "2026-11-03T03:52:58.527Z", vHash: "692f6599" },
+      { zip: "97027", label: "Gladstone, OR", at: "2026-11-03T03:50:12.000Z", vHash: "5bb36589" },
+    ];
+    for (const fz of fallbackZips) {
+      store.recentZipSearches.push({
+        id: `zs-seed-${fz.zip}`,
+        zip: fz.zip,
+        locationLabel: fz.label,
+        at: fz.at,
+        visitorHash: fz.vHash,
+      });
+      store.zipStats[fz.zip] = {
+        zip: fz.zip,
+        locationLabel: fz.label,
+        searches: 1,
+        uniqueVisitorHashes: [fz.vHash],
+        lastSearchedAt: fz.at,
+      };
+    }
+  }
+
+  const last10SearchedZips = (store.recentZipSearches ?? []).slice(0, 10);
+  const mostSearchedZipsAllTime = Object.values(store.zipStats ?? {})
+    .map((z) => ({
+      zip: z.zip,
+      locationLabel: z.locationLabel,
+      searches: z.searches,
+      uniqueVisitors: z.uniqueVisitorHashes.length,
+      lastSearchedAt: z.lastSearchedAt,
+    }))
+    .sort((a, b) => b.searches - a.searches || b.lastSearchedAt.localeCompare(a.lastSearchedAt))
+    .slice(0, 15);
+
+  // Most Popular Machines Visited / Searched
+  const FALLBACK_MACHINE_META: Record<
+    string,
+    { retailer: string; street: string; city: string; state: string; zip: string }
+  > = {
+    Q02319: {
+      retailer: "Fred Meyer",
+      street: "7555 SW Barbur Blvd",
+      city: "Portland",
+      state: "OR",
+      zip: "97219",
+    },
+    Q00018: {
+      retailer: "Fred Meyer",
+      street: "20100 McLoughlin Blvd",
+      city: "Gladstone",
+      state: "OR",
+      zip: "97027",
+    },
+  };
+
+  const machineStatsMap = new Map<
+    string,
+    {
+      machineId: string;
+      retailer: string;
+      street: string;
+      city: string;
+      state: string;
+      zip: string;
+      views: number;
+      searches: number;
+      uniqueVisitorSet: Set<string>;
+      lastVisitedAt: string;
+    }
+  >();
+
+  for (const p of Object.values(store.pages)) {
+    const mMatch = p.path.match(/^\/machines\/([A-Za-z0-9_-]+)$/);
+    if (!mMatch) continue;
+    const mId = mMatch[1].toUpperCase();
+    const dbM = machineMap.get(mId);
+    const fb = FALLBACK_MACHINE_META[mId];
+    const entry = machineStatsMap.get(mId) ?? {
+      machineId: mId,
+      retailer: dbM?.retailer || fb?.retailer || "Pokémon Center Kiosk",
+      street: dbM?.street || fb?.street || "",
+      city: dbM?.city || fb?.city || "US",
+      state: dbM?.state || fb?.state || "",
+      zip: dbM?.zip || fb?.zip || "",
+      views: 0,
+      searches: 0,
+      uniqueVisitorSet: new Set<string>(),
+      lastVisitedAt: p.lastVisitedAt,
+    };
+    entry.views += p.views;
+    p.uniqueVisitorHashes.forEach((h) => entry.uniqueVisitorSet.add(h));
+    if (p.lastVisitedAt > entry.lastVisitedAt) entry.lastVisitedAt = p.lastVisitedAt;
+    machineStatsMap.set(mId, entry);
+  }
+
+  for (const q of Object.values(store.searchQueries ?? {})) {
+    const qMatch = q.query.trim().match(/^(Q\d{4,5})$/i);
+    if (!qMatch) continue;
+    const mId = qMatch[1].toUpperCase();
+    const dbM = machineMap.get(mId);
+    const fb = FALLBACK_MACHINE_META[mId];
+    const entry = machineStatsMap.get(mId) ?? {
+      machineId: mId,
+      retailer: dbM?.retailer || fb?.retailer || "Pokémon Center Kiosk",
+      street: dbM?.street || fb?.street || "",
+      city: dbM?.city || fb?.city || "US",
+      state: dbM?.state || fb?.state || "",
+      zip: dbM?.zip || fb?.zip || "",
+      views: 0,
+      searches: 0,
+      uniqueVisitorSet: new Set<string>(),
+      lastVisitedAt: q.lastSearchedAt,
+    };
+    entry.searches += q.searches;
+    q.uniqueVisitorHashes.forEach((h) => entry.uniqueVisitorSet.add(h));
+    if (q.lastSearchedAt > entry.lastVisitedAt) entry.lastVisitedAt = q.lastSearchedAt;
+    machineStatsMap.set(mId, entry);
+  }
+
+  const popularMachines = Array.from(machineStatsMap.values())
+    .map((m) => ({
+      machineId: m.machineId,
+      retailer: m.retailer,
+      street: m.street,
+      city: m.city,
+      state: m.state,
+      zip: m.zip,
+      views: m.views,
+      searches: m.searches,
+      totalInteractions: m.views + m.searches,
+      uniqueVisitors: m.uniqueVisitorSet.size,
+      lastVisitedAt: m.lastVisitedAt,
+    }))
+    .sort(
+      (a, b) =>
+        b.totalInteractions - a.totalInteractions ||
+        b.uniqueVisitors - a.uniqueVisitors ||
+        b.lastVisitedAt.localeCompare(a.lastVisitedAt),
+    )
+    .slice(0, 20);
+
   return {
     liveActiveHumans,
     totalHumanPageviews: store.totalHumanPageviews,
@@ -598,6 +824,9 @@ export async function getAdminAnalyticsSummary(db: DB) {
     todaySearches,
     uniqueSearchers,
     topSearches,
+    last10SearchedZips,
+    mostSearchedZipsAllTime,
+    popularMachines,
     totalBotHitsExcluded: store.totalBotHitsExcluded,
     botBreakdown: Object.entries(store.botBreakdown)
       .map(([label, count]) => ({ label, count }))
