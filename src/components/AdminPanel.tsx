@@ -27,9 +27,13 @@ import {
   Smartphone,
   Monitor,
   ShieldAlert,
+  Copy,
+  Check,
+  Sparkles,
 } from "lucide-react";
 import { Avatar, CATEGORY_LABEL, timeAgo } from "./ui";
 import type { AdminInboxItem } from "@/app/api/contact/route";
+import type { RedditOpportunity } from "@/lib/reddit-radar";
 
 type AnalyticsSummary = {
   liveActiveHumans: number;
@@ -172,7 +176,7 @@ async function call(url: string, method = "POST", body?: unknown) {
   return j;
 }
 
-type TabKey = "stats" | "inbox" | "news" | "users" | "machines" | "comments" | "retail" | "bots";
+type TabKey = "stats" | "reddit" | "inbox" | "news" | "users" | "machines" | "comments" | "retail" | "bots";
 
 export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
   const [tab, setTab] = useState<TabKey>("stats");
@@ -181,6 +185,20 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
 
   // 0. Human-Only Traffic & Conversion Analytics
   const [analytics, setAnalytics] = useState<AnalyticsSummary | null>(null);
+
+  // 0b. Reddit Opportunity Radar & Reply Drafter
+  const [redditOpps, setRedditOpps] = useState<RedditOpportunity[]>([]);
+  const [redditScanning, setRedditScanning] = useState(false);
+  const [copiedReplyId, setCopiedReplyId] = useState<string | null>(null);
+  const [customRedditTitle, setCustomRedditTitle] = useState("");
+  const [customRedditBody, setCustomRedditBody] = useState("");
+  const [customRedditDraft, setCustomRedditDraft] = useState<{
+    matchedLocationLabel: string;
+    matchedMachinesCount: number;
+    targetPackRadarUrl: string;
+    helpfulReplyDraft: string;
+    shortReplyDraft: string;
+  } | null>(null);
 
   // 1. Inbox (Admin Alerts + Vendor Sales Inquiries)
   const [inbox, setInbox] = useState<AdminInboxItem[]>([]);
@@ -258,8 +276,17 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
       .then(setAnalytics)
       .catch(() => {});
 
+  const loadRedditRadar = (refresh = false) => {
+    setRedditScanning(true);
+    call(`/api/admin/reddit-radar${refresh ? "?refresh=1" : ""}`, "GET")
+      .then((r) => setRedditOpps(r.opportunities ?? []))
+      .catch(() => {})
+      .finally(() => setRedditScanning(false));
+  };
+
   useEffect(() => {
     loadAnalytics();
+    loadRedditRadar();
     loadInbox();
     loadUsers();
     loadContent();
@@ -536,6 +563,19 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
               {analytics.totalUniqueHumans} humans
             </span>
           )}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setTab("reddit")}
+          className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition ${
+            tab === "reddit"
+              ? "bg-volt text-slate-950"
+              : "border border-line bg-panel-2 text-slate-200 hover:border-volt/50"
+          }`}
+        >
+          <Sparkles className="h-4 w-4" />
+          Reddit Radar ({redditOpps.filter((o) => o.status === "open").length})
         </button>
 
         <button
@@ -979,6 +1019,195 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                 </table>
               </div>
             )}
+          </div>
+        </section>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════════════════
+          TAB 0b: REDDIT OPPORTUNITY RADAR & DATA-BACKED REPLY ASSISTANT
+         ═══════════════════════════════════════════════════════════════════════ */}
+      {tab === "reddit" && (
+        <section className="space-y-6">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="flex items-center gap-2 text-2xl font-black text-white">
+                <Sparkles className="h-6 w-6 text-volt" /> Reddit Opportunity Radar &amp; Data-Backed Reply Drafter
+              </h2>
+              <p className="text-xs text-muted">
+                Scans Pokémon TCG subreddits (<code className="text-white">r/PokemonTCG</code>,{" "}
+                <code className="text-white">r/PKMNTCGDeals</code>) for vending machine &amp; restock questions and
+                drafts data-first replies with real machine addresses, <code className="text-volt">:XX</code> drop
+                cadences, and <code className="text-volt">?utm_source=reddit</code> tracking links.
+              </p>
+            </div>
+            <button
+              type="button"
+              disabled={redditScanning}
+              onClick={() => loadRedditRadar(true)}
+              className="btn-primary py-1.5 text-xs font-bold"
+            >
+              <RefreshCw className={`h-3.5 w-3.5 ${redditScanning ? "animate-spin" : ""}`} />
+              {redditScanning ? "Scanning Subreddits…" : "Scan Live Reddit Threads"}
+            </button>
+          </div>
+
+          {/* Instant Custom Reddit Thread / Question Reply Generator */}
+          <div className="card border-volt/30 p-5 space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h3 className="text-sm font-bold text-white">
+                ⚡ Instant Custom Reddit Reply Drafter (Paste Any Reddit Question or City / State / Q-Code)
+              </h3>
+              <span className="text-xs text-muted">
+                Auto-pulls real machine addresses &amp; drop windows from PackRadar DB
+              </span>
+            </div>
+            <div className="grid gap-2 sm:grid-cols-3">
+              <input
+                className="input sm:col-span-2 text-xs"
+                placeholder="Paste a Reddit post title or question (e.g., 'Any luck with Kroger or Safeway vending machines in Seattle or Dallas?')…"
+                value={customRedditTitle}
+                onChange={(e) => setCustomRedditTitle(e.target.value)}
+              />
+              <button
+                type="button"
+                disabled={!customRedditTitle.trim()}
+                onClick={async () => {
+                  const res = await call("/api/admin/reddit-radar", "POST", {
+                    action: "draft_custom",
+                    title: customRedditTitle,
+                    body: customRedditBody,
+                  });
+                  setCustomRedditDraft(res.draft);
+                }}
+                className="btn-primary justify-center py-2 text-xs font-bold"
+              >
+                <Sparkles className="h-3.5 w-3.5" /> Generate Data-Backed Reply
+              </button>
+            </div>
+
+            {customRedditDraft && (
+              <div className="mt-3 space-y-3 rounded-xl border border-volt/40 bg-panel-2 p-4 text-xs">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="font-bold text-volt">
+                    📍 Matched: {customRedditDraft.matchedLocationLabel} ({customRedditDraft.matchedMachinesCount}{" "}
+                    machines)
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(customRedditDraft.helpfulReplyDraft);
+                      setCopiedReplyId("custom-full");
+                      setTimeout(() => setCopiedReplyId(null), 2000);
+                    }}
+                    className="btn-primary py-1 text-xs font-bold"
+                  >
+                    {copiedReplyId === "custom-full" ? (
+                      <Check className="h-3.5 w-3.5" />
+                    ) : (
+                      <Copy className="h-3.5 w-3.5" />
+                    )}
+                    {copiedReplyId === "custom-full" ? "Copied Reply!" : "Copy Full Data Reply"}
+                  </button>
+                </div>
+                <pre className="whitespace-pre-wrap rounded-lg bg-bg p-3 font-sans text-xs leading-relaxed text-slate-200">
+                  {customRedditDraft.helpfulReplyDraft}
+                </pre>
+              </div>
+            )}
+          </div>
+
+          {/* Live Scanned Reddit Threads */}
+          <div className="space-y-4">
+            {redditOpps.map((opp) => (
+              <div
+                key={opp.id}
+                className={`card p-5 space-y-3 ${
+                  opp.status === "replied"
+                    ? "border-green-500/40 bg-green-500/5"
+                    : opp.status === "dismissed"
+                      ? "opacity-50"
+                      : "border-line"
+                }`}
+              >
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="space-y-1">
+                    <div className="flex flex-wrap items-center gap-2 text-xs">
+                      <span className="rounded-full bg-orange-500/20 px-2.5 py-0.5 font-bold text-orange-300">
+                        {opp.subreddit}
+                      </span>
+                      <span className="rounded-full bg-volt/15 px-2.5 py-0.5 font-bold text-volt">
+                        📍 {opp.matchedLocationLabel} ({opp.matchedMachinesCount} machines)
+                      </span>
+                      <span className="text-muted">
+                        by {opp.author} · {timeAgo(new Date(opp.postedAt))}
+                      </span>
+                      {opp.status === "replied" && (
+                        <span className="rounded-full bg-green-500/20 px-2 py-0.5 font-bold text-green-400">
+                          ✓ Replied
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="text-base font-bold text-white">{opp.title}</h3>
+                    {opp.excerpt && opp.excerpt !== opp.title && (
+                      <p className="text-xs text-slate-300">{opp.excerpt}</p>
+                    )}
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(opp.helpfulReplyDraft);
+                        setCopiedReplyId(opp.id);
+                        setTimeout(() => setCopiedReplyId(null), 2500);
+                        window.open(opp.permalink, "_blank", "noopener,noreferrer");
+                        void call("/api/admin/reddit-radar", "POST", {
+                          action: "set_status",
+                          id: opp.id,
+                          status: "replied",
+                        }).then((r) => setRedditOpps(r.opportunities ?? []));
+                      }}
+                      className="btn-primary py-1.5 text-xs font-bold"
+                    >
+                      {copiedReplyId === opp.id ? (
+                        <Check className="h-3.5 w-3.5" />
+                      ) : (
+                        <Copy className="h-3.5 w-3.5" />
+                      )}
+                      {copiedReplyId === opp.id ? "Copied! Opening Reddit…" : "Copy Data Reply & Open Thread ↗"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(opp.shortReplyDraft);
+                        setCopiedReplyId(`${opp.id}-short`);
+                        setTimeout(() => setCopiedReplyId(null), 2000);
+                      }}
+                      className="btn-ghost py-1.5 text-xs"
+                    >
+                      {copiedReplyId === `${opp.id}-short` ? "Copied Short!" : "Copy Short Version"}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="rounded-xl border border-line bg-panel-2/70 p-3.5 text-xs">
+                  <div className="mb-1.5 flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-muted">
+                    <span>Drafted Helpful Reply (Includes Real PackRadar Machine Stats + ?utm_source=reddit)</span>
+                    <a
+                      href={opp.permalink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-volt hover:underline"
+                    >
+                      View on Reddit ↗
+                    </a>
+                  </div>
+                  <pre className="whitespace-pre-wrap font-sans text-xs leading-relaxed text-slate-200">
+                    {opp.helpfulReplyDraft}
+                  </pre>
+                </div>
+              </div>
+            ))}
           </div>
         </section>
       )}
