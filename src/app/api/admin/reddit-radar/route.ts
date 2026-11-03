@@ -26,7 +26,8 @@ export const GET = route(async (req) => {
       (item) =>
         !item.permalink?.includes("/comments/") ||
         item.helpfulReplyDraft?.includes("utm_source=reddit") ||
-        item.helpfulReplyDraft?.toLowerCase().includes("we track"),
+        item.helpfulReplyDraft?.toLowerCase().includes("we track") ||
+        !/vending|machine|kiosk|safeway|kroger|fred meyer|king soopers|qfc/i.test(item.title),
     );
 
   if (!refresh && !hasLegacyCache) {

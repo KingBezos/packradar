@@ -29,16 +29,16 @@ const SITE_URL =
   "https://packradar.onrender.com";
 
 const CITY_STATE_PATTERNS: { regex: RegExp; state: string; label: string }[] = [
-  { regex: /\b(seattle|bellevue|tacoma|redmond|kirkland|everett|spokane|washington|\bwa\b)\b/i, state: "WA", label: "Washington (Seattle / Puget Sound)" },
-  { regex: /\b(portland|gladstone|beaverton|hillsboro|salem|eugene|oregon|\bor\b)\b/i, state: "OR", label: "Oregon (Portland Metro)" },
-  { regex: /\b(los angeles|san diego|irvine|anaheim|sacramento|san jose|bay area|california|socal|norcal|\bca\b)\b/i, state: "CA", label: "California" },
-  { regex: /\b(dallas|dfw|plano|frisco|houston|austin|san antonio|texas|\btx\b)\b/i, state: "TX", label: "Texas" },
-  { regex: /\b(denver|aurora|boulder|colorado springs|fort collins|colorado|king soopers|\bco\b)\b/i, state: "CO", label: "Colorado" },
-  { regex: /\b(phoenix|scottsdale|tempe|mesa|chandler|tucson|arizona|\baz\b)\b/i, state: "AZ", label: "Arizona" },
-  { regex: /\b(chicago|naperville|schaumburg|illinois|jewel[\s-]*osco|\bil\b)\b/i, state: "IL", label: "Illinois" },
-  { regex: /\b(columbus|cincinnati|cleveland|dayton|ohio|\boh\b)\b/i, state: "OH", label: "Ohio" },
-  { regex: /\b(atlanta|marietta|georgia|\bga\b)\b/i, state: "GA", label: "Georgia" },
-  { regex: /\b(miami|orlando|tampa|jacksonville|florida|\bfl\b)\b/i, state: "FL", label: "Florida" },
+  { regex: /\b(seattle|bellevue|tacoma|redmond|kirkland|everett|spokane|washington)\b/i, state: "WA", label: "Washington (Seattle / Puget Sound)" },
+  { regex: /\b(portland|gladstone|beaverton|hillsboro|salem|eugene|oregon)\b/i, state: "OR", label: "Oregon (Portland Metro)" },
+  { regex: /\b(los angeles|san diego|irvine|anaheim|sacramento|san jose|bay area|california|socal|norcal)\b/i, state: "CA", label: "California" },
+  { regex: /\b(dallas|dfw|plano|frisco|houston|austin|san antonio|texas)\b/i, state: "TX", label: "Texas" },
+  { regex: /\b(denver|aurora|boulder|colorado springs|fort collins|colorado|king soopers)\b/i, state: "CO", label: "Colorado" },
+  { regex: /\b(phoenix|scottsdale|tempe|mesa|chandler|tucson|arizona)\b/i, state: "AZ", label: "Arizona" },
+  { regex: /\b(chicago|naperville|schaumburg|illinois|jewel[\s-]*osco)\b/i, state: "IL", label: "Illinois" },
+  { regex: /\b(columbus|cincinnati|cleveland|dayton|ohio)\b/i, state: "OH", label: "Ohio" },
+  { regex: /\b(atlanta|marietta|georgia)\b/i, state: "GA", label: "Georgia" },
+  { regex: /\b(miami|orlando|tampa|jacksonville|florida)\b/i, state: "FL", label: "Florida" },
 ];
 
 /**
@@ -326,11 +326,11 @@ export async function scanLiveRedditOpportunities(db: DB): Promise<RedditOpportu
     const items = parseFeed(xml);
     for (const it of items) {
       if (!it.link || !it.link.includes("/comments/")) continue;
-      if (!/vending|machine|kiosk|restock|safeway|kroger|fred meyer|king soopers|qfc|pack/i.test(`${it.title} ${it.text}`)) {
+      if (!/vending|machine|kiosk|safeway|kroger|fred meyer|king soopers|qfc|vons|albertsons|jewel-osco/i.test(it.title)) {
         continue;
       }
-      // Skip Halloween costume posts that aren't about actual card vending machines
-      if (/halloween|costume|trick or treat/i.test(it.title)) continue;
+      // Skip Halloween costume or giveaway posts that aren't about actual card vending machines
+      if (/halloween|costume|trick or treat|gave away|candy|sticker|magnet/i.test(it.title)) continue;
 
       const cleanUrl = it.link.split("?")[0];
       const idMatch = cleanUrl.match(/\/comments\/([a-z0-9]+)\//i);
