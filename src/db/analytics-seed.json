@@ -5,12 +5,12 @@
     "4c7b82e10f9d32a6",
     "0d1dd19288169b75"
   ],
-  "totalBotHitsExcluded": 45,
+  "totalBotHitsExcluded": 59,
   "botBreakdown": {
-    "Internal QA & Health Checks": 40,
+    "Internal QA & Health Checks": 53,
     "Discord Link Preview (Discordbot)": 3,
     "Search Engine Crawler (Google/Bing/DuckDuckGo)": 1,
-    "Headless Browser / Automation (Puppeteer/Playwright/Curl/Node)": 1
+    "Headless Browser / Automation (Puppeteer/Playwright/Curl/Node)": 2
   },
   "deviceBreakdown": {
     "mobile": 3,
@@ -89,7 +89,7 @@
         "4c7b82e10f9d32a6",
         "0d1dd19288169b75"
       ],
-      "botHitsBlocked": 45,
+      "botHitsBlocked": 59,
       "signUps": 1
     }
   },

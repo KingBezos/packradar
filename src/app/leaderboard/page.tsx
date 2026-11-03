@@ -154,16 +154,16 @@ export default async function LeaderboardPage() {
           <span className="chip text-white">Vote / stock check: +1 Rep</span>
         </div>
 
-        {/* Anti-Spam & False-Report Slashing Safeguards */}
+        {/* Anti-Spam & Fair-Play Notice */}
         <div className="mt-3 flex flex-wrap items-center gap-2 rounded-xl border border-red-500/30 bg-red-950/25 p-3 text-xs text-slate-300">
           <span className="flex items-center gap-1 font-bold text-red-300">
-            <ShieldAlert className="h-3.5 w-3.5 text-red-400" /> Fair-Play &amp; Anti-Spam Penalties:
+            <ShieldAlert className="h-3.5 w-3.5 text-red-400" /> Fair-Play &amp; Anti-Spam Policy:
           </span>
-          <span className="chip border-red-500/30 text-red-300">Disproven Schedule Proposal: -6 Rep</span>
-          <span className="chip border-red-500/30 text-red-300">Impossible Travel / Teleporting (&gt;90 mph): -5 Rep</span>
-          <span className="chip border-red-500/30 text-red-300">Multi-Machine Burst Spam: -5 Rep</span>
-          <span className="chip border-red-500/30 text-red-300">False Drop Report Refuted Later: -4 Rep</span>
-          <span className="chip border-red-500/30 text-red-300">Repeated Cooldown Button-Mashing: -3 Rep</span>
+          <span>
+            Automated anti-spam, bot-detection, and false-report verification policies are strictly enforced—accounts
+            found gaming reputation or submitting fake reports will have points deducted or be disqualified from
+            monthly prizes.
+          </span>
         </div>
       </div>
 
