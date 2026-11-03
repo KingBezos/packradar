@@ -34,6 +34,7 @@ import {
 import { Avatar, CATEGORY_LABEL, timeAgo } from "./ui";
 import type { AdminInboxItem } from "@/app/api/contact/route";
 import type { RedditOpportunity } from "@/lib/reddit-radar";
+import type { FacebookOpportunity } from "@/lib/facebook-radar";
 
 type AnalyticsSummary = {
   liveActiveHumans: number;
@@ -176,7 +177,7 @@ async function call(url: string, method = "POST", body?: unknown) {
   return j;
 }
 
-type TabKey = "stats" | "reddit" | "inbox" | "news" | "users" | "machines" | "comments" | "retail" | "bots";
+type TabKey = "stats" | "reddit" | "facebook" | "inbox" | "news" | "users" | "machines" | "comments" | "retail" | "bots";
 
 export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
   const [tab, setTab] = useState<TabKey>("stats");
@@ -198,6 +199,19 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
     targetPackRadarUrl: string;
     helpfulReplyDraft: string;
     shortReplyDraft: string;
+  } | null>(null);
+
+  // 0c. Facebook Groups & Posts Radar + Clever Short Reply Drafter
+  const [facebookOpps, setFacebookOpps] = useState<FacebookOpportunity[]>([]);
+  const [facebookScanning, setFacebookScanning] = useState(false);
+  const [customFbTitle, setCustomFbTitle] = useState("");
+  const [customFbDraft, setCustomFbDraft] = useState<{
+    matchedLocationLabel: string;
+    matchedMachinesCount: number;
+    targetPackRadarUrl: string;
+    cleverReplyDraft: string;
+    ultraShortDraft: string;
+    altLuckyDraft: string;
   } | null>(null);
 
   // 1. Inbox (Admin Alerts + Vendor Sales Inquiries)
@@ -284,9 +298,18 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
       .finally(() => setRedditScanning(false));
   };
 
+  const loadFacebookRadar = (refresh = false) => {
+    setFacebookScanning(true);
+    call(`/api/admin/facebook-radar${refresh ? "?refresh=1" : ""}`, "GET")
+      .then((r) => setFacebookOpps(r.opportunities ?? []))
+      .catch(() => {})
+      .finally(() => setFacebookScanning(false));
+  };
+
   useEffect(() => {
     loadAnalytics();
     loadRedditRadar();
+    loadFacebookRadar();
     loadInbox();
     loadUsers();
     loadContent();
@@ -576,6 +599,19 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
         >
           <Sparkles className="h-4 w-4" />
           Reddit Radar ({redditOpps.filter((o) => o.status === "open").length})
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setTab("facebook")}
+          className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition ${
+            tab === "facebook"
+              ? "bg-volt text-slate-950"
+              : "border border-line bg-panel-2 text-slate-200 hover:border-volt/50"
+          }`}
+        >
+          <Globe className="h-4 w-4" />
+          Facebook Bot ({facebookOpps.filter((o) => o.status === "open").length})
         </button>
 
         <button
@@ -1249,6 +1285,281 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                         setRedditOpps((prev) =>
                           prev.map((item) =>
                             item.id === opp.id ? { ...item, helpfulReplyDraft: val } : item,
+                          ),
+                        );
+                      }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════════════════
+          TAB 0c: FACEBOOK BOT & CLEVER SHORT REPLY DRAFTER
+         ═══════════════════════════════════════════════════════════════════════ */}
+      {tab === "facebook" && (
+        <section className="space-y-6">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="flex items-center gap-2 text-2xl font-black text-white">
+                <Globe className="h-6 w-6 text-sky-400" /> Facebook Bot &amp; Clever Short Reply Drafter
+              </h2>
+              <p className="text-xs text-muted">
+                Opens active Pokémon TCG &amp; vending machine Facebook posts/groups and drafts{" "}
+                <b className="text-white">short, clever 1–2 sentence replies</b> about getting lucky with packs by
+                timing the machine&apos;s <code className="text-volt">:XX</code> drop minute. Clicking any link
+                auto-copies the reply so you can paste it right into Facebook.
+              </p>
+            </div>
+            <button
+              type="button"
+              disabled={facebookScanning}
+              onClick={() => loadFacebookRadar(true)}
+              className="btn-primary py-1.5 text-xs font-bold"
+            >
+              <RefreshCw className={`h-3.5 w-3.5 ${facebookScanning ? "animate-spin" : ""}`} />
+              {facebookScanning ? "Refreshing Feeds…" : "Refresh Facebook Feeds"}
+            </button>
+          </div>
+
+          {/* Instant Custom Facebook Post / Comment Reply Generator */}
+          <div className="card border-sky-500/30 p-5 space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h3 className="text-sm font-bold text-white">
+                ⚡ Custom Facebook Comment Generator (Paste Any FB Post, Group Topic, City, or Q-Code)
+              </h3>
+              <span className="text-xs text-muted">
+                Generates 3 short, punchy &ldquo;got lucky timing the drop&rdquo; replies
+              </span>
+            </div>
+            <div className="grid gap-2 sm:grid-cols-3">
+              <input
+                className="input sm:col-span-2 text-xs"
+                placeholder="Paste a Facebook post or city/topic (e.g., 'My Kroger machine is always sold out' or 'Seattle Fred Meyer pulls')…"
+                value={customFbTitle}
+                onChange={(e) => setCustomFbTitle(e.target.value)}
+              />
+              <button
+                type="button"
+                disabled={!customFbTitle.trim()}
+                onClick={async () => {
+                  const res = await call("/api/admin/facebook-radar", "POST", {
+                    action: "draft_custom",
+                    title: customFbTitle,
+                  });
+                  setCustomFbDraft(res.draft);
+                }}
+                className="btn-primary justify-center py-2 text-xs font-bold"
+              >
+                <Sparkles className="h-3.5 w-3.5" /> Draft Short FB Reply
+              </button>
+            </div>
+
+            {customFbDraft && (
+              <div className="mt-3 space-y-3 rounded-xl border border-sky-400/40 bg-panel-2 p-4 text-xs">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span className="font-bold text-sky-300 mr-2">
+                      📍 {customFbDraft.matchedLocationLabel} ({customFbDraft.matchedMachinesCount} kiosks)
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setCustomFbDraft({
+                          ...customFbDraft,
+                          cleverReplyDraft: customFbDraft.ultraShortDraft,
+                        })
+                      }
+                      className="chip text-[11px] py-0.5"
+                    >
+                      ⚡ Use Ultra-Short 1-Liner
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setCustomFbDraft({
+                          ...customFbDraft,
+                          cleverReplyDraft: customFbDraft.altLuckyDraft,
+                        })
+                      }
+                      className="chip text-[11px] py-0.5"
+                    >
+                      🎯 Use Alt &ldquo;Sold Out&rdquo; Tip
+                    </button>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(customFbDraft.cleverReplyDraft);
+                      setCopiedReplyId("fb-custom");
+                      setMsg("Copied short Facebook reply! Paste it directly into the Facebook comment box.");
+                      setTimeout(() => setCopiedReplyId(null), 2500);
+                    }}
+                    className="btn-primary py-1 text-xs font-bold"
+                  >
+                    {copiedReplyId === "fb-custom" ? (
+                      <Check className="h-3.5 w-3.5" />
+                    ) : (
+                      <Copy className="h-3.5 w-3.5" />
+                    )}
+                    {copiedReplyId === "fb-custom" ? "Copied FB Reply!" : "Copy FB Reply"}
+                  </button>
+                </div>
+                <textarea
+                  rows={3}
+                  className="input w-full bg-bg font-sans text-xs leading-relaxed text-slate-200"
+                  value={customFbDraft.cleverReplyDraft}
+                  onChange={(e) =>
+                    setCustomFbDraft({
+                      ...customFbDraft,
+                      cleverReplyDraft: e.target.value,
+                    })
+                  }
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Curated Live Facebook Feeds & Group Post Searches */}
+          <div className="space-y-4">
+            {facebookOpps.map((opp) => {
+              const copyAndOpenFacebook = (textToCopy = opp.cleverReplyDraft) => {
+                navigator.clipboard.writeText(textToCopy);
+                setCopiedReplyId(opp.id);
+                setMsg("Clever Facebook reply copied to clipboard! Opening Facebook so you can paste it.");
+                setTimeout(() => setCopiedReplyId(null), 3000);
+                window.open(opp.permalink, "_blank", "noopener,noreferrer");
+                void call("/api/admin/facebook-radar", "POST", {
+                  action: "set_status",
+                  id: opp.id,
+                  status: "replied",
+                }).then((r) => setFacebookOpps(r.opportunities ?? []));
+              };
+
+              return (
+                <div
+                  key={opp.id}
+                  className={`card p-5 space-y-3 ${
+                    opp.status === "replied"
+                      ? "border-green-500/40 bg-green-500/5"
+                      : opp.status === "dismissed"
+                        ? "opacity-50"
+                        : "border-line"
+                  }`}
+                >
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div className="space-y-1">
+                      <div className="flex flex-wrap items-center gap-2 text-xs">
+                        <span className="rounded-full bg-sky-500/20 px-2.5 py-0.5 font-bold text-sky-300">
+                          {opp.groupName}
+                        </span>
+                        <span className="rounded-full bg-volt/15 px-2.5 py-0.5 font-bold text-volt">
+                          🎯 {opp.topicTag}
+                        </span>
+                        {opp.status === "replied" && (
+                          <span className="rounded-full bg-green-500/20 px-2 py-0.5 font-bold text-green-400">
+                            ✓ Opened &amp; Copied
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="text-base font-bold text-white">
+                        <a
+                          href={opp.permalink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            copyAndOpenFacebook(opp.cleverReplyDraft);
+                          }}
+                          className="hover:text-volt hover:underline"
+                        >
+                          {opp.title}
+                        </a>
+                      </h3>
+                      <p className="text-xs text-slate-300">{opp.excerpt}</p>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => copyAndOpenFacebook(opp.cleverReplyDraft)}
+                        className="btn-primary py-1.5 text-xs font-bold"
+                      >
+                        {copiedReplyId === opp.id ? (
+                          <Check className="h-3.5 w-3.5" />
+                        ) : (
+                          <Copy className="h-3.5 w-3.5" />
+                        )}
+                        {copiedReplyId === opp.id
+                          ? "Copied! Paste in Facebook ↗"
+                          : "Copy Reply & Open Facebook ↗"}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => copyAndOpenFacebook(opp.ultraShortDraft)}
+                        className="btn-ghost py-1.5 text-xs"
+                      >
+                        Copy 1-Liner &amp; Open ↗
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl border border-line bg-panel-2/70 p-3.5 text-xs space-y-2">
+                    <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-bold uppercase tracking-wider text-muted">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span>Short Clever Reply (Editable):</span>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setFacebookOpps((prev) =>
+                              prev.map((item) =>
+                                item.id === opp.id ? { ...item, cleverReplyDraft: opp.ultraShortDraft } : item,
+                              ),
+                            )
+                          }
+                          className="rounded border border-line bg-bg px-2 py-0.5 text-[10px] font-semibold normal-case text-slate-300 hover:border-volt hover:text-volt"
+                        >
+                          ⚡ 1-Liner Version
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setFacebookOpps((prev) =>
+                              prev.map((item) =>
+                                item.id === opp.id ? { ...item, cleverReplyDraft: opp.altLuckyDraft } : item,
+                              ),
+                            )
+                          }
+                          className="rounded border border-line bg-bg px-2 py-0.5 text-[10px] font-semibold normal-case text-slate-300 hover:border-volt hover:text-volt"
+                        >
+                          🎯 &ldquo;Got Lucky&rdquo; Version
+                        </button>
+                      </div>
+                      <a
+                        href={opp.permalink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          copyAndOpenFacebook(opp.cleverReplyDraft);
+                        }}
+                        className="text-sky-300 hover:underline"
+                      >
+                        View on Facebook (Auto-Copies Reply) ↗
+                      </a>
+                    </div>
+                    <textarea
+                      rows={3}
+                      className="input w-full bg-bg/90 font-sans text-xs leading-relaxed text-slate-200"
+                      value={opp.cleverReplyDraft}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setFacebookOpps((prev) =>
+                          prev.map((item) =>
+                            item.id === opp.id ? { ...item, cleverReplyDraft: val } : item,
                           ),
                         );
                       }}
