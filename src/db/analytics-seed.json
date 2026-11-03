@@ -1,0 +1,144 @@
+{
+  "totalHumanPageviews": 7,
+  "allTimeUniqueVisitorHashes": [
+    "9a3d1f0b2c8e4511",
+    "4c7b82e10f9d32a6"
+  ],
+  "totalBotHitsExcluded": 18,
+  "botBreakdown": {
+    "Internal QA & Health Checks": 14,
+    "Discord Link Preview (Discordbot)": 3,
+    "Search Engine Crawler (Google/Bing/DuckDuckGo)": 1
+  },
+  "deviceBreakdown": {
+    "mobile": 3,
+    "desktop": 4,
+    "tablet": 0
+  },
+  "pages": {
+    "/": {
+      "path": "/",
+      "views": 2,
+      "uniqueVisitorHashes": [
+        "9a3d1f0b2c8e4511",
+        "4c7b82e10f9d32a6"
+      ],
+      "lastVisitedAt": "2026-11-03T02:09:44.000Z"
+    },
+    "/map": {
+      "path": "/map",
+      "views": 2,
+      "uniqueVisitorHashes": [
+        "9a3d1f0b2c8e4511",
+        "4c7b82e10f9d32a6"
+      ],
+      "lastVisitedAt": "2026-11-03T02:09:45.000Z"
+    },
+    "/machines/Q01168": {
+      "path": "/machines/Q01168",
+      "views": 1,
+      "uniqueVisitorHashes": [
+        "9a3d1f0b2c8e4511"
+      ],
+      "lastVisitedAt": "2026-11-03T02:09:46.000Z"
+    },
+    "/machines/Q00018": {
+      "path": "/machines/Q00018",
+      "views": 1,
+      "uniqueVisitorHashes": [
+        "4c7b82e10f9d32a6"
+      ],
+      "lastVisitedAt": "2026-11-03T02:09:47.000Z"
+    },
+    "/leaderboard": {
+      "path": "/leaderboard",
+      "views": 1,
+      "uniqueVisitorHashes": [
+        "9a3d1f0b2c8e4511"
+      ],
+      "lastVisitedAt": "2026-11-03T02:09:48.000Z"
+    }
+  },
+  "sources": {
+    "Discord": {
+      "source": "Discord",
+      "visits": 7,
+      "uniqueVisitorHashes": [
+        "9a3d1f0b2c8e4511",
+        "4c7b82e10f9d32a6"
+      ],
+      "lastSeenAt": "2026-11-03T02:09:48.000Z"
+    }
+  },
+  "daily": {
+    "2026-11-03": {
+      "date": "2026-11-03",
+      "humanViews": 7,
+      "uniqueVisitorHashes": [
+        "9a3d1f0b2c8e4511",
+        "4c7b82e10f9d32a6"
+      ],
+      "botHitsBlocked": 18,
+      "signUps": 1
+    }
+  },
+  "recentHumanVisits": [
+    {
+      "id": "v-seed-1",
+      "at": "2026-11-03T02:09:48.000Z",
+      "path": "/machines/Q00018",
+      "referrer": "",
+      "sourceLabel": "Discord",
+      "device": "mobile",
+      "visitorHash": "4c7b82e1",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-seed-2",
+      "at": "2026-11-03T02:09:47.000Z",
+      "path": "/map",
+      "referrer": "",
+      "sourceLabel": "Discord",
+      "device": "mobile",
+      "visitorHash": "4c7b82e1",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-seed-3",
+      "at": "2026-11-03T02:09:46.000Z",
+      "path": "/leaderboard",
+      "referrer": "https://discord.com",
+      "sourceLabel": "Discord",
+      "device": "desktop",
+      "visitorHash": "9a3d1f0b",
+      "userId": null,
+      "userName": "King_Bezos"
+    },
+    {
+      "id": "v-seed-4",
+      "at": "2026-11-03T02:09:45.000Z",
+      "path": "/machines/Q01168",
+      "referrer": "https://discord.com",
+      "sourceLabel": "Discord",
+      "device": "desktop",
+      "visitorHash": "9a3d1f0b",
+      "userId": null,
+      "userName": "King_Bezos"
+    },
+    {
+      "id": "v-seed-5",
+      "at": "2026-11-03T02:09:44.000Z",
+      "path": "/",
+      "referrer": "https://discord.com",
+      "sourceLabel": "Discord",
+      "device": "desktop",
+      "visitorHash": "9a3d1f0b",
+      "userId": null,
+      "userName": "King_Bezos"
+    }
+  ],
+  "activeVisitorsMap": {},
+  "updatedAt": "2026-11-03T02:09:48.000Z"
+}

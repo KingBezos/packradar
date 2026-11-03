@@ -203,17 +203,33 @@ function defaultStore(): AnalyticsStore {
 }
 
 const ANALYTICS_FILE = path.join(process.cwd(), "data", "analytics-store.json");
+const SEED_ANALYTICS_FILE = path.join(process.cwd(), "src", "db", "analytics-seed.json");
 const g = globalThis as unknown as { __packradarAnalytics?: AnalyticsStore };
 
+function loadSeedStore(): AnalyticsStore {
+  try {
+    if (fs.existsSync(SEED_ANALYTICS_FILE)) {
+      const parsed = JSON.parse(fs.readFileSync(SEED_ANALYTICS_FILE, "utf8")) as Partial<AnalyticsStore>;
+      return { ...defaultStore(), ...parsed };
+    }
+  } catch {}
+  return defaultStore();
+}
+
 export async function loadAnalyticsStore(db: DB): Promise<AnalyticsStore> {
-  if (g.__packradarAnalytics) return g.__packradarAnalytics;
+  if (g.__packradarAnalytics && g.__packradarAnalytics.totalHumanPageviews > 0) {
+    return g.__packradarAnalytics;
+  }
 
   // 1. Try DB settings
   try {
     const [row] = await db.select().from(settings).where(eq(settings.key, "siteAnalyticsV1"));
     if (row?.value && typeof row.value === "object") {
-      g.__packradarAnalytics = { ...defaultStore(), ...(row.value as Partial<AnalyticsStore>) };
-      return g.__packradarAnalytics;
+      const val = row.value as Partial<AnalyticsStore>;
+      if ((val.totalHumanPageviews ?? 0) > 0) {
+        g.__packradarAnalytics = { ...defaultStore(), ...val };
+        return g.__packradarAnalytics;
+      }
     }
   } catch {}
 
@@ -221,12 +237,16 @@ export async function loadAnalyticsStore(db: DB): Promise<AnalyticsStore> {
   try {
     if (fs.existsSync(ANALYTICS_FILE)) {
       const parsed = JSON.parse(fs.readFileSync(ANALYTICS_FILE, "utf8")) as Partial<AnalyticsStore>;
-      g.__packradarAnalytics = { ...defaultStore(), ...parsed };
-      return g.__packradarAnalytics;
+      if ((parsed.totalHumanPageviews ?? 0) > 0) {
+        g.__packradarAnalytics = { ...defaultStore(), ...parsed };
+        return g.__packradarAnalytics;
+      }
     }
   } catch {}
 
-  g.__packradarAnalytics = defaultStore();
+  // 3. Fall back to baseline seed store so fresh Render container deploys never reset stats to 0
+  const seeded = loadSeedStore();
+  g.__packradarAnalytics = seeded;
   return g.__packradarAnalytics;
 }
 
