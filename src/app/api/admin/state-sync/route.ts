@@ -197,6 +197,16 @@ export const POST = route(async (req) => {
               planExpiresAt: u.planExpiresAt ? new Date(u.planExpiresAt) : null,
             })
             .onConflictDoNothing();
+        } else if (typeof u.reputation === "number") {
+          await db
+            .update(user)
+            .set({
+              reputation: u.reputation,
+              name: u.name || existingByEmail.name,
+              role: u.role || existingByEmail.role,
+              plan: u.plan || existingByEmail.plan,
+            })
+            .where(eq(user.id, existingByEmail.id));
         }
       } catch {}
     }

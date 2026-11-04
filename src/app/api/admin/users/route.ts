@@ -1,9 +1,9 @@
 import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { route, json } from "@/lib/api";
-import { requireRole } from "@/lib/session";
+import { persistIdentityCookie, requireRole } from "@/lib/session";
 import { getDb } from "@/db";
-import { account, alertSubscriptions, session, user } from "@/db/schema";
+import { account, alertSubscriptions, reputationEvents, session, user } from "@/db/schema";
 
 export const dynamic = "force-dynamic";
 
@@ -55,9 +55,12 @@ const PatchUser = z.object({
 });
 
 export const PATCH = route(async (req) => {
-  await requireRole(["admin"]);
+  const adminUser = await requireRole(["admin"]);
   const b = PatchUser.parse(await json(req));
   const db = await getDb();
+  const [existing] = await db.select().from(user).where(eq(user.id, b.userId));
+  if (!existing) throw new Error("User not found");
+
   const patch: Partial<typeof user.$inferInsert> = { updatedAt: new Date() };
   if (b.name !== undefined) patch.name = b.name;
   if (b.role !== undefined) patch.role = b.role;
@@ -66,7 +69,24 @@ export const PATCH = route(async (req) => {
   if (b.reputation !== undefined) patch.reputation = b.reputation;
 
   await db.update(user).set(patch).where(eq(user.id, b.userId));
-  return { ok: true };
+
+  if (b.reputation !== undefined) {
+    const delta = b.reputation - (existing.reputation ?? 0);
+    if (delta !== 0) {
+      await db.insert(reputationEvents).values({
+        userId: b.userId,
+        delta,
+        reason: "Admin reputation adjustment",
+      });
+    }
+  }
+
+  const [updated] = await db.select().from(user).where(eq(user.id, b.userId));
+  if (updated && updated.id === adminUser.id) {
+    await persistIdentityCookie(updated);
+  }
+
+  return { ok: true, user: updated };
 });
 
 export const DELETE = route(async (req) => {

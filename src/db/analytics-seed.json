@@ -1,5 +1,5 @@
 {
-  "totalHumanPageviews": 224,
+  "totalHumanPageviews": 228,
   "allTimeUniqueVisitorHashes": [
     "9a3d1f0b2c8e4511",
     "4c7b82e10f9d32a6",
@@ -51,20 +51,20 @@
     "6ed87aa0efb242da",
     "0cd77ac637d61abd"
   ],
-  "totalBotHitsExcluded": 584,
+  "totalBotHitsExcluded": 599,
   "botBreakdown": {
-    "Internal QA & Health Checks": 495,
+    "Internal QA & Health Checks": 508,
     "Discord Link Preview (Discordbot)": 3,
     "Search Engine Crawler (Google/Bing/DuckDuckGo)": 1,
-    "Headless Browser / Automation (Puppeteer/Playwright/Curl/Node)": 8,
+    "Headless Browser / Automation (Puppeteer/Playwright/Curl/Node)": 9,
     "Empty or Synthetic User-Agent": 2,
-    "Social Preview Bot (Twitter/FB/Slack/Telegram/Reddit)": 62,
+    "Social Preview Bot (Twitter/FB/Slack/Telegram/Reddit)": 63,
     "Non-Browser HTTP Client": 11,
     "Headless Webdriver Flag (navigator.webdriver)": 2
   },
   "deviceBreakdown": {
     "mobile": 215,
-    "desktop": 9,
+    "desktop": 13,
     "tablet": 0
   },
   "pages": {
@@ -150,13 +150,14 @@
     },
     "/leaderboard": {
       "path": "/leaderboard",
-      "views": 8,
+      "views": 9,
       "uniqueVisitorHashes": [
         "9a3d1f0b2c8e4511",
         "481f815e11b27427",
-        "9bf9ba7d0de1038a"
+        "9bf9ba7d0de1038a",
+        "0d1dd19288169b75"
       ],
-      "lastVisitedAt": "2026-11-03T17:06:31.784Z"
+      "lastVisitedAt": "2026-11-04T03:30:13.839Z"
     },
     "/drops": {
       "path": "/drops",
@@ -261,12 +262,13 @@
     },
     "/alerts": {
       "path": "/alerts",
-      "views": 13,
+      "views": 14,
       "uniqueVisitorHashes": [
         "2a0c6057a5d0139a",
-        "481f815e11b27427"
+        "481f815e11b27427",
+        "0d1dd19288169b75"
       ],
-      "lastVisitedAt": "2026-11-03T17:03:27.839Z"
+      "lastVisitedAt": "2026-11-04T03:32:49.882Z"
     },
     "/locations": {
       "path": "/locations",
@@ -398,11 +400,12 @@
     },
     "/profile": {
       "path": "/profile",
-      "views": 5,
+      "views": 7,
       "uniqueVisitorHashes": [
-        "481f815e11b27427"
+        "481f815e11b27427",
+        "0d1dd19288169b75"
       ],
-      "lastVisitedAt": "2026-11-03T17:05:31.898Z"
+      "lastVisitedAt": "2026-11-04T03:32:33.277Z"
     },
     "/news/packradar-6h-drop-intel-2026-11-03-h12": {
       "path": "/news/packradar-6h-drop-intel-2026-11-03-h12",
@@ -582,17 +585,62 @@
     },
     "2026-11-04": {
       "date": "2026-11-04",
-      "humanViews": 13,
+      "humanViews": 17,
       "uniqueVisitorHashes": [
         "6ed87aa0efb242da",
         "0cd77ac637d61abd",
-        "31aa7685cac146af"
+        "31aa7685cac146af",
+        "0d1dd19288169b75"
       ],
-      "botHitsBlocked": 101,
+      "botHitsBlocked": 116,
       "signUps": 0
     }
   },
   "recentHumanVisits": [
+    {
+      "id": "v-1793763169882-zzpy",
+      "at": "2026-11-04T03:32:49.882Z",
+      "path": "/alerts",
+      "referrer": "https://packradar.onrender.com/admin",
+      "sourceLabel": "Internal Navigation",
+      "device": "desktop",
+      "visitorHash": "0d1dd192",
+      "userId": "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+      "userName": "King_Bezos"
+    },
+    {
+      "id": "v-1793763153277-gl8l",
+      "at": "2026-11-04T03:32:33.277Z",
+      "path": "/profile",
+      "referrer": "https://packradar.onrender.com/admin",
+      "sourceLabel": "Internal Navigation",
+      "device": "desktop",
+      "visitorHash": "0d1dd192",
+      "userId": "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+      "userName": "King_Bezos"
+    },
+    {
+      "id": "v-1793763021177-fpm6",
+      "at": "2026-11-04T03:30:21.177Z",
+      "path": "/profile",
+      "referrer": "https://packradar.onrender.com/admin",
+      "sourceLabel": "Internal Navigation",
+      "device": "desktop",
+      "visitorHash": "0d1dd192",
+      "userId": "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+      "userName": "King_Bezos"
+    },
+    {
+      "id": "v-1793763013839-4s7u",
+      "at": "2026-11-04T03:30:13.839Z",
+      "path": "/leaderboard",
+      "referrer": "https://packradar.onrender.com/admin",
+      "sourceLabel": "Internal Navigation",
+      "device": "desktop",
+      "visitorHash": "0d1dd192",
+      "userId": "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+      "userName": "King_Bezos"
+    },
     {
       "id": "v-1793756907399-pm4w",
       "at": "2026-11-04T01:48:27.399Z",
@@ -1208,53 +1256,11 @@
       "visitorHash": "481f815e",
       "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
       "userName": "RayquazaRipper249"
-    },
-    {
-      "id": "v-1793725459938-grx0",
-      "at": "2026-11-03T17:04:19.938Z",
-      "path": "/news",
-      "referrer": "https://packradar.onrender.com/map",
-      "sourceLabel": "Internal Navigation",
-      "device": "mobile",
-      "visitorHash": "481f815e",
-      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
-      "userName": "RayquazaRipper249"
-    },
-    {
-      "id": "v-1793725449495-zd0a",
-      "at": "2026-11-03T17:04:09.495Z",
-      "path": "/news/packradar-6h-drop-intel-2026-11-03-h12",
-      "referrer": "https://packradar.onrender.com/map",
-      "sourceLabel": "Internal Navigation",
-      "device": "mobile",
-      "visitorHash": "481f815e",
-      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
-      "userName": "RayquazaRipper249"
-    },
-    {
-      "id": "v-1793725427883-ks5s",
-      "at": "2026-11-03T17:03:47.883Z",
-      "path": "/news",
-      "referrer": "https://packradar.onrender.com/map",
-      "sourceLabel": "Internal Navigation",
-      "device": "mobile",
-      "visitorHash": "481f815e",
-      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
-      "userName": "RayquazaRipper249"
-    },
-    {
-      "id": "v-1793725407839-i7hn",
-      "at": "2026-11-03T17:03:27.839Z",
-      "path": "/alerts",
-      "referrer": "https://packradar.onrender.com/map",
-      "sourceLabel": "Internal Navigation",
-      "device": "mobile",
-      "visitorHash": "481f815e",
-      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
-      "userName": "RayquazaRipper249"
     }
   ],
-  "activeVisitorsMap": {},
+  "activeVisitorsMap": {
+    "0d1dd19288169b75": 1793763169882
+  },
   "totalSearches": 32,
   "searchQueries": {
     "19382": {
@@ -1785,5 +1791,5 @@
       "lastSearchedAt": "2026-11-04T00:24:43.766Z"
     }
   },
-  "updatedAt": "2026-11-04T03:15:19.737Z"
+  "updatedAt": "2026-11-04T03:32:49.882Z"
 }

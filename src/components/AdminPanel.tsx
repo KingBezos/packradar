@@ -249,6 +249,7 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
   const [users, setUsers] = useState<ManagedUser[]>([]);
   const [userSearch, setUserSearch] = useState("");
   const [editingNames, setEditingNames] = useState<Record<string, string>>({});
+  const [editingReps, setEditingReps] = useState<Record<string, string>>({});
 
   // 3. Content (News, Machines, Retail, Sponsors, Comments)
   const [newsList, setNewsList] = useState<NewsArticle[]>([]);
@@ -2355,23 +2356,82 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                         </select>
                       </td>
                       <td className="px-4 py-3">
-                        <div className="flex items-center gap-1.5">
-                          <span className="font-mono text-sm font-bold text-volt">{u.reputation}</span>
-                          {isAdmin && (
-                            <div className="flex gap-1">
-                              <button
-                                className="rounded border border-line bg-panel-2 px-1.5 py-0.5 text-[10px] hover:border-volt"
-                                onClick={() => patchUser(u.id, { reputation: u.reputation + 10 }, `+10 rep to ${u.name}`)}
-                              >
-                                +10
-                              </button>
-                              <button
-                                className="rounded border border-line bg-panel-2 px-1.5 py-0.5 text-[10px] hover:border-red-400"
-                                onClick={() => patchUser(u.id, { reputation: u.reputation - 10 }, `-10 rep from ${u.name}`)}
-                              >
-                                -10
-                              </button>
-                            </div>
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          {isAdmin ? (
+                            <>
+                              <input
+                                type="number"
+                                className="input w-20 px-2 py-1 font-mono text-xs font-bold text-volt"
+                                value={editingReps[u.id] ?? String(u.reputation)}
+                                onChange={(e) =>
+                                  setEditingReps({ ...editingReps, [u.id]: e.target.value })
+                                }
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") {
+                                    const parsed = parseInt(editingReps[u.id] ?? String(u.reputation), 10);
+                                    if (!Number.isNaN(parsed)) {
+                                      patchUser(
+                                        u.id,
+                                        { reputation: parsed },
+                                        `Set ${u.name}'s reputation to ${parsed}`,
+                                      );
+                                    }
+                                  }
+                                }}
+                              />
+                              {editingReps[u.id] !== undefined &&
+                                editingReps[u.id] !== String(u.reputation) && (
+                                  <button
+                                    type="button"
+                                    className="rounded bg-volt px-2 py-1 text-[10px] font-bold text-slate-950"
+                                    onClick={() => {
+                                      const parsed = parseInt(editingReps[u.id] ?? String(u.reputation), 10);
+                                      if (!Number.isNaN(parsed)) {
+                                        patchUser(
+                                          u.id,
+                                          { reputation: parsed },
+                                          `Set ${u.name}'s reputation to ${parsed}`,
+                                        );
+                                        const next = { ...editingReps };
+                                        delete next[u.id];
+                                        setEditingReps(next);
+                                      }
+                                    }}
+                                  >
+                                    Set
+                                  </button>
+                                )}
+                              <div className="flex gap-1">
+                                <button
+                                  type="button"
+                                  className="rounded border border-line bg-panel-2 px-1.5 py-0.5 text-[10px] hover:border-volt"
+                                  onClick={() => {
+                                    const nextRep = u.reputation + 10;
+                                    const next = { ...editingReps };
+                                    delete next[u.id];
+                                    setEditingReps(next);
+                                    patchUser(u.id, { reputation: nextRep }, `+10 rep to ${u.name} (${nextRep})`);
+                                  }}
+                                >
+                                  +10
+                                </button>
+                                <button
+                                  type="button"
+                                  className="rounded border border-line bg-panel-2 px-1.5 py-0.5 text-[10px] hover:border-red-400"
+                                  onClick={() => {
+                                    const nextRep = u.reputation - 10;
+                                    const next = { ...editingReps };
+                                    delete next[u.id];
+                                    setEditingReps(next);
+                                    patchUser(u.id, { reputation: nextRep }, `-10 rep from ${u.name} (${nextRep})`);
+                                  }}
+                                >
+                                  -10
+                                </button>
+                              </div>
+                            </>
+                          ) : (
+                            <span className="font-mono text-sm font-bold text-volt">{u.reputation}</span>
                           )}
                         </div>
                       </td>

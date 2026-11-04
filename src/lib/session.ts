@@ -110,15 +110,8 @@ async function sanitizeUserPrivacy(
 
   const nameChanged = desiredName !== u.name;
   const hasImage = Boolean(u.image);
-  const minOwnerRep = OWNER_MIN_REPUTATION[emailLower] ?? 0;
-  const cookieRep =
-    cookieProfile && cookieProfile.email.toLowerCase() === emailLower
-      ? (cookieProfile.reputation ?? 0)
-      : 0;
-  const desiredRep = Math.max(u.reputation ?? 0, cookieRep, minOwnerRep);
-  const repChanged = desiredRep !== (u.reputation ?? 0);
 
-  if (!hasImage && !nameChanged && !shouldBeAdmin && !repChanged) return u;
+  if (!hasImage && !nameChanged && !shouldBeAdmin) return u;
 
   const newRole = shouldBeAdmin ? "admin" : u.role;
   const newPlan = ownerEmails.includes(emailLower) ? "premium" : u.plan;
@@ -129,7 +122,6 @@ async function sanitizeUserPrivacy(
       image: null,
       role: newRole,
       plan: newPlan,
-      reputation: desiredRep,
       ...(shouldBeAdmin ? { emailVerified: true } : {}),
     })
     .where(eq(userTable.id, u.id))
@@ -141,7 +133,6 @@ async function sanitizeUserPrivacy(
     image: null,
     role: newRole,
     plan: newPlan,
-    reputation: desiredRep,
     ...(shouldBeAdmin ? { emailVerified: true } : {}),
   };
   await persistIdentityCookie(updatedUser);
