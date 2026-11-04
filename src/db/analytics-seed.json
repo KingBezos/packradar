@@ -1,5 +1,5 @@
 {
-  "totalHumanPageviews": 30,
+  "totalHumanPageviews": 224,
   "allTimeUniqueVisitorHashes": [
     "9a3d1f0b2c8e4511",
     "4c7b82e10f9d32a6",
@@ -13,27 +13,64 @@
     "118b619d39b6d34e",
     "cebc97d640fbd992",
     "4ad046a9706bfa29",
-    "bb117ff2addac445"
+    "bb117ff2addac445",
+    "a26b09d08318cb4b",
+    "1b5e7e29d9806f56",
+    "2a0c6057a5d0139a",
+    "481f815e11b27427",
+    "3e5400ad98a51f73",
+    "ee2edd93264e4cb8",
+    "821cdff0ea1f395c",
+    "3de52e697c7179cc",
+    "2e3db359a59095df",
+    "ea9feaee705b5117",
+    "7fd7f31494b84852",
+    "c5c748635d1f5b01",
+    "512a1177dcd6c71f",
+    "47f3f7befd8d9ba4",
+    "a7fce8cca2fa2d07",
+    "1cefab3d1844d5c5",
+    "9bf9ba7d0de1038a",
+    "69ca85f1c25a82f0",
+    "2c99208ef95544fc",
+    "4c2c7f74a14c6cf3",
+    "8d6c3c86a95231e9",
+    "6637ebf24f641cb9",
+    "cf7d8c1396149d23",
+    "24e879835c975969",
+    "712b60d4bf1aa093",
+    "b51b3f3fd8fa469e",
+    "afc77e8958b2964d",
+    "93e4287fa078a857",
+    "e3594d61cab9b776",
+    "eb6b7b2e93c72a32",
+    "d98eb34ebf31de58",
+    "58319644add0fba0",
+    "cbb60c2157671196",
+    "31aa7685cac146af",
+    "6ed87aa0efb242da",
+    "0cd77ac637d61abd"
   ],
-  "totalBotHitsExcluded": 173,
+  "totalBotHitsExcluded": 537,
   "botBreakdown": {
-    "Internal QA & Health Checks": 131,
+    "Internal QA & Health Checks": 456,
     "Discord Link Preview (Discordbot)": 3,
     "Search Engine Crawler (Google/Bing/DuckDuckGo)": 1,
-    "Headless Browser / Automation (Puppeteer/Playwright/Curl/Node)": 5,
+    "Headless Browser / Automation (Puppeteer/Playwright/Curl/Node)": 6,
     "Empty or Synthetic User-Agent": 2,
-    "Social Preview Bot (Twitter/FB/Slack/Telegram/Reddit)": 29,
-    "Non-Browser HTTP Client": 2
+    "Social Preview Bot (Twitter/FB/Slack/Telegram/Reddit)": 56,
+    "Non-Browser HTTP Client": 11,
+    "Headless Webdriver Flag (navigator.webdriver)": 2
   },
   "deviceBreakdown": {
-    "mobile": 25,
-    "desktop": 5,
+    "mobile": 215,
+    "desktop": 9,
     "tablet": 0
   },
   "pages": {
     "/": {
       "path": "/",
-      "views": 14,
+      "views": 58,
       "uniqueVisitorHashes": [
         "9a3d1f0b2c8e4511",
         "4c7b82e10f9d32a6",
@@ -45,20 +82,55 @@
         "425e08eb2de5d278",
         "cebc97d640fbd992",
         "4ad046a9706bfa29",
-        "bb117ff2addac445"
+        "bb117ff2addac445",
+        "a26b09d08318cb4b",
+        "1b5e7e29d9806f56",
+        "2a0c6057a5d0139a",
+        "481f815e11b27427",
+        "ee2edd93264e4cb8",
+        "821cdff0ea1f395c",
+        "3de52e697c7179cc",
+        "2e3db359a59095df",
+        "7fd7f31494b84852",
+        "c5c748635d1f5b01",
+        "512a1177dcd6c71f",
+        "47f3f7befd8d9ba4",
+        "a7fce8cca2fa2d07",
+        "9bf9ba7d0de1038a",
+        "69ca85f1c25a82f0",
+        "2c99208ef95544fc",
+        "4c2c7f74a14c6cf3",
+        "6637ebf24f641cb9",
+        "cf7d8c1396149d23",
+        "24e879835c975969",
+        "712b60d4bf1aa093",
+        "b51b3f3fd8fa469e",
+        "93e4287fa078a857",
+        "d98eb34ebf31de58",
+        "58319644add0fba0",
+        "cbb60c2157671196",
+        "31aa7685cac146af",
+        "6ed87aa0efb242da",
+        "0cd77ac637d61abd"
       ],
-      "lastVisitedAt": "2026-11-03T06:02:52.289Z"
+      "lastVisitedAt": "2026-11-04T01:47:50.289Z"
     },
     "/map": {
       "path": "/map",
-      "views": 5,
+      "views": 32,
       "uniqueVisitorHashes": [
         "9a3d1f0b2c8e4511",
         "4c7b82e10f9d32a6",
         "4c61408b0d9751e3",
-        "5bb365893501aca0"
+        "5bb365893501aca0",
+        "2a0c6057a5d0139a",
+        "481f815e11b27427",
+        "ea9feaee705b5117",
+        "d98eb34ebf31de58",
+        "0cd77ac637d61abd",
+        "31aa7685cac146af"
       ],
-      "lastVisitedAt": "2026-11-03T03:56:48.016Z"
+      "lastVisitedAt": "2026-11-04T01:48:27.399Z"
     },
     "/machines/Q01168": {
       "path": "/machines/Q01168",
@@ -78,31 +150,52 @@
     },
     "/leaderboard": {
       "path": "/leaderboard",
-      "views": 1,
+      "views": 8,
       "uniqueVisitorHashes": [
-        "9a3d1f0b2c8e4511"
+        "9a3d1f0b2c8e4511",
+        "481f815e11b27427",
+        "9bf9ba7d0de1038a"
       ],
-      "lastVisitedAt": "2026-11-03T02:09:48.000Z"
+      "lastVisitedAt": "2026-11-03T17:06:31.784Z"
     },
     "/drops": {
       "path": "/drops",
-      "views": 2,
+      "views": 10,
       "uniqueVisitorHashes": [
         "0d1dd19288169b75",
-        "5bb365893501aca0"
+        "5bb365893501aca0",
+        "481f815e11b27427",
+        "0cd77ac637d61abd"
       ],
-      "lastVisitedAt": "2026-11-03T03:55:34.225Z"
+      "lastVisitedAt": "2026-11-04T00:29:04.349Z"
     },
     "/search": {
       "path": "/search",
-      "views": 4,
+      "views": 32,
       "uniqueVisitorHashes": [
         "5bb365893501aca0",
         "692f65999f08d194",
         "118b619d39b6d34e",
-        "4ad046a9706bfa29"
+        "4ad046a9706bfa29",
+        "a26b09d08318cb4b",
+        "2a0c6057a5d0139a",
+        "ea9feaee705b5117",
+        "481f815e11b27427",
+        "c5c748635d1f5b01",
+        "512a1177dcd6c71f",
+        "1cefab3d1844d5c5",
+        "9bf9ba7d0de1038a",
+        "2c99208ef95544fc",
+        "712b60d4bf1aa093",
+        "afc77e8958b2964d",
+        "93e4287fa078a857",
+        "e3594d61cab9b776",
+        "eb6b7b2e93c72a32",
+        "d98eb34ebf31de58",
+        "31aa7685cac146af",
+        "0cd77ac637d61abd"
       ],
-      "lastVisitedAt": "2026-11-03T04:47:23.844Z"
+      "lastVisitedAt": "2026-11-04T00:28:41.515Z"
     },
     "/machines/Q02071": {
       "path": "/machines/Q02071",
@@ -119,6 +212,245 @@
         "118b619d39b6d34e"
       ],
       "lastVisitedAt": "2026-11-03T04:12:10.846Z"
+    },
+    "/machines/Q01328": {
+      "path": "/machines/Q01328",
+      "views": 15,
+      "uniqueVisitorHashes": [
+        "a26b09d08318cb4b",
+        "2a0c6057a5d0139a",
+        "481f815e11b27427",
+        "4c61408b0d9751e3"
+      ],
+      "lastVisitedAt": "2026-11-03T17:15:01.178Z"
+    },
+    "/sign-up": {
+      "path": "/sign-up",
+      "views": 2,
+      "uniqueVisitorHashes": [
+        "2a0c6057a5d0139a",
+        "d98eb34ebf31de58"
+      ],
+      "lastVisitedAt": "2026-11-03T22:52:46.289Z"
+    },
+    "/news/welcome-to-packradar": {
+      "path": "/news/welcome-to-packradar",
+      "views": 1,
+      "uniqueVisitorHashes": [
+        "2a0c6057a5d0139a"
+      ],
+      "lastVisitedAt": "2026-11-03T07:45:50.837Z"
+    },
+    "/news": {
+      "path": "/news",
+      "views": 3,
+      "uniqueVisitorHashes": [
+        "2a0c6057a5d0139a",
+        "481f815e11b27427"
+      ],
+      "lastVisitedAt": "2026-11-03T17:04:19.938Z"
+    },
+    "/releases": {
+      "path": "/releases",
+      "views": 5,
+      "uniqueVisitorHashes": [
+        "2a0c6057a5d0139a",
+        "481f815e11b27427"
+      ],
+      "lastVisitedAt": "2026-11-03T17:05:44.152Z"
+    },
+    "/alerts": {
+      "path": "/alerts",
+      "views": 13,
+      "uniqueVisitorHashes": [
+        "2a0c6057a5d0139a",
+        "481f815e11b27427"
+      ],
+      "lastVisitedAt": "2026-11-03T17:03:27.839Z"
+    },
+    "/locations": {
+      "path": "/locations",
+      "views": 1,
+      "uniqueVisitorHashes": [
+        "481f815e11b27427"
+      ],
+      "lastVisitedAt": "2026-11-03T07:52:46.582Z"
+    },
+    "/locations/az": {
+      "path": "/locations/az",
+      "views": 1,
+      "uniqueVisitorHashes": [
+        "481f815e11b27427"
+      ],
+      "lastVisitedAt": "2026-11-03T07:52:48.197Z"
+    },
+    "/locations/az/phoenix": {
+      "path": "/locations/az/phoenix",
+      "views": 2,
+      "uniqueVisitorHashes": [
+        "481f815e11b27427"
+      ],
+      "lastVisitedAt": "2026-11-03T12:59:16.033Z"
+    },
+    "/machines/Q00337": {
+      "path": "/machines/Q00337",
+      "views": 1,
+      "uniqueVisitorHashes": [
+        "481f815e11b27427"
+      ],
+      "lastVisitedAt": "2026-11-03T07:53:37.761Z"
+    },
+    "/drive-plan": {
+      "path": "/drive-plan",
+      "views": 1,
+      "uniqueVisitorHashes": [
+        "481f815e11b27427"
+      ],
+      "lastVisitedAt": "2026-11-03T07:53:54.445Z"
+    },
+    "/machines/Q01332": {
+      "path": "/machines/Q01332",
+      "views": 1,
+      "uniqueVisitorHashes": [
+        "481f815e11b27427"
+      ],
+      "lastVisitedAt": "2026-11-03T07:54:33.605Z"
+    },
+    "/sign-in": {
+      "path": "/sign-in",
+      "views": 1,
+      "uniqueVisitorHashes": [
+        "3e5400ad98a51f73"
+      ],
+      "lastVisitedAt": "2026-11-03T08:53:59.630Z"
+    },
+    "/machines/Q00605": {
+      "path": "/machines/Q00605",
+      "views": 1,
+      "uniqueVisitorHashes": [
+        "481f815e11b27427"
+      ],
+      "lastVisitedAt": "2026-11-03T08:59:40.052Z"
+    },
+    "/machines/Q00364": {
+      "path": "/machines/Q00364",
+      "views": 1,
+      "uniqueVisitorHashes": [
+        "481f815e11b27427"
+      ],
+      "lastVisitedAt": "2026-11-03T12:02:38.642Z"
+    },
+    "/machines/Q02072": {
+      "path": "/machines/Q02072",
+      "views": 1,
+      "uniqueVisitorHashes": [
+        "c5c748635d1f5b01"
+      ],
+      "lastVisitedAt": "2026-11-03T12:29:36.632Z"
+    },
+    "/machines/Q00901": {
+      "path": "/machines/Q00901",
+      "views": 12,
+      "uniqueVisitorHashes": [
+        "9bf9ba7d0de1038a"
+      ],
+      "lastVisitedAt": "2026-11-03T14:30:30.026Z"
+    },
+    "/machines/Q01748": {
+      "path": "/machines/Q01748",
+      "views": 1,
+      "uniqueVisitorHashes": [
+        "9bf9ba7d0de1038a"
+      ],
+      "lastVisitedAt": "2026-11-03T14:20:10.209Z"
+    },
+    "/machines/Q00902": {
+      "path": "/machines/Q00902",
+      "views": 1,
+      "uniqueVisitorHashes": [
+        "9bf9ba7d0de1038a"
+      ],
+      "lastVisitedAt": "2026-11-03T14:20:28.580Z"
+    },
+    "/news/pokemon-tcg-november-2026-lineup-includes-delta-reign-and-30th-celebration-76ahn": {
+      "path": "/news/pokemon-tcg-november-2026-lineup-includes-delta-reign-and-30th-celebration-76ahn",
+      "views": 1,
+      "uniqueVisitorHashes": [
+        "9bf9ba7d0de1038a"
+      ],
+      "lastVisitedAt": "2026-11-03T14:21:48.500Z"
+    },
+    "/machines/Q00361": {
+      "path": "/machines/Q00361",
+      "views": 1,
+      "uniqueVisitorHashes": [
+        "481f815e11b27427"
+      ],
+      "lastVisitedAt": "2026-11-03T15:20:31.563Z"
+    },
+    "/machines/Q00162": {
+      "path": "/machines/Q00162",
+      "views": 1,
+      "uniqueVisitorHashes": [
+        "8d6c3c86a95231e9"
+      ],
+      "lastVisitedAt": "2026-11-03T16:22:03.030Z"
+    },
+    "/profile": {
+      "path": "/profile",
+      "views": 5,
+      "uniqueVisitorHashes": [
+        "481f815e11b27427"
+      ],
+      "lastVisitedAt": "2026-11-03T17:05:31.898Z"
+    },
+    "/news/packradar-6h-drop-intel-2026-11-03-h12": {
+      "path": "/news/packradar-6h-drop-intel-2026-11-03-h12",
+      "views": 1,
+      "uniqueVisitorHashes": [
+        "481f815e11b27427"
+      ],
+      "lastVisitedAt": "2026-11-03T17:04:09.495Z"
+    },
+    "/about": {
+      "path": "/about",
+      "views": 1,
+      "uniqueVisitorHashes": [
+        "481f815e11b27427"
+      ],
+      "lastVisitedAt": "2026-11-03T17:04:51.866Z"
+    },
+    "/machines/Q01885": {
+      "path": "/machines/Q01885",
+      "views": 1,
+      "uniqueVisitorHashes": [
+        "712b60d4bf1aa093"
+      ],
+      "lastVisitedAt": "2026-11-03T17:46:31.879Z"
+    },
+    "/machines/Q00488": {
+      "path": "/machines/Q00488",
+      "views": 1,
+      "uniqueVisitorHashes": [
+        "d98eb34ebf31de58"
+      ],
+      "lastVisitedAt": "2026-11-03T20:02:34.898Z"
+    },
+    "/machines/Q00890": {
+      "path": "/machines/Q00890",
+      "views": 3,
+      "uniqueVisitorHashes": [
+        "d98eb34ebf31de58"
+      ],
+      "lastVisitedAt": "2026-11-03T22:52:56.726Z"
+    },
+    "/machines/Q02253": {
+      "path": "/machines/Q02253",
+      "views": 1,
+      "uniqueVisitorHashes": [
+        "0cd77ac637d61abd"
+      ],
+      "lastVisitedAt": "2026-11-04T00:26:12.596Z"
     }
   },
   "sources": {
@@ -133,33 +465,69 @@
     },
     "Facebook": {
       "source": "Facebook",
-      "visits": 11,
+      "visits": 73,
       "uniqueVisitorHashes": [
         "5bb365893501aca0",
         "a58a2d94d082288b",
         "1b78fe8791b59c3b",
         "cebc97d640fbd992",
         "4ad046a9706bfa29",
-        "bb117ff2addac445"
+        "bb117ff2addac445",
+        "a26b09d08318cb4b",
+        "1b5e7e29d9806f56",
+        "ee2edd93264e4cb8",
+        "821cdff0ea1f395c",
+        "3de52e697c7179cc",
+        "2e3db359a59095df",
+        "ea9feaee705b5117",
+        "7fd7f31494b84852",
+        "c5c748635d1f5b01",
+        "512a1177dcd6c71f",
+        "a7fce8cca2fa2d07",
+        "1cefab3d1844d5c5",
+        "69ca85f1c25a82f0",
+        "4c2c7f74a14c6cf3",
+        "8d6c3c86a95231e9",
+        "6637ebf24f641cb9",
+        "cf7d8c1396149d23",
+        "24e879835c975969",
+        "712b60d4bf1aa093",
+        "b51b3f3fd8fa469e",
+        "afc77e8958b2964d",
+        "93e4287fa078a857",
+        "eb6b7b2e93c72a32",
+        "d98eb34ebf31de58",
+        "58319644add0fba0",
+        "cbb60c2157671196",
+        "31aa7685cac146af",
+        "6ed87aa0efb242da",
+        "0cd77ac637d61abd"
       ],
-      "lastSeenAt": "2026-11-03T05:03:41.438Z"
+      "lastSeenAt": "2026-11-04T01:48:27.399Z"
     },
     "Direct / Shared Link (Discord/SMS/App)": {
       "source": "Direct / Shared Link (Discord/SMS/App)",
-      "visits": 11,
+      "visits": 92,
       "uniqueVisitorHashes": [
         "692f65999f08d194",
         "4c61408b0d9751e3",
         "425e08eb2de5d278",
-        "118b619d39b6d34e"
+        "118b619d39b6d34e",
+        "2a0c6057a5d0139a",
+        "481f815e11b27427",
+        "3e5400ad98a51f73",
+        "47f3f7befd8d9ba4",
+        "9bf9ba7d0de1038a",
+        "2c99208ef95544fc",
+        "e3594d61cab9b776"
       ],
-      "lastSeenAt": "2026-11-03T06:02:52.289Z"
+      "lastSeenAt": "2026-11-03T23:46:28.995Z"
     }
   },
   "daily": {
     "2026-11-03": {
       "date": "2026-11-03",
-      "humanViews": 30,
+      "humanViews": 211,
       "uniqueVisitorHashes": [
         "9a3d1f0b2c8e4511",
         "4c7b82e10f9d32a6",
@@ -173,324 +541,1237 @@
         "118b619d39b6d34e",
         "cebc97d640fbd992",
         "4ad046a9706bfa29",
-        "bb117ff2addac445"
+        "bb117ff2addac445",
+        "a26b09d08318cb4b",
+        "1b5e7e29d9806f56",
+        "2a0c6057a5d0139a",
+        "481f815e11b27427",
+        "3e5400ad98a51f73",
+        "ee2edd93264e4cb8",
+        "821cdff0ea1f395c",
+        "3de52e697c7179cc",
+        "2e3db359a59095df",
+        "ea9feaee705b5117",
+        "7fd7f31494b84852",
+        "c5c748635d1f5b01",
+        "512a1177dcd6c71f",
+        "47f3f7befd8d9ba4",
+        "a7fce8cca2fa2d07",
+        "1cefab3d1844d5c5",
+        "9bf9ba7d0de1038a",
+        "69ca85f1c25a82f0",
+        "2c99208ef95544fc",
+        "4c2c7f74a14c6cf3",
+        "8d6c3c86a95231e9",
+        "6637ebf24f641cb9",
+        "cf7d8c1396149d23",
+        "24e879835c975969",
+        "712b60d4bf1aa093",
+        "b51b3f3fd8fa469e",
+        "afc77e8958b2964d",
+        "93e4287fa078a857",
+        "e3594d61cab9b776",
+        "eb6b7b2e93c72a32",
+        "d98eb34ebf31de58",
+        "58319644add0fba0",
+        "cbb60c2157671196",
+        "31aa7685cac146af"
       ],
-      "botHitsBlocked": 173,
-      "signUps": 1
+      "botHitsBlocked": 483,
+      "signUps": 1,
+      "searches": 25
+    },
+    "2026-11-04": {
+      "date": "2026-11-04",
+      "humanViews": 13,
+      "uniqueVisitorHashes": [
+        "6ed87aa0efb242da",
+        "0cd77ac637d61abd",
+        "31aa7685cac146af"
+      ],
+      "botHitsBlocked": 54,
+      "signUps": 0,
+      "searches": 3
     }
   },
   "recentHumanVisits": [
     {
-      "id": "v-1793685772289-ah0o",
-      "at": "2026-11-03T06:02:52.289Z",
-      "path": "/",
-      "referrer": "",
-      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
-      "device": "mobile",
-      "visitorHash": "4c61408b",
-      "userId": "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
-      "userName": "King_Bezos"
-    },
-    {
-      "id": "v-1793682221438-h4wv",
-      "at": "2026-11-03T05:03:41.438Z",
-      "path": "/",
-      "referrer": "https://facebook.com/",
-      "sourceLabel": "Facebook",
-      "device": "mobile",
-      "visitorHash": "bb117ff2",
-      "userId": null,
-      "userName": null
-    },
-    {
-      "id": "v-1793681243844-3xhv",
-      "at": "2026-11-03T04:47:23.844Z",
-      "path": "/search",
-      "referrer": "https://facebook.com/",
-      "sourceLabel": "Facebook",
-      "device": "mobile",
-      "visitorHash": "4ad046a9",
-      "userId": null,
-      "userName": null
-    },
-    {
-      "id": "v-1793681232287-yqnx",
-      "at": "2026-11-03T04:47:12.287Z",
-      "path": "/",
-      "referrer": "https://facebook.com/",
-      "sourceLabel": "Facebook",
-      "device": "mobile",
-      "visitorHash": "4ad046a9",
-      "userId": null,
-      "userName": null
-    },
-    {
-      "id": "v-1793679815891-kh6x",
-      "at": "2026-11-03T04:23:35.891Z",
-      "path": "/",
-      "referrer": "",
-      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
-      "device": "mobile",
-      "visitorHash": "4c61408b",
-      "userId": "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
-      "userName": "King_Bezos"
-    },
-    {
-      "id": "v-1793679743106-ods8",
-      "at": "2026-11-03T04:22:23.106Z",
-      "path": "/",
-      "referrer": "https://facebook.com/",
-      "sourceLabel": "Facebook",
-      "device": "mobile",
-      "visitorHash": "cebc97d6",
-      "userId": null,
-      "userName": null
-    },
-    {
-      "id": "v-1793679130846-mzeq",
-      "at": "2026-11-03T04:12:10.846Z",
-      "path": "/machines/Q02319",
-      "referrer": "",
-      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
-      "device": "mobile",
-      "visitorHash": "118b619d",
-      "userId": null,
-      "userName": null
-    },
-    {
-      "id": "v-1793679095508-jw6l",
-      "at": "2026-11-03T04:11:35.508Z",
-      "path": "/search",
-      "referrer": "",
-      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
-      "device": "mobile",
-      "visitorHash": "118b619d",
-      "userId": null,
-      "userName": null
-    },
-    {
-      "id": "v-1793679082750-7wpi",
-      "at": "2026-11-03T04:11:22.750Z",
-      "path": "/",
-      "referrer": "",
-      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
-      "device": "mobile",
-      "visitorHash": "425e08eb",
-      "userId": null,
-      "userName": null
-    },
-    {
-      "id": "v-1793678901606-fj7l",
-      "at": "2026-11-03T04:08:21.606Z",
-      "path": "/",
-      "referrer": "",
-      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
-      "device": "mobile",
-      "visitorHash": "4c61408b",
-      "userId": "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
-      "userName": "King_Bezos"
-    },
-    {
-      "id": "v-1793678208016-dl9w",
-      "at": "2026-11-03T03:56:48.016Z",
+      "id": "v-1793756907399-pm4w",
+      "at": "2026-11-04T01:48:27.399Z",
       "path": "/map",
-      "referrer": "https://lm.facebook.com/",
+      "referrer": "https://facebook.com/",
       "sourceLabel": "Facebook",
       "device": "mobile",
-      "visitorHash": "5bb36589",
+      "visitorHash": "31aa7685",
       "userId": null,
       "userName": null
     },
     {
-      "id": "v-1793678134225-05lj",
-      "at": "2026-11-03T03:55:34.225Z",
+      "id": "v-1793756870289-6kqg",
+      "at": "2026-11-04T01:47:50.289Z",
+      "path": "/",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "31aa7685",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793752144349-aw8f",
+      "at": "2026-11-04T00:29:04.349Z",
       "path": "/drops",
-      "referrer": "https://lm.facebook.com/",
+      "referrer": "https://facebook.com/",
       "sourceLabel": "Facebook",
       "device": "mobile",
-      "visitorHash": "5bb36589",
+      "visitorHash": "0cd77ac6",
       "userId": null,
       "userName": null
     },
     {
-      "id": "v-1793678124225-rp2v",
-      "at": "2026-11-03T03:55:24.225Z",
-      "path": "/map",
-      "referrer": "",
-      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
-      "device": "mobile",
-      "visitorHash": "4c61408b",
-      "userId": "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
-      "userName": "King_Bezos"
-    },
-    {
-      "id": "v-1793678118887-5okr",
-      "at": "2026-11-03T03:55:18.887Z",
-      "path": "/map",
-      "referrer": "",
-      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
-      "device": "mobile",
-      "visitorHash": "4c61408b",
-      "userId": "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
-      "userName": "King_Bezos"
-    },
-    {
-      "id": "v-1793678097985-haxi",
-      "at": "2026-11-03T03:54:57.985Z",
-      "path": "/",
-      "referrer": "",
-      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
-      "device": "mobile",
-      "visitorHash": "4c61408b",
-      "userId": "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
-      "userName": "King_Bezos"
-    },
-    {
-      "id": "v-1793678019416-k2i1",
-      "at": "2026-11-03T03:53:39.416Z",
-      "path": "/",
-      "referrer": "https://lm.facebook.com/",
-      "sourceLabel": "Facebook",
-      "device": "mobile",
-      "visitorHash": "1b78fe87",
-      "userId": null,
-      "userName": null
-    },
-    {
-      "id": "v-1793677991274-el34",
-      "at": "2026-11-03T03:53:11.274Z",
-      "path": "/machines/Q02071",
-      "referrer": "https://lm.facebook.com/",
-      "sourceLabel": "Facebook",
-      "device": "mobile",
-      "visitorHash": "5bb36589",
-      "userId": null,
-      "userName": null
-    },
-    {
-      "id": "v-1793677978527-jbpd",
-      "at": "2026-11-03T03:52:58.527Z",
+      "id": "v-1793752121529-wa0z",
+      "at": "2026-11-04T00:28:41.529Z",
       "path": "/search",
-      "referrer": "",
-      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
       "device": "mobile",
-      "visitorHash": "692f6599",
+      "visitorHash": "0cd77ac6",
       "userId": null,
       "userName": null
     },
     {
-      "id": "v-1793677967282-sx6a",
-      "at": "2026-11-03T03:52:47.282Z",
-      "path": "/",
-      "referrer": "",
-      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
-      "device": "mobile",
-      "visitorHash": "692f6599",
-      "userId": null,
-      "userName": null
-    },
-    {
-      "id": "v-1793677941734-v0dl",
-      "at": "2026-11-03T03:52:21.734Z",
+      "id": "v-1793752112780-rtbe",
+      "at": "2026-11-04T00:28:32.780Z",
       "path": "/",
       "referrer": "https://facebook.com/",
       "sourceLabel": "Facebook",
       "device": "mobile",
-      "visitorHash": "a58a2d94",
+      "visitorHash": "0cd77ac6",
       "userId": null,
       "userName": null
     },
     {
-      "id": "v-1793677938535-ht5i",
-      "at": "2026-11-03T03:52:18.535Z",
-      "path": "/search",
-      "referrer": "https://lm.facebook.com/",
+      "id": "v-1793752001307-da3o",
+      "at": "2026-11-04T00:26:41.307Z",
+      "path": "/map",
+      "referrer": "https://facebook.com/",
       "sourceLabel": "Facebook",
       "device": "mobile",
-      "visitorHash": "5bb36589",
+      "visitorHash": "0cd77ac6",
       "userId": null,
       "userName": null
     },
     {
-      "id": "v-1793677931102-ayd6",
-      "at": "2026-11-03T03:52:11.102Z",
-      "path": "/",
-      "referrer": "https://lm.facebook.com/",
-      "sourceLabel": "Facebook",
-      "device": "mobile",
-      "visitorHash": "5bb36589",
-      "userId": null,
-      "userName": null
-    },
-    {
-      "id": "v-1793675326728-25i0",
-      "at": "2026-11-03T03:08:46.728Z",
-      "path": "/drops",
-      "referrer": "https://packradar.onrender.com/",
+      "id": "v-1793751972596-24op",
+      "at": "2026-11-04T00:26:12.596Z",
+      "path": "/machines/Q02253",
+      "referrer": "https://packradar.onrender.com/map",
       "sourceLabel": "Internal Navigation",
-      "device": "desktop",
-      "visitorHash": "0d1dd192",
+      "device": "mobile",
+      "visitorHash": "0cd77ac6",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793751937386-efhh",
+      "at": "2026-11-04T00:25:37.386Z",
+      "path": "/map",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "0cd77ac6",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793751909328-hag4",
+      "at": "2026-11-04T00:25:09.328Z",
+      "path": "/drops",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "0cd77ac6",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793751906278-o4hl",
+      "at": "2026-11-04T00:25:06.278Z",
+      "path": "/",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "0cd77ac6",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793751895457-j7hh",
+      "at": "2026-11-04T00:24:55.457Z",
+      "path": "/search",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "0cd77ac6",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793751883766-gd1e",
+      "at": "2026-11-04T00:24:43.766Z",
+      "path": "/search",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "0cd77ac6",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793751871345-2rn7",
+      "at": "2026-11-04T00:24:31.345Z",
+      "path": "/",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "6ed87aa0",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793749588995-gnt1",
+      "at": "2026-11-03T23:46:28.995Z",
+      "path": "/search",
+      "referrer": "",
+      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
+      "device": "mobile",
+      "visitorHash": "692f6599",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793746376726-gfdk",
+      "at": "2026-11-03T22:52:56.726Z",
+      "path": "/machines/Q00890",
+      "referrer": "https://packradar.onrender.com/map",
+      "sourceLabel": "Internal Navigation",
+      "device": "mobile",
+      "visitorHash": "d98eb34e",
+      "userId": "QF3xShpkjC27Z88xXSt7aP8ww2slmt3D",
+      "userName": "GardevoirSpotter194"
+    },
+    {
+      "id": "v-1793746366289-wloc",
+      "at": "2026-11-03T22:52:46.289Z",
+      "path": "/sign-up",
+      "referrer": "https://packradar.onrender.com/map",
+      "sourceLabel": "Internal Navigation",
+      "device": "mobile",
+      "visitorHash": "d98eb34e",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793746326210-c7o6",
+      "at": "2026-11-03T22:52:06.210Z",
+      "path": "/machines/Q00890",
+      "referrer": "https://packradar.onrender.com/map",
+      "sourceLabel": "Internal Navigation",
+      "device": "mobile",
+      "visitorHash": "d98eb34e",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793746288631-gxf3",
+      "at": "2026-11-03T22:51:28.631Z",
+      "path": "/map",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "d98eb34e",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793746274061-mhmz",
+      "at": "2026-11-03T22:51:14.061Z",
+      "path": "/",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "d98eb34e",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793745292350-phnl",
+      "at": "2026-11-03T22:34:52.350Z",
+      "path": "/",
+      "referrer": "",
+      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
+      "device": "mobile",
+      "visitorHash": "4c61408b",
       "userId": "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
       "userName": "King_Bezos"
     },
     {
-      "id": "v-seed-1",
-      "at": "2026-11-03T02:09:48.000Z",
-      "path": "/machines/Q00018",
-      "referrer": "",
-      "sourceLabel": "Discord",
+      "id": "v-1793742070116-t0al",
+      "at": "2026-11-03T21:41:10.116Z",
+      "path": "/",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
       "device": "mobile",
-      "visitorHash": "4c7b82e1",
+      "visitorHash": "31aa7685",
       "userId": null,
       "userName": null
     },
     {
-      "id": "v-seed-2",
-      "at": "2026-11-03T02:09:47.000Z",
+      "id": "v-1793741833742-5d8e",
+      "at": "2026-11-03T21:37:13.742Z",
+      "path": "/search",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "31aa7685",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793741812768-2xua",
+      "at": "2026-11-03T21:36:52.768Z",
+      "path": "/",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "cbb60c21",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793741578668-k85v",
+      "at": "2026-11-03T21:32:58.668Z",
       "path": "/map",
       "referrer": "",
-      "sourceLabel": "Discord",
+      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
       "device": "mobile",
-      "visitorHash": "4c7b82e1",
+      "visitorHash": "481f815e",
+      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+      "userName": "RayquazaRipper249"
+    },
+    {
+      "id": "v-1793741027255-drdx",
+      "at": "2026-11-03T21:23:47.255Z",
+      "path": "/map",
+      "referrer": "",
+      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
+      "device": "mobile",
+      "visitorHash": "481f815e",
+      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+      "userName": "RayquazaRipper249"
+    },
+    {
+      "id": "v-1793738579480-5miy",
+      "at": "2026-11-03T20:42:59.480Z",
+      "path": "/",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "58319644",
       "userId": null,
       "userName": null
     },
     {
-      "id": "v-seed-3",
-      "at": "2026-11-03T02:09:46.000Z",
-      "path": "/leaderboard",
-      "referrer": "https://discord.com",
-      "sourceLabel": "Discord",
-      "device": "desktop",
-      "visitorHash": "9a3d1f0b",
+      "id": "v-1793736194120-xo31",
+      "at": "2026-11-03T20:03:14.120Z",
+      "path": "/machines/Q00890",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "d98eb34e",
       "userId": null,
-      "userName": "King_Bezos"
+      "userName": null
     },
     {
-      "id": "v-seed-4",
-      "at": "2026-11-03T02:09:45.000Z",
-      "path": "/machines/Q01168",
-      "referrer": "https://discord.com",
-      "sourceLabel": "Discord",
-      "device": "desktop",
-      "visitorHash": "9a3d1f0b",
+      "id": "v-1793736188174-lrym",
+      "at": "2026-11-03T20:03:08.174Z",
+      "path": "/search",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "d98eb34e",
       "userId": null,
-      "userName": "King_Bezos"
+      "userName": null
     },
     {
-      "id": "v-seed-5",
-      "at": "2026-11-03T02:09:44.000Z",
+      "id": "v-1793736182292-rjfn",
+      "at": "2026-11-03T20:03:02.292Z",
+      "path": "/search",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "d98eb34e",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793736177947-88i0",
+      "at": "2026-11-03T20:02:57.947Z",
+      "path": "/search",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "d98eb34e",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793736154898-uz4l",
+      "at": "2026-11-03T20:02:34.898Z",
+      "path": "/machines/Q00488",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "d98eb34e",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793736120873-c699",
+      "at": "2026-11-03T20:02:00.873Z",
+      "path": "/search",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "d98eb34e",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793736114999-s64o",
+      "at": "2026-11-03T20:01:54.999Z",
       "path": "/",
-      "referrer": "https://discord.com",
-      "sourceLabel": "Discord",
-      "device": "desktop",
-      "visitorHash": "9a3d1f0b",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "d98eb34e",
       "userId": null,
-      "userName": "King_Bezos"
+      "userName": null
+    },
+    {
+      "id": "v-1793735264711-en92",
+      "at": "2026-11-03T19:47:44.711Z",
+      "path": "/search",
+      "referrer": "http://m.facebook.com",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "eb6b7b2e",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793735256734-k020",
+      "at": "2026-11-03T19:47:36.734Z",
+      "path": "/search",
+      "referrer": "",
+      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
+      "device": "mobile",
+      "visitorHash": "e3594d61",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793735229790-uoyy",
+      "at": "2026-11-03T19:47:09.790Z",
+      "path": "/search",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "93e4287f",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793735175276-ros9",
+      "at": "2026-11-03T19:46:15.276Z",
+      "path": "/search",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "93e4287f",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793735162089-7e8e",
+      "at": "2026-11-03T19:46:02.089Z",
+      "path": "/",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "93e4287f",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793731508935-0zka",
+      "at": "2026-11-03T18:45:08.935Z",
+      "path": "/map",
+      "referrer": "",
+      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
+      "device": "mobile",
+      "visitorHash": "481f815e",
+      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+      "userName": "RayquazaRipper249"
+    },
+    {
+      "id": "v-1793729292355-tony",
+      "at": "2026-11-03T18:08:12.355Z",
+      "path": "/search",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "afc77e89",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793729253575-389u",
+      "at": "2026-11-03T18:07:33.575Z",
+      "path": "/",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "b51b3f3f",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793728347809-vze8",
+      "at": "2026-11-03T17:52:27.809Z",
+      "path": "/map",
+      "referrer": "",
+      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
+      "device": "mobile",
+      "visitorHash": "481f815e",
+      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+      "userName": "RayquazaRipper249"
+    },
+    {
+      "id": "v-1793727991879-tjfh",
+      "at": "2026-11-03T17:46:31.879Z",
+      "path": "/machines/Q01885",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "712b60d4",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793727987062-rpvw",
+      "at": "2026-11-03T17:46:27.062Z",
+      "path": "/search",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "712b60d4",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793727971538-0gbw",
+      "at": "2026-11-03T17:46:11.538Z",
+      "path": "/search",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "712b60d4",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793727960964-uozh",
+      "at": "2026-11-03T17:46:00.964Z",
+      "path": "/",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "712b60d4",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793727895136-jfua",
+      "at": "2026-11-03T17:44:55.136Z",
+      "path": "/",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "24e87983",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1793726101178-3kee",
+      "at": "2026-11-03T17:15:01.178Z",
+      "path": "/machines/Q01328",
+      "referrer": "https://packradar.onrender.com/map",
+      "sourceLabel": "Internal Navigation",
+      "device": "mobile",
+      "visitorHash": "481f815e",
+      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+      "userName": "RayquazaRipper249"
+    },
+    {
+      "id": "v-1793726049738-i88k",
+      "at": "2026-11-03T17:14:09.738Z",
+      "path": "/map",
+      "referrer": "",
+      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
+      "device": "mobile",
+      "visitorHash": "481f815e",
+      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+      "userName": "RayquazaRipper249"
+    },
+    {
+      "id": "v-1793725591784-xuca",
+      "at": "2026-11-03T17:06:31.784Z",
+      "path": "/leaderboard",
+      "referrer": "https://packradar.onrender.com/map",
+      "sourceLabel": "Internal Navigation",
+      "device": "mobile",
+      "visitorHash": "481f815e",
+      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+      "userName": "RayquazaRipper249"
+    },
+    {
+      "id": "v-1793725586792-qfv8",
+      "at": "2026-11-03T17:06:26.792Z",
+      "path": "/",
+      "referrer": "https://packradar.onrender.com/map",
+      "sourceLabel": "Internal Navigation",
+      "device": "mobile",
+      "visitorHash": "481f815e",
+      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+      "userName": "RayquazaRipper249"
+    },
+    {
+      "id": "v-1793725550073-gq83",
+      "at": "2026-11-03T17:05:50.073Z",
+      "path": "/drops",
+      "referrer": "https://packradar.onrender.com/map",
+      "sourceLabel": "Internal Navigation",
+      "device": "mobile",
+      "visitorHash": "481f815e",
+      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+      "userName": "RayquazaRipper249"
+    },
+    {
+      "id": "v-1793725544152-168b",
+      "at": "2026-11-03T17:05:44.152Z",
+      "path": "/releases",
+      "referrer": "https://packradar.onrender.com/map",
+      "sourceLabel": "Internal Navigation",
+      "device": "mobile",
+      "visitorHash": "481f815e",
+      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+      "userName": "RayquazaRipper249"
+    },
+    {
+      "id": "v-1793725531898-6syb",
+      "at": "2026-11-03T17:05:31.898Z",
+      "path": "/profile",
+      "referrer": "https://packradar.onrender.com/map",
+      "sourceLabel": "Internal Navigation",
+      "device": "mobile",
+      "visitorHash": "481f815e",
+      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+      "userName": "RayquazaRipper249"
+    },
+    {
+      "id": "v-1793725491866-7jel",
+      "at": "2026-11-03T17:04:51.866Z",
+      "path": "/about",
+      "referrer": "https://packradar.onrender.com/map",
+      "sourceLabel": "Internal Navigation",
+      "device": "mobile",
+      "visitorHash": "481f815e",
+      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+      "userName": "RayquazaRipper249"
+    },
+    {
+      "id": "v-1793725481870-6lbe",
+      "at": "2026-11-03T17:04:41.870Z",
+      "path": "/profile",
+      "referrer": "https://packradar.onrender.com/map",
+      "sourceLabel": "Internal Navigation",
+      "device": "mobile",
+      "visitorHash": "481f815e",
+      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+      "userName": "RayquazaRipper249"
+    },
+    {
+      "id": "v-1793725459938-grx0",
+      "at": "2026-11-03T17:04:19.938Z",
+      "path": "/news",
+      "referrer": "https://packradar.onrender.com/map",
+      "sourceLabel": "Internal Navigation",
+      "device": "mobile",
+      "visitorHash": "481f815e",
+      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+      "userName": "RayquazaRipper249"
+    },
+    {
+      "id": "v-1793725449495-zd0a",
+      "at": "2026-11-03T17:04:09.495Z",
+      "path": "/news/packradar-6h-drop-intel-2026-11-03-h12",
+      "referrer": "https://packradar.onrender.com/map",
+      "sourceLabel": "Internal Navigation",
+      "device": "mobile",
+      "visitorHash": "481f815e",
+      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+      "userName": "RayquazaRipper249"
+    },
+    {
+      "id": "v-1793725427883-ks5s",
+      "at": "2026-11-03T17:03:47.883Z",
+      "path": "/news",
+      "referrer": "https://packradar.onrender.com/map",
+      "sourceLabel": "Internal Navigation",
+      "device": "mobile",
+      "visitorHash": "481f815e",
+      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+      "userName": "RayquazaRipper249"
+    },
+    {
+      "id": "v-1793725407839-i7hn",
+      "at": "2026-11-03T17:03:27.839Z",
+      "path": "/alerts",
+      "referrer": "https://packradar.onrender.com/map",
+      "sourceLabel": "Internal Navigation",
+      "device": "mobile",
+      "visitorHash": "481f815e",
+      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+      "userName": "RayquazaRipper249"
     }
   ],
   "activeVisitorsMap": {},
-  "totalSearches": 0,
-  "searchQueries": {},
-  "updatedAt": "2026-11-03T06:02:52.289Z"
+  "totalSearches": 32,
+  "searchQueries": {
+    "19382": {
+      "query": "19382",
+      "searches": 1,
+      "uniqueVisitorHashes": [
+        "31aa7685cac146af"
+      ],
+      "lastSearchedAt": "2026-11-03T21:37:13.733Z"
+    },
+    "20603": {
+      "query": "20603",
+      "searches": 4,
+      "uniqueVisitorHashes": [
+        "93e4287fa078a857",
+        "e3594d61cab9b776",
+        "eb6b7b2e93c72a32"
+      ],
+      "lastSearchedAt": "2026-11-03T19:47:44.697Z"
+    },
+    "43207": {
+      "query": "43207",
+      "searches": 1,
+      "uniqueVisitorHashes": [
+        "692f65999f08d194"
+      ],
+      "lastSearchedAt": "2026-11-03T23:46:28.984Z"
+    },
+    "45036": {
+      "query": "45036",
+      "searches": 2,
+      "uniqueVisitorHashes": [
+        "c5c748635d1f5b01"
+      ],
+      "lastSearchedAt": "2026-11-03T12:29:33.956Z"
+    },
+    "47630": {
+      "query": "47630",
+      "searches": 1,
+      "uniqueVisitorHashes": [
+        "2c99208ef95544fc"
+      ],
+      "lastSearchedAt": "2026-11-03T14:22:27.362Z"
+    },
+    "75229": {
+      "query": "75229",
+      "searches": 2,
+      "uniqueVisitorHashes": [
+        "9bf9ba7d0de1038a"
+      ],
+      "lastSearchedAt": "2026-11-03T14:21:11.934Z"
+    },
+    "76248": {
+      "query": "76248",
+      "searches": 1,
+      "uniqueVisitorHashes": [
+        "afc77e8958b2964d"
+      ],
+      "lastSearchedAt": "2026-11-03T18:08:12.258Z"
+    },
+    "78006": {
+      "query": "78006",
+      "searches": 1,
+      "uniqueVisitorHashes": [
+        "512a1177dcd6c71f"
+      ],
+      "lastSearchedAt": "2026-11-03T12:33:56.750Z"
+    },
+    "85013": {
+      "query": "85013",
+      "searches": 3,
+      "uniqueVisitorHashes": [
+        "a26b09d08318cb4b",
+        "2a0c6057a5d0139a",
+        "481f815e11b27427"
+      ],
+      "lastSearchedAt": "2026-11-03T11:56:05.539Z"
+    },
+    "92029": {
+      "query": "92029",
+      "searches": 3,
+      "uniqueVisitorHashes": [
+        "d98eb34ebf31de58"
+      ],
+      "lastSearchedAt": "2026-11-03T20:03:02.283Z"
+    },
+    "92592": {
+      "query": "92592",
+      "searches": 1,
+      "uniqueVisitorHashes": [
+        "712b60d4bf1aa093"
+      ],
+      "lastSearchedAt": "2026-11-03T17:46:11.528Z"
+    },
+    "95829": {
+      "query": "95829",
+      "searches": 1,
+      "uniqueVisitorHashes": [
+        "1cefab3d1844d5c5"
+      ],
+      "lastSearchedAt": "2026-11-03T14:12:03.597Z"
+    },
+    "quebec": {
+      "query": "quebec",
+      "searches": 1,
+      "uniqueVisitorHashes": [
+        "ea9feaee705b5117"
+      ],
+      "lastSearchedAt": "2026-11-03T11:21:38.343Z"
+    },
+    "g3k 1j3": {
+      "query": "g3k 1j3",
+      "searches": 1,
+      "uniqueVisitorHashes": [
+        "ea9feaee705b5117"
+      ],
+      "lastSearchedAt": "2026-11-03T11:21:55.547Z"
+    },
+    "temecula": {
+      "query": "Temecula",
+      "searches": 1,
+      "uniqueVisitorHashes": [
+        "712b60d4bf1aa093"
+      ],
+      "lastSearchedAt": "2026-11-03T17:46:27.054Z"
+    },
+    "escondido": {
+      "query": "Escondido",
+      "searches": 1,
+      "uniqueVisitorHashes": [
+        "d98eb34ebf31de58"
+      ],
+      "lastSearchedAt": "2026-11-03T20:03:08.164Z"
+    },
+    "02346": {
+      "query": "02346",
+      "searches": 1,
+      "uniqueVisitorHashes": [
+        "0cd77ac637d61abd"
+      ],
+      "lastSearchedAt": "2026-11-04T00:24:43.755Z"
+    },
+    "carver ma": {
+      "query": "Carver ma",
+      "searches": 1,
+      "uniqueVisitorHashes": [
+        "0cd77ac637d61abd"
+      ],
+      "lastSearchedAt": "2026-11-04T00:24:55.441Z"
+    },
+    "boston": {
+      "query": "Boston",
+      "searches": 1,
+      "uniqueVisitorHashes": [
+        "0cd77ac637d61abd"
+      ],
+      "lastSearchedAt": "2026-11-04T00:28:41.515Z"
+    }
+  },
+  "recentZipSearches": [
+    {
+      "id": "zs-1793751883766-oc3z",
+      "zip": "02346",
+      "locationLabel": "US",
+      "at": "2026-11-04T00:24:43.766Z",
+      "visitorHash": "0cd77ac6"
+    },
+    {
+      "id": "zs-1793749588995-b53t",
+      "zip": "43207",
+      "locationLabel": "US",
+      "at": "2026-11-03T23:46:28.995Z",
+      "visitorHash": "692f6599"
+    },
+    {
+      "id": "zs-1793741833742-kj6w",
+      "zip": "19382",
+      "locationLabel": "US",
+      "at": "2026-11-03T21:37:13.742Z",
+      "visitorHash": "31aa7685"
+    },
+    {
+      "id": "zs-1793736188174-rzgx",
+      "zip": "92029",
+      "locationLabel": "Escondido, CA",
+      "at": "2026-11-03T20:03:08.174Z",
+      "visitorHash": "d98eb34e"
+    },
+    {
+      "id": "zs-1793736182292-o39h",
+      "zip": "92029",
+      "locationLabel": "Escondido, CA",
+      "at": "2026-11-03T20:03:02.292Z",
+      "visitorHash": "d98eb34e"
+    },
+    {
+      "id": "zs-1793736177947-rj9b",
+      "zip": "92029",
+      "locationLabel": "Escondido, CA",
+      "at": "2026-11-03T20:02:57.947Z",
+      "visitorHash": "d98eb34e"
+    },
+    {
+      "id": "zs-1793736120873-9jga",
+      "zip": "92029",
+      "locationLabel": "US",
+      "at": "2026-11-03T20:02:00.873Z",
+      "visitorHash": "d98eb34e"
+    },
+    {
+      "id": "zs-1793735264711-flkf",
+      "zip": "20603",
+      "locationLabel": "Waldorf, MD",
+      "at": "2026-11-03T19:47:44.711Z",
+      "visitorHash": "eb6b7b2e"
+    },
+    {
+      "id": "zs-1793735256734-lyfh",
+      "zip": "20603",
+      "locationLabel": "Waldorf, MD",
+      "at": "2026-11-03T19:47:36.734Z",
+      "visitorHash": "e3594d61"
+    },
+    {
+      "id": "zs-1793735229790-em46",
+      "zip": "20603",
+      "locationLabel": "Waldorf, MD",
+      "at": "2026-11-03T19:47:09.790Z",
+      "visitorHash": "93e4287f"
+    },
+    {
+      "id": "zs-1793735175276-jh5g",
+      "zip": "20603",
+      "locationLabel": "US",
+      "at": "2026-11-03T19:46:15.276Z",
+      "visitorHash": "93e4287f"
+    },
+    {
+      "id": "zs-1793729292355-p75p",
+      "zip": "76248",
+      "locationLabel": "Keller, TX",
+      "at": "2026-11-03T18:08:12.355Z",
+      "visitorHash": "afc77e89"
+    },
+    {
+      "id": "zs-1793727987062-6pu0",
+      "zip": "92592",
+      "locationLabel": "Temecula, CA",
+      "at": "2026-11-03T17:46:27.062Z",
+      "visitorHash": "712b60d4"
+    },
+    {
+      "id": "zs-1793727971538-2hpy",
+      "zip": "92592",
+      "locationLabel": "US",
+      "at": "2026-11-03T17:46:11.538Z",
+      "visitorHash": "712b60d4"
+    },
+    {
+      "id": "zs-1793715747374-u272",
+      "zip": "47630",
+      "locationLabel": "US",
+      "at": "2026-11-03T14:22:27.374Z",
+      "visitorHash": "2c99208e"
+    },
+    {
+      "id": "zs-1793715671944-po5c",
+      "zip": "75229",
+      "locationLabel": "US",
+      "at": "2026-11-03T14:21:11.944Z",
+      "visitorHash": "9bf9ba7d"
+    },
+    {
+      "id": "zs-1793715479043-z308",
+      "zip": "75229",
+      "locationLabel": "US",
+      "at": "2026-11-03T14:17:59.043Z",
+      "visitorHash": "9bf9ba7d"
+    },
+    {
+      "id": "zs-1793715123606-18ki",
+      "zip": "95829",
+      "locationLabel": "US",
+      "at": "2026-11-03T14:12:03.606Z",
+      "visitorHash": "1cefab3d"
+    },
+    {
+      "id": "zs-1793709236758-0598",
+      "zip": "78006",
+      "locationLabel": "US",
+      "at": "2026-11-03T12:33:56.758Z",
+      "visitorHash": "512a1177"
+    },
+    {
+      "id": "zs-1793708973964-5ap7",
+      "zip": "45036",
+      "locationLabel": "US",
+      "at": "2026-11-03T12:29:33.964Z",
+      "visitorHash": "c5c74863"
+    },
+    {
+      "id": "zs-1793708948558-1hbn",
+      "zip": "45036",
+      "locationLabel": "US",
+      "at": "2026-11-03T12:29:08.558Z",
+      "visitorHash": "c5c74863"
+    },
+    {
+      "id": "zs-1793706965549-zh0u",
+      "zip": "85013",
+      "locationLabel": "Phoenix, AZ",
+      "at": "2026-11-03T11:56:05.549Z",
+      "visitorHash": "481f815e"
+    },
+    {
+      "id": "zs-1793691493764-wiu8",
+      "zip": "85013",
+      "locationLabel": "Phoenix, AZ",
+      "at": "2026-11-03T07:38:13.764Z",
+      "visitorHash": "2a0c6057"
+    },
+    {
+      "id": "zs-1793691293006-b2p5",
+      "zip": "85013",
+      "locationLabel": "Phoenix, AZ",
+      "at": "2026-11-03T07:34:53.006Z",
+      "visitorHash": "a26b09d0"
+    },
+    {
+      "id": "zs-seed-60613",
+      "zip": "60613",
+      "locationLabel": "Chicago, IL",
+      "at": "2026-11-03T04:47:23.844Z",
+      "visitorHash": "4ad046a9"
+    },
+    {
+      "id": "zs-seed-97219",
+      "zip": "97219",
+      "locationLabel": "Portland, OR",
+      "at": "2026-11-03T04:11:35.508Z",
+      "visitorHash": "118b619d"
+    },
+    {
+      "id": "zs-seed-98112",
+      "zip": "98112",
+      "locationLabel": "Seattle, WA",
+      "at": "2026-11-03T03:52:58.527Z",
+      "visitorHash": "692f6599"
+    },
+    {
+      "id": "zs-seed-97027",
+      "zip": "97027",
+      "locationLabel": "Gladstone, OR",
+      "at": "2026-11-03T03:50:12.000Z",
+      "visitorHash": "5bb36589"
+    }
+  ],
+  "zipStats": {
+    "19382": {
+      "zip": "19382",
+      "locationLabel": "US",
+      "searches": 1,
+      "uniqueVisitorHashes": [
+        "31aa7685cac146af"
+      ],
+      "lastSearchedAt": "2026-11-03T21:37:13.742Z"
+    },
+    "20603": {
+      "zip": "20603",
+      "locationLabel": "Waldorf, MD",
+      "searches": 4,
+      "uniqueVisitorHashes": [
+        "93e4287fa078a857",
+        "e3594d61cab9b776",
+        "eb6b7b2e93c72a32"
+      ],
+      "lastSearchedAt": "2026-11-03T19:47:44.711Z"
+    },
+    "43207": {
+      "zip": "43207",
+      "locationLabel": "US",
+      "searches": 1,
+      "uniqueVisitorHashes": [
+        "692f65999f08d194"
+      ],
+      "lastSearchedAt": "2026-11-03T23:46:28.995Z"
+    },
+    "45036": {
+      "zip": "45036",
+      "locationLabel": "US",
+      "searches": 2,
+      "uniqueVisitorHashes": [
+        "c5c748635d1f5b01"
+      ],
+      "lastSearchedAt": "2026-11-03T12:29:33.964Z"
+    },
+    "47630": {
+      "zip": "47630",
+      "locationLabel": "US",
+      "searches": 1,
+      "uniqueVisitorHashes": [
+        "2c99208ef95544fc"
+      ],
+      "lastSearchedAt": "2026-11-03T14:22:27.374Z"
+    },
+    "60613": {
+      "zip": "60613",
+      "locationLabel": "Chicago, IL",
+      "searches": 1,
+      "uniqueVisitorHashes": [
+        "4ad046a9"
+      ],
+      "lastSearchedAt": "2026-11-03T04:47:23.844Z"
+    },
+    "75229": {
+      "zip": "75229",
+      "locationLabel": "US",
+      "searches": 2,
+      "uniqueVisitorHashes": [
+        "9bf9ba7d0de1038a"
+      ],
+      "lastSearchedAt": "2026-11-03T14:21:11.944Z"
+    },
+    "76248": {
+      "zip": "76248",
+      "locationLabel": "Keller, TX",
+      "searches": 1,
+      "uniqueVisitorHashes": [
+        "afc77e8958b2964d"
+      ],
+      "lastSearchedAt": "2026-11-03T18:08:12.355Z"
+    },
+    "78006": {
+      "zip": "78006",
+      "locationLabel": "US",
+      "searches": 1,
+      "uniqueVisitorHashes": [
+        "512a1177dcd6c71f"
+      ],
+      "lastSearchedAt": "2026-11-03T12:33:56.758Z"
+    },
+    "85013": {
+      "zip": "85013",
+      "locationLabel": "Phoenix, AZ",
+      "searches": 3,
+      "uniqueVisitorHashes": [
+        "a26b09d08318cb4b",
+        "2a0c6057a5d0139a",
+        "481f815e11b27427"
+      ],
+      "lastSearchedAt": "2026-11-03T11:56:05.549Z"
+    },
+    "92029": {
+      "zip": "92029",
+      "locationLabel": "Escondido, CA",
+      "searches": 4,
+      "uniqueVisitorHashes": [
+        "d98eb34ebf31de58"
+      ],
+      "lastSearchedAt": "2026-11-03T20:03:08.174Z"
+    },
+    "92592": {
+      "zip": "92592",
+      "locationLabel": "Temecula, CA",
+      "searches": 2,
+      "uniqueVisitorHashes": [
+        "712b60d4bf1aa093"
+      ],
+      "lastSearchedAt": "2026-11-03T17:46:27.062Z"
+    },
+    "95829": {
+      "zip": "95829",
+      "locationLabel": "US",
+      "searches": 1,
+      "uniqueVisitorHashes": [
+        "1cefab3d1844d5c5"
+      ],
+      "lastSearchedAt": "2026-11-03T14:12:03.606Z"
+    },
+    "97027": {
+      "zip": "97027",
+      "locationLabel": "Gladstone, OR",
+      "searches": 1,
+      "uniqueVisitorHashes": [
+        "5bb36589"
+      ],
+      "lastSearchedAt": "2026-11-03T03:50:12.000Z"
+    },
+    "97219": {
+      "zip": "97219",
+      "locationLabel": "Portland, OR",
+      "searches": 1,
+      "uniqueVisitorHashes": [
+        "118b619d"
+      ],
+      "lastSearchedAt": "2026-11-03T04:11:35.508Z"
+    },
+    "98112": {
+      "zip": "98112",
+      "locationLabel": "Seattle, WA",
+      "searches": 1,
+      "uniqueVisitorHashes": [
+        "692f6599"
+      ],
+      "lastSearchedAt": "2026-11-03T03:52:58.527Z"
+    },
+    "02346": {
+      "zip": "02346",
+      "locationLabel": "US",
+      "searches": 1,
+      "uniqueVisitorHashes": [
+        "0cd77ac637d61abd"
+      ],
+      "lastSearchedAt": "2026-11-04T00:24:43.766Z"
+    }
+  },
+  "updatedAt": "2026-11-04T01:48:27.399Z"
 }

@@ -1654,6 +1654,9 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                         </a>
                       </h3>
                       <p className="text-xs text-slate-300">{opp.excerpt}</p>
+                      <p className="font-mono text-[11px] text-sky-400/90 break-all">
+                        Direct Thread / Post: {opp.permalink}
+                      </p>
                     </div>
 
                     <div className="flex flex-wrap items-center gap-2">
@@ -1668,8 +1671,8 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                           <Copy className="h-3.5 w-3.5" />
                         )}
                         {copiedReplyId === opp.id
-                          ? "Copied! Paste in Facebook ↗"
-                          : "Copy Reply & Open Facebook ↗"}
+                          ? "Copied! Paste in Post ↗"
+                          : "Copy Reply & Open Post ↗"}
                       </button>
                       <button
                         type="button"

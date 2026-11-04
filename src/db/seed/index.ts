@@ -300,29 +300,59 @@ export async function seedIfEmpty(db: DB) {
     })),
   );
 
-  // 3b. Seed Owner Account (King_Bezos) with baseline reputation so container restarts never reset to 0
+  // 3b. Seed Owner Account (King_Bezos) + registered real users with baseline reputation so container restarts never reset to 0
   await db
     .insert(user)
-    .values({
-      id: "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
-      name: "King_Bezos",
-      email: "james@jpegtown.com",
-      emailVerified: true,
-      role: "admin",
-      plan: "premium",
-      reputation: 100,
-      homeZip: "97027",
-    })
+    .values([
+      {
+        id: "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+        name: "King_Bezos",
+        email: "james@jpegtown.com",
+        emailVerified: true,
+        role: "admin",
+        plan: "premium",
+        reputation: 100,
+        homeZip: "97027",
+      },
+      {
+        id: "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+        name: "RayquazaRipper249",
+        email: "bernalrose33@gmail.com",
+        emailVerified: true,
+        role: "user",
+        plan: "free",
+        reputation: 2,
+        homeZip: null,
+      },
+      {
+        id: "QF3xShpkjC27Z88xXSt7aP8ww2slmt3D",
+        name: "GardevoirSpotter194",
+        email: "egarvey1989@gmail.com",
+        emailVerified: false,
+        role: "user",
+        plan: "free",
+        reputation: 0,
+        homeZip: null,
+      },
+    ])
     .onConflictDoNothing();
 
   await db
     .insert(reputationEvents)
-    .values({
-      id: "rep-owner-seed-100",
-      userId: "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
-      delta: 100,
-      reason: "Verified vending drop & product spotter",
-    })
+    .values([
+      {
+        id: "rep-owner-seed-100",
+        userId: "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+        delta: 100,
+        reason: "Verified vending drop & product spotter",
+      },
+      {
+        id: "rep-user-seed-rayquaza-2",
+        userId: "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+        delta: 2,
+        reason: "Community drop confirmation",
+      },
+    ])
     .onConflictDoNothing();
 
   // 4. Welcome News & Sponsors

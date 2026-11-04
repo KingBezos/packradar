@@ -144,76 +144,180 @@ const CURATED_FACEBOOK_OPPORTUNITIES: {
   postedAt: string;
 }[] = [
   {
-    id: "fb_vending_recent_posts",
-    groupName: "Facebook Live Search · Recent Posts",
-    topicTag: "Sold Out Screen / Drop Timers",
-    title: "Recent Facebook Posts: \"Pokemon Vending Machine\" (Sorted by Newest)",
+    id: "fb_post_pokehunt_droptimes",
+    groupName: "PokeHunt - Vending Machine & Restock Finder",
+    topicTag: "Direct Thread · Figuring Out Drop Times",
+    title: "Figuring out the Pokémon Vending Machine drop times & crowd-sourcing restocks",
     excerpt:
-      "Opens live Facebook posts from collectors asking why their local grocery store Pokémon machine says Sold Out or showing off kiosk finds.",
-    permalink: "https://www.facebook.com/search/posts?q=pokemon%20vending%20machine",
-    postedAt: new Date(Date.now() - 18 * 60_000).toISOString(),
+      "\"It does have crowd sourcing, but I've gotten pretty good at figuring out the drop times and how to figure them out so tons of the machines drop throughout the day...\"",
+    permalink: "https://www.facebook.com/groups/853863810682663/posts/1085486814187027/",
+    postedAt: new Date(Date.now() - 22 * 60_000).toISOString(),
   },
   {
-    id: "fb_vending_lucky_pulls",
-    groupName: "Facebook Live Search · Kiosk Pulls & Hits",
-    topicTag: "Got Lucky / Vending Pulls",
-    title: "Recent Facebook Posts: \"Pokemon Vending Machine Pulls / Restock\"",
+    id: "fb_post_msrp_vending_restock",
+    groupName: "Pokémon TCG Community · Restock Q&A",
+    topicTag: "Direct Thread · Empty Shelves vs. Kiosk MSRP",
+    title: "Pokemon center vending machine restock? Where to find Pokémon vending machine items at MSRP?",
     excerpt:
-      "Collectors posting photos of ETBs, booster bundles, and hits they scored from grocery store Pokémon Center vending kiosks.",
-    permalink: "https://www.facebook.com/search/posts?q=pokemon%20vending%20machine%20restock",
-    postedAt: new Date(Date.now() - 42 * 60_000).toISOString(),
+      "\"When do stores restock on pokemon cards? I'm trying to find a gift for my niece but all I find are empty shelves. People tell me not to buy online because of scalpers... Where to find Pokémon vending machine items at MSRP?\"",
+    permalink: "https://www.facebook.com/groups/258221861210656/posts/2750618785304272/",
+    postedAt: new Date(Date.now() - 48 * 60_000).toISOString(),
   },
   {
-    id: "fb_kroger_safeway_kiosks",
-    groupName: "Facebook Live Search · Grocery Kiosks",
-    topicTag: "Kroger / Safeway / Fred Meyer",
-    title: "Recent Facebook Posts: \"Kroger / Safeway / Fred Meyer Pokemon Machine\"",
+    id: "fb_post_surging_sparks_unlock",
+    groupName: "Pokémon Collectors Community",
+    topicTag: "Direct Thread · Surging Sparks & Destined Rivals Unlock",
+    title: "Anyone else have Pokemon TCG vending machines near them? Watched it unlock Surging Sparks & Destined Rivals!",
     excerpt:
-      "People asking which grocery stores have the Pokémon Center kiosks and what time they restock or unlock inventory.",
-    permalink: "https://www.facebook.com/search/posts?q=kroger%20pokemon%20vending%20machine",
-    postedAt: new Date(Date.now() - 85 * 60_000).toISOString(),
+      "\"I had never seen a Pokemon vending machine before so I looked them up and found one 13 minutes from my house. I walk in, find it and only the tin was available, then it made available a Surging Sparks pack and a Destined Rivals pack!\"",
+    permalink: "https://www.facebook.com/groups/552846471765330/posts/2325472841169342/",
+    postedAt: new Date(Date.now() - 75 * 60_000).toISOString(),
   },
   {
-    id: "fb_pnw_wa_or_groups",
-    groupName: "Facebook Groups · PNW (Seattle / Portland)",
-    topicTag: "Washington & Oregon Kiosks",
-    title: "PNW Pokémon TCG Vending Machine & Restock Posts (Seattle / Portland / Fred Meyer / QFC)",
+    id: "fb_post_vending_gurus_advice",
+    groupName: "Pokémon TCG Restock & Kiosk Discussion",
+    topicTag: "Direct Thread · Beating Kiosk Scalpers",
+    title: "Questions for the Pokémon vending machine gurus — advice on not getting scalped out?",
     excerpt:
-      "Great for replying to Washington & Oregon collectors hunting Fred Meyer, QFC, and Safeway kiosks in Seattle, Tacoma, Bellevue, Portland, and Gladstone.",
-    permalink: "https://www.facebook.com/search/posts?q=fred%20meyer%20pokemon%20vending%20machine",
+      "\"Pokemon vending machine advice? Just found one close to home finally. I keep getting scalped out hahahaha — how are people catching packs when it restocks?\"",
+    permalink: "https://www.facebook.com/groups/348508402822990/posts/1643552273318590/",
     postedAt: new Date(Date.now() - 2 * 3600_000).toISOString(),
   },
   {
-    id: "fb_california_groups",
-    groupName: "Facebook Groups · California (SoCal / Bay Area)",
-    topicTag: "California Vons / Safeway / Ralphs",
-    title: "California Pokémon Vending Machine Posts (Los Angeles, San Diego, Bay Area)",
+    id: "fb_post_restock_hours_thread",
+    groupName: "Pokemon Cards Restock Information & Buy/Sell/Trade",
+    topicTag: "Direct Thread · 8am–9pm Kiosk Drop Schedule",
+    title: "How the Pokémon Center vending machines release products between 8am and 9pm local time",
     excerpt:
-      "Collectors in California discussing Vons, Pavilions, Ralphs, and Safeway Pokémon Center vending machines and drop windows.",
-    permalink: "https://www.facebook.com/search/posts?q=safeway%20pokemon%20vending%20machine",
+      "\"The Pokemon vending machines only release products from 8am to 9pm local time. After 8am they start to drop on staggered intervals...\"",
+    permalink: "https://www.facebook.com/groups/418499722960643/posts/1625324225611514/",
     postedAt: new Date(Date.now() - 3 * 3600_000).toISOString(),
   },
   {
-    id: "fb_texas_colorado_groups",
-    groupName: "Facebook Groups · Texas & Colorado",
-    topicTag: "Texas Kroger / H-E-B & Colorado King Soopers",
-    title: "Texas & Colorado Pokémon Kiosk Posts (Dallas, Houston, Denver King Soopers)",
+    id: "fb_reel_houston_tx_method",
+    groupName: "Facebook Reel · Houston TX Kiosk Hunt",
+    topicTag: "Direct Reel · Texas Grocery Kiosk",
+    title: "What's hiding in the Pokémon vending machine 👀 How to get lucky on the machine (Houston, TX)",
     excerpt:
-      "Collectors in DFW, Houston, Austin, and Denver discussing King Soopers and Kroger Pokémon vending machine restocks.",
-    permalink: "https://www.facebook.com/search/posts?q=king%20soopers%20pokemon%20vending%20machine",
+      "Checking the local grocery Pokémon Center vending machine in Houston, TX to see what packs and booster bundles unlock on the hourly timer.",
+    permalink: "https://www.facebook.com/reel/2811337305884910/",
     postedAt: new Date(Date.now() - 4 * 3600_000).toISOString(),
   },
   {
-    id: "fb_scalpers_empty_shelves",
-    groupName: "Facebook Live Search · Retail Restock Talk",
-    topicTag: "Empty Shelves vs. Kiosk Timers",
-    title: "Recent Facebook Posts: \"Pokemon Restock Sold Out / Target Walmart Empty\"",
+    id: "fb_reel_always_empty_timer",
+    groupName: "Facebook Reel · Why Kiosks Say Sold Out",
+    topicTag: "Direct Reel · Sold Out Screen vs. Hourly Timer",
+    title: "Why Pokémon Vending Machines Are Always Empty — And How the Hourly Timer Actually Works",
     excerpt:
-      "Collectors complaining about empty Target/Walmart shelves—perfect place to casually mention getting lucky on the grocery kiosk hourly timers instead.",
-    permalink: "https://www.facebook.com/search/posts?q=pokemon%20center%20vending%20machine%20sold%20out",
+      "The shiny red Pokémon Center vending machines at grocery stores look sold out at first glance — perfect reel comment section to mention timing the :XX drop minute.",
+    permalink: "https://www.facebook.com/reel/1293838985850912/",
     postedAt: new Date(Date.now() - 5 * 3600_000).toISOString(),
   },
+  {
+    id: "fb_group_oregon_portland_restocks",
+    groupName: "Oregon / Portland Metro Pokemon Restock Updates",
+    topicTag: "Direct Group · Oregon / PNW (Fred Meyer & Safeway)",
+    title: "Oregon / Portland Metro Pokémon Vending Machine & Store Restock Updates (Gladstone, Portland, Beaverton)",
+    excerpt:
+      "Active Portland & Oregon Facebook group where collectors post Fred Meyer, QFC, and Safeway Pokémon Center kiosk drops and stocking schedules.",
+    permalink: "https://www.facebook.com/groups/1155810866239886/",
+    postedAt: new Date(Date.now() - 6 * 3600_000).toISOString(),
+  },
+  {
+    id: "fb_group_wa_pnw_pokestop",
+    groupName: "Washington / PNW Pokémon TCG Community",
+    topicTag: "Direct Thread · Washington State Collectors",
+    title: "Washington State Pokémon TCG Collectors & Vending Machine Discussion Thread",
+    excerpt:
+      "Washington & PNW collectors discussing Seattle, Bellevue, Tacoma, and Redmond Fred Meyer / QFC / Safeway Pokémon Center vending machines.",
+    permalink: "https://www.facebook.com/groups/wapokemontcg/posts/1664242804423516/",
+    postedAt: new Date(Date.now() - 7 * 3600_000).toISOString(),
+  },
+  {
+    id: "fb_group_pokemon_restock_alerts",
+    groupName: "Pokemon Restock Updates & Alerts",
+    topicTag: "Direct Group · National Restock Feed",
+    title: "Pokemon Restock Updates & Alerts — Daily Kiosk & Retail Drop Feed",
+    excerpt:
+      "Active Facebook community tracking daily Pokémon TCG drops, grocery vending machine restock windows, and MSRP alerts.",
+    permalink: "https://www.facebook.com/groups/1296352191593526/",
+    postedAt: new Date(Date.now() - 8 * 3600_000).toISOString(),
+  },
 ];
+
+function decodeHtmlEntities(s: string): string {
+  return s
+    .replace(/<[^>]+>/g, "")
+    .replace(/&amp;/g, "&")
+    .replace(/&#x27;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&rsquo;/g, "'")
+    .replace(/&ldquo;/g, '"')
+    .replace(/&rdquo;/g, '"')
+    .replace(/&mdash;/g, "—")
+    .replace(/&ndash;/g, "–")
+    .replace(/&eacute;/g, "é")
+    .replace(/&middot;/g, "·")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+async function discoverLiveFacebookThreads(): Promise<typeof CURATED_FACEBOOK_OPPORTUNITIES> {
+  const discovered: typeof CURATED_FACEBOOK_OPPORTUNITIES = [];
+  const queries = [
+    'site:facebook.com/groups "pokemon vending machine" posts',
+    'site:facebook.com/reel "pokemon vending machine"',
+  ];
+
+  for (const q of queries) {
+    try {
+      const url = `https://search.yahoo.com/search?p=${encodeURIComponent(q)}`;
+      const res = await fetch(url, {
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        },
+        signal: AbortSignal.timeout(4500),
+      });
+      if (!res.ok) continue;
+      const html = await res.text();
+      const blocks = html.split(/<div class="dd algo[^>]*>/).slice(1);
+      for (const b of blocks) {
+        const ru = b.match(/RU=([^/]+)\/RK=/);
+        if (!ru) continue;
+        const link = decodeURIComponent(ru[1]);
+        if (
+          !link.includes("facebook.com/") ||
+          link.includes("/search/") ||
+          link.includes("/fb-answers/") ||
+          link.includes("vendingmachineowners")
+        ) {
+          continue;
+        }
+        if (!link.includes("/posts/") && !link.includes("/reel/")) continue;
+        const titleMatch = b.match(/<h3[^>]*>([\s\S]*?)<\/h3>/);
+        const snippetMatch = b.match(/<div class="compText[^>]*>([\s\S]*?)<\/div>/);
+        const cleanTitle = titleMatch ? decodeHtmlEntities(titleMatch[1]).replace(/\s*[-|]\s*Facebook$/i, "") : "";
+        const cleanSnippet = snippetMatch ? decodeHtmlEntities(snippetMatch[1]) : "";
+        if (!cleanTitle || cleanTitle.length < 10) continue;
+
+        const idSlug = link.replace(/[^a-zA-Z0-9]/g, "").slice(-24);
+        discovered.push({
+          id: `fb_live_${idSlug}`,
+          groupName: link.includes("/reel/") ? "Facebook Reel · Live Discovery" : "Facebook Group Thread · Live Discovery",
+          topicTag: link.includes("/reel/") ? "Direct Facebook Reel" : "Direct Group Thread",
+          title: cleanTitle,
+          excerpt: cleanSnippet || "Direct Facebook Pokémon vending machine discussion thread.",
+          permalink: link,
+          postedAt: new Date(Date.now() - 35 * 60_000).toISOString(),
+        });
+      }
+    } catch {
+      // Ignore network/timeout errors during live search enrichment
+    }
+  }
+  return discovered;
+}
 
 export async function scanFacebookOpportunities(db: DB): Promise<FacebookOpportunity[]> {
   const [existingRow] = await db.select().from(settings).where(eq(settings.key, "facebookOpportunitiesV1"));
@@ -222,9 +326,20 @@ export async function scanFacebookOpportunities(db: DB): Promise<FacebookOpportu
     : [];
   const statusById = new Map(existingList.map((item) => [item.id, item.status]));
 
+  const liveDiscovered = await discoverLiveFacebookThreads();
+  const seenUrls = new Set<string>();
+  const combinedRaw: typeof CURATED_FACEBOOK_OPPORTUNITIES = [];
+
+  for (const item of [...CURATED_FACEBOOK_OPPORTUNITIES, ...liveDiscovered]) {
+    const normUrl = item.permalink.replace(/\/+$/, "").toLowerCase();
+    if (seenUrls.has(normUrl)) continue;
+    seenUrls.add(normUrl);
+    combinedRaw.push(item);
+  }
+
   const opportunities: FacebookOpportunity[] = [];
 
-  for (const raw of CURATED_FACEBOOK_OPPORTUNITIES) {
+  for (const raw of combinedRaw) {
     const drafted = await buildCleverFacebookReply(db, {
       groupName: raw.groupName,
       title: raw.title,

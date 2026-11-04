@@ -20,8 +20,9 @@ export const GET = route(async (req) => {
 
   const [row] = await db.select().from(settings).where(eq(settings.key, "facebookOpportunitiesV1"));
   const cached = Array.isArray(row?.value) ? (row.value as FacebookOpportunity[]) : [];
+  const hasStaleSearchLinks = cached.some((item) => item.permalink?.includes("/search/"));
 
-  if (!refresh && cached.length > 0) {
+  if (!refresh && cached.length > 0 && !hasStaleSearchLinks) {
     return { opportunities: cached };
   }
 
