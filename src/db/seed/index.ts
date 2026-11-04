@@ -11,7 +11,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { sql } from "drizzle-orm";
 import type { DB } from "@/db";
-import { activity, dropCandidates, machines, newsPosts, releases, reputationEvents, settings, sponsors, user } from "@/db/schema";
+import { activity, alertSubscriptions, dropCandidates, machines, newsPosts, releases, reputationEvents, settings, sponsors, user } from "@/db/schema";
 import { titleCase, type OfficialMachine } from "@/lib/machines";
 import { slugify, timezoneFor } from "@/lib/geo";
 
@@ -351,6 +351,171 @@ export async function seedIfEmpty(db: DB) {
         userId: "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
         delta: 2,
         reason: "Community drop confirmation",
+      },
+    ])
+    .onConflictDoNothing();
+
+  // 3c. Seed baseline Alert Subscriptions for King_Bezos (Gladstone/Portland 97027) and RayquazaRipper249 (Phoenix 85013 - 10 alerts)
+  await db
+    .insert(alertSubscriptions)
+    .values([
+      // King_Bezos alerts (Gladstone / Portland 97027 area & nearby machines + restocks)
+      {
+        id: "alert-owner-zip-97027",
+        userId: "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+        kind: "area_drop",
+        lat: 45.381,
+        lng: -122.593,
+        radiusMiles: 15,
+        keyword: "ZIP 97027",
+        leadMinutes: 10,
+        channels: ["email", "push", "discord"],
+        active: true,
+      },
+      {
+        id: "alert-owner-q01010",
+        userId: "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+        kind: "machine_drop",
+        machineId: "Q01010",
+        leadMinutes: 10,
+        channels: ["email", "push", "discord"],
+        active: true,
+      },
+      {
+        id: "alert-owner-q00120",
+        userId: "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+        kind: "machine_drop",
+        machineId: "Q00120",
+        leadMinutes: 10,
+        channels: ["email", "push"],
+        active: true,
+      },
+      {
+        id: "alert-owner-q00955",
+        userId: "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+        kind: "machine_drop",
+        machineId: "Q00955",
+        leadMinutes: 10,
+        channels: ["email", "push"],
+        active: true,
+      },
+      {
+        id: "alert-owner-q00226",
+        userId: "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+        kind: "machine_drop",
+        machineId: "Q00226",
+        leadMinutes: 10,
+        channels: ["email", "push"],
+        active: true,
+      },
+      {
+        id: "alert-owner-restock",
+        userId: "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+        kind: "product_restock",
+        leadMinutes: 5,
+        channels: ["email", "push", "discord"],
+        active: true,
+      },
+      {
+        id: "alert-owner-release",
+        userId: "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+        kind: "release",
+        leadMinutes: 5,
+        channels: ["email", "push"],
+        active: true,
+      },
+      // RayquazaRipper249 alerts (all 10 Phoenix 85013 machines & area alerts)
+      {
+        id: "alert-rayquaza-1-zip85013",
+        userId: "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+        kind: "area_drop",
+        lat: 33.4885,
+        lng: -112.0813,
+        radiusMiles: 10,
+        keyword: "ZIP 85013",
+        leadMinutes: 10,
+        channels: ["email", "push"],
+        active: true,
+      },
+      {
+        id: "alert-rayquaza-2-q01328",
+        userId: "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+        kind: "machine_drop",
+        machineId: "Q01328",
+        leadMinutes: 10,
+        channels: ["email", "push"],
+        active: true,
+      },
+      {
+        id: "alert-rayquaza-3-q00364",
+        userId: "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+        kind: "machine_drop",
+        machineId: "Q00364",
+        leadMinutes: 10,
+        channels: ["email", "push"],
+        active: true,
+      },
+      {
+        id: "alert-rayquaza-4-q00337",
+        userId: "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+        kind: "machine_drop",
+        machineId: "Q00337",
+        leadMinutes: 10,
+        channels: ["email", "push"],
+        active: true,
+      },
+      {
+        id: "alert-rayquaza-5-q00361",
+        userId: "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+        kind: "machine_drop",
+        machineId: "Q00361",
+        leadMinutes: 10,
+        channels: ["email", "push"],
+        active: true,
+      },
+      {
+        id: "alert-rayquaza-6-q00377",
+        userId: "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+        kind: "machine_drop",
+        machineId: "Q00377",
+        leadMinutes: 10,
+        channels: ["email", "push"],
+        active: true,
+      },
+      {
+        id: "alert-rayquaza-7-q00365",
+        userId: "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+        kind: "machine_drop",
+        machineId: "Q00365",
+        leadMinutes: 10,
+        channels: ["email", "push"],
+        active: true,
+      },
+      {
+        id: "alert-rayquaza-8-q00369",
+        userId: "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+        kind: "machine_drop",
+        machineId: "Q00369",
+        leadMinutes: 10,
+        channels: ["email", "push"],
+        active: true,
+      },
+      {
+        id: "alert-rayquaza-9-q01301",
+        userId: "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+        kind: "machine_drop",
+        machineId: "Q01301",
+        leadMinutes: 10,
+        channels: ["email", "push"],
+        active: true,
+      },
+      {
+        id: "alert-rayquaza-10-restock",
+        userId: "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+        kind: "product_restock",
+        leadMinutes: 5,
+        channels: ["email", "push"],
+        active: true,
       },
     ])
     .onConflictDoNothing();

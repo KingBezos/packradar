@@ -1,7 +1,20 @@
 import { eq } from "drizzle-orm";
 import { route, json } from "@/lib/api";
 import { getDb } from "@/db";
-import { account, settings, user } from "@/db/schema";
+import {
+  account,
+  alertSubscriptions,
+  comments,
+  dropObservations,
+  dropVotes,
+  favorites,
+  notifications,
+  pushSubscriptions,
+  reputationEvents,
+  settings,
+  stockReports,
+  user,
+} from "@/db/schema";
 import { requireRole } from "@/lib/session";
 import {
   loadAnalyticsStore,
@@ -142,11 +155,42 @@ export const GET = route(async () => {
   const realUserIds = new Set(realUsers.map((u) => u.id));
   const realAccounts = allAccounts.filter((a) => realUserIds.has(a.userId));
 
+  const [
+    allAlertSubscriptions,
+    allPushSubscriptions,
+    allNotifications,
+    allFavorites,
+    allReputationEvents,
+    allDropObservations,
+    allStockReports,
+    allComments,
+    allDropVotes,
+  ] = await Promise.all([
+    db.select().from(alertSubscriptions),
+    db.select().from(pushSubscriptions),
+    db.select().from(notifications),
+    db.select().from(favorites),
+    db.select().from(reputationEvents),
+    db.select().from(dropObservations),
+    db.select().from(stockReports),
+    db.select().from(comments),
+    db.select().from(dropVotes),
+  ]);
+
   return {
     analytics,
     settings: allSettings,
     users: realUsers,
     accounts: realAccounts,
+    alertSubscriptions: allAlertSubscriptions.filter((r) => realUserIds.has(r.userId)),
+    pushSubscriptions: allPushSubscriptions.filter((r) => realUserIds.has(r.userId)),
+    notifications: allNotifications.filter((r) => realUserIds.has(r.userId)),
+    favorites: allFavorites.filter((r) => realUserIds.has(r.userId)),
+    reputationEvents: allReputationEvents.filter((r) => realUserIds.has(r.userId)),
+    dropObservations: allDropObservations.filter((r) => !r.userId || realUserIds.has(r.userId)),
+    stockReports: allStockReports.filter((r) => !r.userId || realUserIds.has(r.userId)),
+    comments: allComments.filter((r) => realUserIds.has(r.userId)),
+    dropVotes: allDropVotes.filter((r) => realUserIds.has(r.userId)),
     exportedAt: new Date().toISOString(),
   };
 });
@@ -158,6 +202,15 @@ export const POST = route(async (req) => {
     settings?: { key: string; value: unknown }[];
     users?: (typeof user.$inferInsert)[];
     accounts?: (typeof account.$inferInsert)[];
+    alertSubscriptions?: (typeof alertSubscriptions.$inferInsert)[];
+    pushSubscriptions?: (typeof pushSubscriptions.$inferInsert)[];
+    notifications?: (typeof notifications.$inferInsert)[];
+    favorites?: (typeof favorites.$inferInsert)[];
+    reputationEvents?: (typeof reputationEvents.$inferInsert)[];
+    dropObservations?: (typeof dropObservations.$inferInsert)[];
+    stockReports?: (typeof stockReports.$inferInsert)[];
+    comments?: (typeof comments.$inferInsert)[];
+    dropVotes?: (typeof dropVotes.$inferInsert)[];
   };
   const db = await getDb();
 
@@ -205,6 +258,10 @@ export const POST = route(async (req) => {
               name: u.name || existingByEmail.name,
               role: u.role || existingByEmail.role,
               plan: u.plan || existingByEmail.plan,
+              homeZip: u.homeZip ?? existingByEmail.homeZip,
+              homeLat: u.homeLat ?? existingByEmail.homeLat,
+              homeLng: u.homeLng ?? existingByEmail.homeLng,
+              discordWebhookUrl: u.discordWebhookUrl ?? existingByEmail.discordWebhookUrl,
             })
             .where(eq(user.id, existingByEmail.id));
         }
@@ -223,6 +280,135 @@ export const POST = route(async (req) => {
             updatedAt: new Date(),
             accessTokenExpiresAt: a.accessTokenExpiresAt ? new Date(a.accessTokenExpiresAt) : null,
             refreshTokenExpiresAt: a.refreshTokenExpiresAt ? new Date(a.refreshTokenExpiresAt) : null,
+          })
+          .onConflictDoNothing();
+      } catch {}
+    }
+  }
+
+  if (Array.isArray(body.alertSubscriptions)) {
+    for (const row of body.alertSubscriptions) {
+      try {
+        await db
+          .insert(alertSubscriptions)
+          .values({
+            ...row,
+            createdAt: row.createdAt ? new Date(row.createdAt) : new Date(),
+            lastNotifiedAt: row.lastNotifiedAt ? new Date(row.lastNotifiedAt) : null,
+          })
+          .onConflictDoNothing();
+      } catch {}
+    }
+  }
+
+  if (Array.isArray(body.pushSubscriptions)) {
+    for (const row of body.pushSubscriptions) {
+      try {
+        await db
+          .insert(pushSubscriptions)
+          .values({
+            ...row,
+            createdAt: row.createdAt ? new Date(row.createdAt) : new Date(),
+          })
+          .onConflictDoNothing();
+      } catch {}
+    }
+  }
+
+  if (Array.isArray(body.notifications)) {
+    for (const row of body.notifications) {
+      try {
+        await db
+          .insert(notifications)
+          .values({
+            ...row,
+            createdAt: row.createdAt ? new Date(row.createdAt) : new Date(),
+            readAt: row.readAt ? new Date(row.readAt) : null,
+          })
+          .onConflictDoNothing();
+      } catch {}
+    }
+  }
+
+  if (Array.isArray(body.favorites)) {
+    for (const row of body.favorites) {
+      try {
+        await db
+          .insert(favorites)
+          .values({
+            ...row,
+            createdAt: row.createdAt ? new Date(row.createdAt) : new Date(),
+          })
+          .onConflictDoNothing();
+      } catch {}
+    }
+  }
+
+  if (Array.isArray(body.reputationEvents)) {
+    for (const row of body.reputationEvents) {
+      try {
+        await db
+          .insert(reputationEvents)
+          .values({
+            ...row,
+            createdAt: row.createdAt ? new Date(row.createdAt) : new Date(),
+          })
+          .onConflictDoNothing();
+      } catch {}
+    }
+  }
+
+  if (Array.isArray(body.dropObservations)) {
+    for (const row of body.dropObservations) {
+      try {
+        await db
+          .insert(dropObservations)
+          .values({
+            ...row,
+            observedAt: row.observedAt ? new Date(row.observedAt) : new Date(),
+            createdAt: row.createdAt ? new Date(row.createdAt) : new Date(),
+          })
+          .onConflictDoNothing();
+      } catch {}
+    }
+  }
+
+  if (Array.isArray(body.stockReports)) {
+    for (const row of body.stockReports) {
+      try {
+        await db
+          .insert(stockReports)
+          .values({
+            ...row,
+            createdAt: row.createdAt ? new Date(row.createdAt) : new Date(),
+          })
+          .onConflictDoNothing();
+      } catch {}
+    }
+  }
+
+  if (Array.isArray(body.comments)) {
+    for (const row of body.comments) {
+      try {
+        await db
+          .insert(comments)
+          .values({
+            ...row,
+            createdAt: row.createdAt ? new Date(row.createdAt) : new Date(),
+          })
+          .onConflictDoNothing();
+      } catch {}
+    }
+  }
+
+  if (Array.isArray(body.dropVotes)) {
+    for (const row of body.dropVotes) {
+      try {
+        await db
+          .insert(dropVotes)
+          .values({
+            ...row,
+            createdAt: row.createdAt ? new Date(row.createdAt) : new Date(),
           })
           .onConflictDoNothing();
       } catch {}

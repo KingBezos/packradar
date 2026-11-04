@@ -160,6 +160,7 @@ type UserDetailPayload = {
     kind: string;
     machineId: string | null;
     keyword: string | null;
+    channels?: string[];
     active: boolean;
     createdAt: string;
   }[];
@@ -3026,6 +3027,45 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                         </li>
                       ))}
                     </ul>
+                  )}
+
+                  {/* User's Active Alert Subscriptions */}
+                  {selectedUserDetail.alerts.length > 0 && (
+                    <div className="pt-3 border-t border-line space-y-2">
+                      <h5 className="text-[11px] font-extrabold uppercase tracking-wider text-amber-300">
+                        🔔 Active Alerts ({selectedUserDetail.alerts.length})
+                      </h5>
+                      <ul className="divide-y divide-line max-h-44 overflow-y-auto text-xs">
+                        {selectedUserDetail.alerts.map((a) => (
+                          <li key={a.id} className="flex items-center justify-between gap-2 py-1.5">
+                            <div className="min-w-0 truncate">
+                              {a.machineId ? (
+                                <Link
+                                  href={`/machines/${a.machineId}`}
+                                  className="font-mono font-bold text-amber-300 hover:underline"
+                                >
+                                  {a.machineId}
+                                </Link>
+                              ) : (
+                                <span className="font-semibold text-amber-300">
+                                  {a.keyword || a.kind}
+                                </span>
+                              )}
+                              <span className="ml-1.5 text-[11px] text-slate-400">
+                                ({a.kind} · {(a.channels ?? ["email", "push"]).join(", ")})
+                              </span>
+                            </div>
+                            <span
+                              className={`text-[10px] font-bold ${
+                                a.active ? "text-green-400" : "text-muted"
+                              }`}
+                            >
+                              {a.active ? "Active" : "Paused"}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   )}
                 </div>
               </div>

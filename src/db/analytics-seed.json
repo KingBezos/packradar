@@ -51,13 +51,13 @@
     "6ed87aa0efb242da",
     "0cd77ac637d61abd"
   ],
-  "totalBotHitsExcluded": 614,
+  "totalBotHitsExcluded": 639,
   "botBreakdown": {
-    "Internal QA & Health Checks": 521,
+    "Internal QA & Health Checks": 534,
     "Discord Link Preview (Discordbot)": 3,
     "Search Engine Crawler (Google/Bing/DuckDuckGo)": 1,
-    "Headless Browser / Automation (Puppeteer/Playwright/Curl/Node)": 10,
-    "Empty or Synthetic User-Agent": 2,
+    "Headless Browser / Automation (Puppeteer/Playwright/Curl/Node)": 11,
+    "Empty or Synthetic User-Agent": 13,
     "Social Preview Bot (Twitter/FB/Slack/Telegram/Reddit)": 64,
     "Non-Browser HTTP Client": 11,
     "Headless Webdriver Flag (navigator.webdriver)": 2
@@ -592,7 +592,7 @@
         "31aa7685cac146af",
         "0d1dd19288169b75"
       ],
-      "botHitsBlocked": 131,
+      "botHitsBlocked": 156,
       "signUps": 0
     }
   },
@@ -1791,5 +1791,5 @@
       "lastSearchedAt": "2026-11-04T00:24:43.766Z"
     }
   },
-  "updatedAt": "2026-11-04T03:36:03.469Z"
+  "updatedAt": "2026-11-04T03:47:29.098Z"
 }
