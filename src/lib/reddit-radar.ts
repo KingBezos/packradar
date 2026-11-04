@@ -88,14 +88,13 @@ export async function buildDataBackedRedditReply(
       const anchorStr = String(m.anchorMinute ?? 15).padStart(2, "0");
 
       const helpfulReplyDraft =
-        `I actually started getting lucky on that ${m.city} ${m.retailer} kiosk (${m.id}) once I realized it unlocks 1–2 items around :${anchorStr} past the hour instead of all at once. ` +
-        `${st.status !== "unknown" ? `Next window is in ~${formatCountdown(st.secondsToNext)} (${productNames || "bundles & packs"} spotted recently) on ${url}` : `Live drop timer is on ${url}`}`;
+        `that ${m.city} ${m.retailer} machine (${m.id}) unlocks 1-2 items around :${anchorStr} every hour instead of all at once, i just check the timer on ${url} before i go`;
 
       const shortReplyDraft =
-        `That ${m.city} ${m.retailer} machine (${m.id}) unlocks stock around :${anchorStr} past the hour—live countdown is on ${url}`;
+        `that ${m.city} ${m.retailer} machine (${m.id}) unlocks around :${anchorStr} past the hour, timer is on ${url}`;
 
       const altCleverDraft =
-        `Don't trust the "Sold Out" screen on ${m.id}—it just drips out 1–2 items at :${anchorStr} every hour so one person can't wipe it. Check ${url} right before heading over.`;
+        `the sold out screen is a lie on ${m.id} lol it drips out 1-2 items at :${anchorStr} every hour (${url})`;
 
       return {
         matchedLocationLabel: `${m.city}, ${m.state} (${m.id})`,
@@ -120,17 +119,17 @@ export async function buildDataBackedRedditReply(
 
     const sample = stateMachines.find((m) => m.anchorMinute != null) ?? stateMachines[0];
     const sampleMin = sample ? `:${String(sample.anchorMinute ?? 18).padStart(2, "0")}` : ":18";
-    const sampleStore = sample ? `${sample.city} ${sample.retailer}` : "local grocery";
+    const sampleStore = sample ? `${sample.city} ${sample.retailer}` : "my store";
     const targetUrl = `${SITE_URL}/locations/${targetState.toLowerCase()}`;
 
     const helpfulReplyDraft =
-      `Kept walking up to "Sold Out" screens in ${targetState} until I learned the kiosks unlock 1–2 items on an hourly :XX timer (like ${sampleMin} at the ${sampleStore}). Started timing the drop minutes on ${targetUrl} and finally started catching MSRP bundles.`;
+      `mine always said sold out in ${targetState} too until i learned they unlock 1-2 items at the same minute every hour (like ${sampleMin} at ${sampleStore}). started checking ${targetUrl} and finally caught bundles`;
 
     const shortReplyDraft =
-      `The ${targetState} kiosks are on staggered hourly timers—check the :XX unlock minute marks on ${targetUrl} and swing by right when they unlock.`;
+      `the ${targetState} machines unlock on an hourly timer, ${targetUrl} has the exact minute marks`;
 
     const altCleverDraft =
-      `Best trick for the ${regionMatch.label} machines is timing their hourly :XX drop minute so scalpers can't beat you to it. ${targetUrl} has the local kiosks and drop windows mapped out.`;
+      `only way ive been catching packs in ${targetState} is timing the hourly drop minute on ${targetUrl} before my grocery run`;
 
     return {
       matchedLocationLabel: regionMatch.label,
@@ -148,23 +147,23 @@ export async function buildDataBackedRedditReply(
   // 3a. Prismatic / 151 / Booster Bundles / Pulls / Blessed / Lucky hits
   if (/prismatic|151|bundle|pull|blessed|hit|lucky|god pack|sir|hyper rare|gold card|bought|scored|booster/i.test(lower)) {
     const helpfulVariants = [
-      `Catching a kiosk right when its hourly :XX timer unlocks a bundle at MSRP is unbeatable lol. Ever since I started checking my local machine's drop minute on ${SITE_URL} I've had way better luck catching packs.`,
-      `Vending machine MSRP hits different! Once I figured out the kiosks unlock 1–2 items at a set :XX minute every hour (I check mine on ${SITE_URL}), I stopped wasting trips to empty Target shelves.`,
-      `Honestly timing the grocery kiosk's hourly :XX unlock minute is the only way I've been getting lucky with bundles lately. ${SITE_URL} has the live drop timers mapped out if you hit other machines nearby.`,
+      `catching a machine right when its hourly timer unlocks a bundle is unbeatable lol. ever since i started checking my store's drop minute on ${SITE_URL} ive had way better luck`,
+      `nice pull! once i figured out the machines unlock 1-2 items at the same minute every hour (i check mine on ${SITE_URL}) i stopped wasting trips to target`,
+      `timing the grocery machine's hourly unlock minute is honestly the only way ive been catching bundles lately. ${SITE_URL} has the drop times if you hit other stores nearby`,
     ];
     const shortVariants = [
-      `Timing the hourly :XX unlock minute on ${SITE_URL} is honestly the only way I catch MSRP bundles at the kiosks anymore 🔥`,
-      `Once you know your local kiosk's :XX hourly drop minute (tracked on ${SITE_URL}), catching packs at retail gets way easier.`,
-      `Grocery kiosk drop timers > big box restocks. I check my machine's :XX unlock minute on ${SITE_URL} before every grocery run.`,
+      `timing the hourly drop minute on ${SITE_URL} is the only way i catch bundles on these machines anymore`,
+      `once you know what minute past the hour your machine unlocks at (on ${SITE_URL}), catching packs gets way easier`,
+      `grocery machine drop timers > target restocks lol i just check my store's unlock minute on ${SITE_URL}`,
     ];
     const altVariants = [
-      `Even when a machine says Sold Out, it usually holds stock inside and unlocks 1–2 items at its :XX minute mark each hour—${SITE_URL} tracks the exact drop times.`,
-      `The anti-scalper timer on the kiosks is clutch once you know what :XX minute mark your store drops on (${SITE_URL} has the map).`,
-      `I used to think my kiosk was always empty until I timed its :XX hourly drop window on ${SITE_URL} and scored back-to-back bundles.`,
+      `even when the screen says sold out it holds stock inside and unlocks 1-2 items at the same minute every hour, ${SITE_URL} has the drop minutes`,
+      `the hourly timer on these machines is clutch once you know what minute your store drops on (${SITE_URL})`,
+      `i thought mine was always empty until i timed its hourly drop minute on ${SITE_URL} and caught two bundles`,
     ];
 
     return {
-      matchedLocationLabel: "Vending Pulls & Lucky Drop Timing",
+      matchedLocationLabel: "Vending Pulls & Drop Timing",
       matchedMachinesCount: 357,
       targetPackRadarUrl: SITE_URL,
       helpfulReplyDraft: helpfulVariants[variant],
@@ -176,55 +175,55 @@ export async function buildDataBackedRedditReply(
   // 3b. Malfunction / Reliability / Sold Out / Taken for a ride / Glitch
   if (/malfunction|reliab|broken|glitch|stuck|error|out of stock|sold out|refund|ride|single 10/i.test(lower)) {
     const helpfulVariants = [
-      `Half the time the screen says "Sold Out" it's not even empty—the firmware locks stock behind a 60–90 min timer and only drips out 1–2 items at a specific :XX minute mark each hour. I check my store's unlock minute on ${SITE_URL} before walking in and it's night and day.`,
-      `The "Sold Out" screen is the biggest bait on these machines lol—they hold inventory inside and unlock 1–2 items at a set :XX minute past the hour. Once I started checking the drop timer on ${SITE_URL}, I actually started catching ETBs and bundles.`,
-      `Those kiosks are quirky, especially with the anti-scalper timer locking stock until a specific :XX minute every hour. You can check which machines near you are active and what minute they unlock on ${SITE_URL}.`,
+      `half the time it says sold out its not even empty, the timer locks stock and only drips out 1-2 items at a set minute each hour. i check my store's drop minute on ${SITE_URL} before walking in`,
+      `the sold out screen is the biggest bait on these lol they hold stock inside and unlock 1-2 items at the same minute every hour. started checking ${SITE_URL} and finally caught bundles`,
+      `they put an hourly cooldown timer on them so one guy cant buy out the whole machine. you can see what minute your local machine unlocks on ${SITE_URL}`,
     ];
     const shortVariants = [
-      `The "Sold Out" screen is usually just the hourly cooldown timer—check your kiosk's :XX unlock minute on ${SITE_URL} and hit it right on the drop.`,
-      `Most kiosks aren't actually empty when they say Sold Out; they unlock 1–2 items at a specific :XX minute each hour (mapped on ${SITE_URL}).`,
-      `Once you time the machine's :XX hourly unlock window on ${SITE_URL}, you stop running into the fake Sold Out screen.`,
+      `the sold out screen is usually just the hourly cooldown timer, check your machine's unlock minute on ${SITE_URL}`,
+      `most of them arent actually empty when they say sold out, they unlock 1-2 items at a set minute each hour (${SITE_URL})`,
+      `once you time the hourly unlock minute on ${SITE_URL} you stop running into the fake sold out screen`,
     ];
 
     return {
-      matchedLocationLabel: "Kiosk Cooldown & Drop Timers",
+      matchedLocationLabel: "Vending Cooldown & Drop Timers",
       matchedMachinesCount: 357,
       targetPackRadarUrl: SITE_URL,
       helpfulReplyDraft: helpfulVariants[variant],
       shortReplyDraft: shortVariants[variant],
-      altCleverDraft: `Pro tip for the kiosks: they hold stock back on a staggered hourly timer so one person can't clear them. Check your machine's :XX drop minute on ${SITE_URL} before heading over.`,
+      altCleverDraft: `they hold stock back on an hourly timer so one person cant clear them, check your machine's drop minute on ${SITE_URL}`,
     };
   }
 
   // 3c. Scalpers / Ripped packs / Hiding cards / Restock hunting
   if (/scalp|rip|stole|hide|trash|camp|waiting in line|restock|keep up to date|drops/i.test(lower)) {
     return {
-      matchedLocationLabel: "Beating Scalpers via Kiosk Timers",
+      matchedLocationLabel: "Beating Scalpers via Drop Timers",
       matchedMachinesCount: 357,
       targetPackRadarUrl: mapUrl,
       helpfulReplyDraft:
-        `People doing that is wild. The one saving grace with the grocery store kiosks now is the staggered hourly timer—it only unlocks 1–2 items at a specific :XX minute mark so nobody can wipe the whole machine at once. I just check my store's unlock minute on ${SITE_URL} and swing by right on the dot.`,
+        `people doing that is wild. at least the machines are on an hourly timer now so one guy cant clear the whole thing at once, i just check what minute mine unlocks on ${SITE_URL}`,
       shortReplyDraft:
-        `Thankfully the kiosks only unlock 1–2 items per hour on a :XX timer now—I check the drop minute marks near me on ${SITE_URL} and skip the big-box chaos.`,
+        `thankfully the machines only unlock 1-2 items an hour on a timer now, i check the drop minutes near me on ${SITE_URL}`,
       altCleverDraft:
-        `Instead of fighting retail lines, time the grocery kiosk's :XX hourly unlock window on ${mapUrl}—way easier to catch MSRP packs.`,
+        `way easier to just time the grocery machine's hourly unlock minute on ${SITE_URL} than deal with retail lines`,
     };
   }
 
   // 3d. Default general vending machine thread
   const defaultHelpful = [
-    `Thought my local kiosk was permanently empty until I learned they unlock 1–2 items on a staggered :XX hourly timer instead of all at once. Started checking the drop minute marks on ${mapUrl} and finally started getting lucky at MSRP.`,
-    `Secret with the Pokémon Center grocery kiosks is they don't drop everything at once—they unlock 1–2 items at a specific :XX minute mark every hour. I check my local machine's drop timer on ${mapUrl} right before my grocery run.`,
-    `If you're hunting the grocery store vending machines, don't let the "Sold Out" screen fool you—they're on an hourly :XX unlock timer. ${mapUrl} shows the machines near your ZIP and what minute mark they drop on.`,
+    `thought my machine was always empty until i learned they unlock 1-2 items at the same minute every hour instead of all at once. started checking ${SITE_URL} and finally got lucky`,
+    `secret with the grocery machines is they dont drop everything at once, they unlock a couple items at a set minute every hour. i check my store's minute mark on ${SITE_URL}`,
+    `dont let the sold out screen fool you lol they're on an hourly unlock timer. ${SITE_URL} shows the drop minute for each store`,
   ];
 
   return {
-    matchedLocationLabel: "US Pokémon Vending Kiosks",
+    matchedLocationLabel: "US Pokémon Vending Machines",
     matchedMachinesCount: 357,
     targetPackRadarUrl: mapUrl,
     helpfulReplyDraft: defaultHelpful[variant],
-    shortReplyDraft: `The kiosks unlock 1–2 items at a set :XX minute every hour even when they say Sold Out—check your local machine's drop timer on ${mapUrl}`,
-    altCleverDraft: `Timing the hourly :XX unlock minute on ${SITE_URL} is the only way I've been catching bundles at the vending machines lately.`,
+    shortReplyDraft: `they unlock 1-2 items at the same minute every hour even when they say sold out, check your store's timer on ${SITE_URL}`,
+    altCleverDraft: `timing the hourly unlock minute on ${SITE_URL} is the only way ive been catching bundles on these lately`,
   };
 }
 

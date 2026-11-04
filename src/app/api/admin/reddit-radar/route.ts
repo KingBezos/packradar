@@ -29,7 +29,9 @@ export const GET = route(async (req) => {
       (item) =>
         !item.permalink?.includes("/comments/") ||
         !item.altCleverDraft ||
-        (item.helpfulReplyDraft?.length ?? 0) > 260 ||
+        item.helpfulReplyDraft?.includes("—") ||
+        item.helpfulReplyDraft?.includes("MSRP") ||
+        (item.helpfulReplyDraft?.length ?? 0) > 230 ||
         item.helpfulReplyDraft?.includes("utm_source=reddit") ||
         item.helpfulReplyDraft?.toLowerCase().includes("we track") ||
         !/vending|machine|kiosk|safeway|kroger|fred meyer|king soopers|qfc|restock|bundle/i.test(item.title),

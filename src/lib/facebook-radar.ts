@@ -37,9 +37,17 @@ const CITY_STATE_PATTERNS: { regex: RegExp; state: string; label: string }[] = [
   { regex: /\b(miami|orlando|tampa|jacksonville|florida)\b/i, state: "FL", label: "Florida" },
 ];
 
+function hashPick(seed: string, mod: number): number {
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) {
+    h = (h * 31 + seed.charCodeAt(i)) >>> 0;
+  }
+  return h % mod;
+}
+
 /**
- * Generates short, clever, punchy Facebook comments about getting lucky with packs/bundles
- * by timing the vending machine's hourly :XX drop window.
+ * Generates short, casual, human-sounding Facebook comments (no AI em-dashes, no sales pitch,
+ * just a quick collector tip about timing the machine's hourly drop minute).
  */
 export async function buildCleverFacebookReply(
   db: DB,
@@ -58,6 +66,7 @@ export async function buildCleverFacebookReply(
 }> {
   const combined = `${input.title} ${input.body || ""} ${input.groupName || ""}`.trim();
   const lower = combined.toLowerCase();
+  const idx = hashPick(input.title, 4);
 
   // 1. Specific Q-code mentioned
   const qMatch = combined.match(/\b(Q\d{4,5})\b/i);
@@ -71,9 +80,9 @@ export async function buildCleverFacebookReply(
         matchedLocationLabel: `${m.city}, ${m.state} (${m.id})`,
         matchedMachinesCount: 1,
         targetPackRadarUrl: url,
-        cleverReplyDraft: `I actually got lucky at that ${m.city} ${m.retailer} kiosk once I figured out it unlocks a couple items around :${anchorStr} past the hour instead of all at once 😅 You can see its live drop timer on ${url}`,
-        ultraShortDraft: `That ${m.city} ${m.retailer} machine unlocks stock around :${anchorStr} past the hour! Live timer is on ${url} 🔥`,
-        altLuckyDraft: `Don't let the "Sold Out" screen fool you on that ${m.retailer} machine—it's on a staggered timer (:‍${anchorStr} past the hour). I check ${url} right before heading over and have hit bundles twice now!`,
+        cleverReplyDraft: `that ${m.city} ${m.retailer} machine unlocks a couple items around :${anchorStr} every hour, i just check ${url} before i walk in`,
+        ultraShortDraft: `it drops around :${anchorStr} past the hour, timer is on ${url}`,
+        altLuckyDraft: `the sold out screen is a lie on that one lol it unlocks stock at :${anchorStr} every hour (${url})`,
       };
     }
   }
@@ -86,51 +95,76 @@ export async function buildCleverFacebookReply(
     const stateMachines = all.filter((m) => m.state.toUpperCase() === matchedHint.state);
     const sample = stateMachines[0];
     const sampleAnchor = sample ? String(sample.anchorMinute ?? 18).padStart(2, "0") : "18";
-    const sampleLabel = sample ? `${sample.city} ${sample.retailer}` : "local grocery";
+    const sampleLabel = sample ? `${sample.city} ${sample.retailer}` : "my store";
     const stateUrl = `${SITE_URL}/locations/${matchedHint.state.toLowerCase()}`;
+
+    const regionalClever = [
+      `mine always said sold out too until i found out they unlock a couple packs at the same minute every hour (like :${sampleAnchor} at ${sampleLabel}). i just check ${stateUrl} before heading over`,
+      `the machines here are on an hourly timer so one guy cant buy it all at once. i check the drop minutes on ${stateUrl} and have been getting lucky all week`,
+      `dont trust the sold out screen lol they drip out 1 or 2 items every hour at a set minute. ${stateUrl} has the drop times for our area`,
+      `only way ive been catching packs here is timing the hourly unlock minute on ${stateUrl} right before my grocery run`,
+    ];
 
     return {
       matchedLocationLabel: matchedHint.label,
       matchedMachinesCount: stateMachines.length || all.length,
       targetPackRadarUrl: stateUrl,
-      cleverReplyDraft: `I kept walking up to "Sold Out" screens here until I found out the kiosks unlock 1–2 items on an hourly timer 😂 Started checking the :XX drop minutes (like :${sampleAnchor} at the ${sampleLabel}) on ${stateUrl} and finally got lucky with MSRP bundles!`,
-      ultraShortDraft: `Timing the hourly :XX unlock minute is the only way I've been getting lucky at the ${matchedHint.state} kiosks lately—${stateUrl} has the drop times mapped out 👀`,
-      altLuckyDraft: `Secret with the ${matchedHint.state} vending machines is they're on staggered hourly timers so scalpers can't clear them all at once. I check the drop minute marks on ${stateUrl} before my grocery run and keep catching packs at retail!`,
+      cleverReplyDraft: regionalClever[idx % regionalClever.length],
+      ultraShortDraft: `they unlock on an hourly timer here, ${stateUrl} has the exact minute marks`,
+      altLuckyDraft: `check the hourly drop minute on ${stateUrl} before you go, the machine holds stock back on a timer`,
     };
   }
 
-  // 3. Topic: Pulls / Hits / "Got lucky at the vending machine"
-  if (/pull|hit|lucky|blessed|god pack|sir|charizard|pikachu|eevee|prismatic|surging|scored/i.test(lower)) {
+  // 3. Topic: Pulls / Hits / Unlocks
+  if (/pull|hit|lucky|blessed|god pack|sir|charizard|pikachu|eevee|prismatic|surging|destined|scored|unlock/i.test(lower)) {
+    const pullClever = [
+      `timing the hourly unlock minute is honestly the only way i get lucky on these machines anymore lol i check mine on ${SITE_URL}`,
+      `nice! ever since i started checking my stores hourly drop minute on ${SITE_URL} ive actually been catching bundles too`,
+      `once you figure out what minute past the hour your machine unlocks at (i use ${SITE_URL}) you start catching packs way more often`,
+      `the hourly timer on these machines is clutch once you know the minute mark, i check ${SITE_URL} before i walk in`,
+    ];
     return {
-      matchedLocationLabel: "Vending Pulls & Lucky Timing",
+      matchedLocationLabel: "Vending Pulls & Drop Timing",
       matchedMachinesCount: all.length,
       targetPackRadarUrl: SITE_URL,
-      cleverReplyDraft: `Huge pull!! 🔥 Honestly ever since I started timing my local kiosk's :XX hourly drop minute on ${SITE_URL} I’ve had way better luck catching packs and bundles at MSRP too.`,
-      ultraShortDraft: `Vending machine luck hits different! Timing the hourly :XX unlock window on ${SITE_URL} is the only way I catch MSRP packs anymore 🔥`,
-      altLuckyDraft: `Love seeing kiosk hits! Once you figure out what :XX minute mark your local machine unlocks at (I check mine on ${SITE_URL}), you start catching restocks way more often.`,
+      cleverReplyDraft: pullClever[idx % pullClever.length],
+      ultraShortDraft: `timing the hourly drop minute on ${SITE_URL} is the only way i catch packs on these lol`,
+      altLuckyDraft: `i just check what minute my local machine unlocks on ${SITE_URL} and swing by right on the dot`,
     };
   }
 
-  // 4. Topic: Scalpers / Empty Target & Walmart shelves / Frustration
-  if (/scalp|empty|target|walmart|costco|wiped|line|camp|resell|msrp/i.test(lower)) {
+  // 4. Topic: Scalpers / Empty shelves / Advice
+  if (/scalp|empty|target|walmart|costco|wiped|line|camp|resell|msrp|advice|guru/i.test(lower)) {
+    const scalpClever = [
+      `trick is the machines are on an hourly cooldown timer so scalpers cant clear them all at once. i check what minute mine unlocks on ${SITE_URL} and just show up then`,
+      `way better than fighting target lines tbh. the machines unlock 1-2 items at the same minute every hour, i check the drop times on ${SITE_URL}`,
+      `even if someone just bought from it, the timer unlocks more stock an hour later. i use ${SITE_URL} to see the exact minute mark for my store`,
+      `i stopped bothering with walmart/target and just time the grocery machine's hourly drop minute on ${SITE_URL}`,
+    ];
     return {
-      matchedLocationLabel: "Beating Scalpers via Kiosk Timers",
+      matchedLocationLabel: "Beating Scalpers via Drop Timers",
       matchedMachinesCount: all.length,
-      targetPackRadarUrl: `${SITE_URL}/map`,
-      cleverReplyDraft: `Big box stores are cooked tbh. I switched to the grocery store vending machines because they're on staggered hourly timers now—so one person can't buy it all at once. I just check the :XX drop minute on ${SITE_URL} and swing by right when it unlocks 👌`,
-      ultraShortDraft: `Skip Target/Walmart and hit the grocery kiosks right on their :XX hourly unlock minute! I use ${SITE_URL} to check the drop times near me.`,
-      altLuckyDraft: `The best part about the Pokémon Center kiosks now is the anti-scalper timer that only unlocks 1–2 items each hour. I check my store's exact :XX unlock minute on ${SITE_URL} and have been getting lucky at MSRP all week!`,
+      targetPackRadarUrl: SITE_URL,
+      cleverReplyDraft: scalpClever[idx % scalpClever.length],
+      ultraShortDraft: `they unlock 1-2 items an hour on a timer so scalpers cant wipe them, check the drop minute on ${SITE_URL}`,
+      altLuckyDraft: `just time the hourly unlock minute on ${SITE_URL} instead of hunting big box restocks`,
     };
   }
 
-  // 5. Default: "Always Sold Out" / How Vending Machines Work
+  // 5. Default: "Always Sold Out" / Drop Times
+  const defaultClever = [
+    `the sold out screen is bait lol they hold stock inside and unlock 1-2 items at a set minute every hour. i check my store's drop minute on ${SITE_URL}`,
+    `thought mine was always empty too until i learned it drops on an hourly timer. started checking ${SITE_URL} before grocery runs and finally caught bundles`,
+    `they dont release everything at once anymore, it unlocks a couple packs at the same minute every hour. ${SITE_URL} shows the drop minute for each store`,
+    `if it says sold out wait for the hourly unlock minute, i check ${SITE_URL} to see what minute mark my local machine drops on`,
+  ];
   return {
-    matchedLocationLabel: "Vending Kiosk Drop Timers",
+    matchedLocationLabel: "Vending Machine Drop Timers",
     matchedMachinesCount: all.length,
     targetPackRadarUrl: SITE_URL,
-    cleverReplyDraft: `Honestly thought my machine was always empty too until I learned they unlock 1–2 items on a 60–90 min timer instead of all at once 😅 I started checking my store's :XX drop minute on ${SITE_URL} and finally started getting lucky with bundles and ETBs!`,
-    ultraShortDraft: `Even when the screen says Sold Out, it's just on an hourly timer! Check your machine's :XX unlock minute on ${SITE_URL} and you'll catch it stocked 👀`,
-    altLuckyDraft: `Game changer for the vending machines: they hold stock inside and unlock 1–2 items at a specific :XX minute mark every hour. I use ${SITE_URL} to see what minute my local kiosk drops on and what sets are loaded inside!`,
+    cleverReplyDraft: defaultClever[idx % defaultClever.length],
+    ultraShortDraft: `the sold out screen is just an hourly timer, check your machine's drop minute on ${SITE_URL}`,
+    altLuckyDraft: `they unlock a couple items at the same minute every hour, i check ${SITE_URL} before i go`,
   };
 }
 
