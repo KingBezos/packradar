@@ -51,12 +51,12 @@
     "6ed87aa0efb242da",
     "0cd77ac637d61abd"
   ],
-  "totalBotHitsExcluded": 537,
+  "totalBotHitsExcluded": 551,
   "botBreakdown": {
-    "Internal QA & Health Checks": 456,
+    "Internal QA & Health Checks": 469,
     "Discord Link Preview (Discordbot)": 3,
     "Search Engine Crawler (Google/Bing/DuckDuckGo)": 1,
-    "Headless Browser / Automation (Puppeteer/Playwright/Curl/Node)": 6,
+    "Headless Browser / Automation (Puppeteer/Playwright/Curl/Node)": 7,
     "Empty or Synthetic User-Agent": 2,
     "Social Preview Bot (Twitter/FB/Slack/Telegram/Reddit)": 56,
     "Non-Browser HTTP Client": 11,
@@ -578,8 +578,7 @@
         "31aa7685cac146af"
       ],
       "botHitsBlocked": 483,
-      "signUps": 1,
-      "searches": 25
+      "signUps": 1
     },
     "2026-11-04": {
       "date": "2026-11-04",
@@ -589,9 +588,8 @@
         "0cd77ac637d61abd",
         "31aa7685cac146af"
       ],
-      "botHitsBlocked": 54,
-      "signUps": 0,
-      "searches": 3
+      "botHitsBlocked": 68,
+      "signUps": 0
     }
   },
   "recentHumanVisits": [
@@ -1612,6 +1610,20 @@
       "locationLabel": "Gladstone, OR",
       "at": "2026-11-03T03:50:12.000Z",
       "visitorHash": "5bb36589"
+    },
+    {
+      "id": "zs-1793751883766-oc3z",
+      "zip": "02346",
+      "locationLabel": "US",
+      "at": "2026-11-04T00:24:43.766Z",
+      "visitorHash": "0cd77ac6"
+    },
+    {
+      "id": "zs-1793749588995-b53t",
+      "zip": "43207",
+      "locationLabel": "US",
+      "at": "2026-11-03T23:46:28.995Z",
+      "visitorHash": "692f6599"
     }
   ],
   "zipStats": {
@@ -1773,5 +1785,5 @@
       "lastSearchedAt": "2026-11-04T00:24:43.766Z"
     }
   },
-  "updatedAt": "2026-11-04T01:48:27.399Z"
+  "updatedAt": "2026-11-04T03:05:08.028Z"
 }

@@ -215,6 +215,7 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
   // 0b. Reddit Opportunity Radar & Reply Drafter
   const [redditOpps, setRedditOpps] = useState<RedditOpportunity[]>([]);
   const [redditScanning, setRedditScanning] = useState(false);
+  const [redditLastScanAt, setRedditLastScanAt] = useState<string | null>(null);
   const [copiedReplyId, setCopiedReplyId] = useState<string | null>(null);
   const [customRedditTitle, setCustomRedditTitle] = useState("");
   const [customRedditBody, setCustomRedditBody] = useState("");
@@ -224,6 +225,7 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
     targetPackRadarUrl: string;
     helpfulReplyDraft: string;
     shortReplyDraft: string;
+    altCleverDraft?: string;
   } | null>(null);
 
   // 0c. Facebook Groups & Posts Radar + Clever Short Reply Drafter
@@ -318,7 +320,10 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
   const loadRedditRadar = (refresh = false) => {
     setRedditScanning(true);
     call(`/api/admin/reddit-radar${refresh ? "?refresh=1" : ""}`, "GET")
-      .then((r) => setRedditOpps(r.opportunities ?? []))
+      .then((r) => {
+        setRedditOpps(r.opportunities ?? []);
+        setRedditLastScanAt(new Date().toLocaleTimeString());
+      })
       .catch(() => {})
       .finally(() => setRedditScanning(false));
   };
@@ -343,7 +348,13 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
       loadScrapers();
       loadAnalytics();
     }, 8000);
-    return () => clearInterval(t);
+    const redditTimer = setInterval(() => {
+      loadRedditRadar(true);
+    }, 60_000);
+    return () => {
+      clearInterval(t);
+      clearInterval(redditTimer);
+    };
   }, []);
 
   /* ── Handlers ── */
@@ -1241,12 +1252,17 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="flex items-center gap-2 text-2xl font-black text-white">
-                <Sparkles className="h-6 w-6 text-volt" /> Reddit Thread Finder &amp; Casual Reply Drafter
+                <Sparkles className="h-6 w-6 text-volt" /> Reddit Thread Finder &amp; Clever Short Reply Drafter
               </h2>
               <p className="text-xs text-muted">
-                Pulls direct Reddit comment threads (<code className="text-white">/r/PokemonTCG/comments/…</code>) about
-                Pokémon vending machines and drafts casual, collector-to-collector replies you can copy and paste right
-                into the thread.
+                Auto-scans <code className="text-white">r/PokemonTCG</code>,{" "}
+                <code className="text-white">r/PKMNTCGDeals</code> &amp;{" "}
+                <code className="text-white">r/PokeInvesting</code> every 60s for direct comment threads and drafts{" "}
+                <b className="text-white">short, clever 1–2 sentence replies</b> about timing the{" "}
+                <code className="text-volt">:XX</code> drop minute.
+                {redditLastScanAt && (
+                  <span className="ml-2 font-mono text-volt">· Last synced {redditLastScanAt}</span>
+                )}
               </p>
             </div>
             <button
@@ -1256,7 +1272,7 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
               className="btn-primary py-1.5 text-xs font-bold"
             >
               <RefreshCw className={`h-3.5 w-3.5 ${redditScanning ? "animate-spin" : ""}`} />
-              {redditScanning ? "Scanning Subreddits…" : "Scan Live Reddit Threads"}
+              {redditScanning ? "Scanning Subreddits…" : "Scan Live Reddit Threads Now"}
             </button>
           </div>
 
@@ -1267,7 +1283,7 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                 ⚡ Custom Thread Reply Generator (Paste Any Reddit Question, Thread Title, or City / State / Q-Code)
               </h3>
               <span className="text-xs text-muted">
-                Writes a natural, nonchalant reply matched to the topic + local kiosks
+                Generates 3 short, witty &ldquo;got lucky timing the drop&rdquo; replies
               </span>
             </div>
             <div className="grid gap-2 sm:grid-cols-3">
@@ -1290,23 +1306,51 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                 }}
                 className="btn-primary justify-center py-2 text-xs font-bold"
               >
-                <Sparkles className="h-3.5 w-3.5" /> Generate Casual Reply
+                <Sparkles className="h-3.5 w-3.5" /> Draft Short Reddit Reply
               </button>
             </div>
 
             {customRedditDraft && (
               <div className="mt-3 space-y-3 rounded-xl border border-volt/40 bg-panel-2 p-4 text-xs">
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="font-bold text-volt">
-                    📍 Matched: {customRedditDraft.matchedLocationLabel} ({customRedditDraft.matchedMachinesCount}{" "}
-                    machines)
-                  </span>
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span className="font-bold text-volt mr-2">
+                      📍 {customRedditDraft.matchedLocationLabel} ({customRedditDraft.matchedMachinesCount}{" "}
+                      machines)
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setCustomRedditDraft({
+                          ...customRedditDraft,
+                          helpfulReplyDraft: customRedditDraft.shortReplyDraft,
+                        })
+                      }
+                      className="chip text-[11px] py-0.5"
+                    >
+                      ⚡ Use Ultra-Short 1-Liner
+                    </button>
+                    {customRedditDraft.altCleverDraft && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setCustomRedditDraft({
+                            ...customRedditDraft,
+                            helpfulReplyDraft: customRedditDraft.altCleverDraft!,
+                          })
+                        }
+                        className="chip text-[11px] py-0.5"
+                      >
+                        🎯 Use Alt &ldquo;Sold Out&rdquo; Tip
+                      </button>
+                    )}
+                  </div>
                   <button
                     type="button"
                     onClick={() => {
                       navigator.clipboard.writeText(customRedditDraft.helpfulReplyDraft);
                       setCopiedReplyId("custom-full");
-                      setMsg("Copied reply to clipboard! Paste it directly into the Reddit comment box.");
+                      setMsg("Copied short reply to clipboard! Paste it directly into the Reddit comment box.");
                       setTimeout(() => setCopiedReplyId(null), 2500);
                     }}
                     className="btn-primary py-1 text-xs font-bold"
@@ -1316,11 +1360,11 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                     ) : (
                       <Copy className="h-3.5 w-3.5" />
                     )}
-                    {copiedReplyId === "custom-full" ? "Copied Reply!" : "Copy Casual Reply"}
+                    {copiedReplyId === "custom-full" ? "Copied Reply!" : "Copy Short Reply"}
                   </button>
                 </div>
                 <textarea
-                  rows={5}
+                  rows={3}
                   className="input w-full bg-bg font-sans text-xs leading-relaxed text-slate-200"
                   value={customRedditDraft.helpfulReplyDraft}
                   onChange={(e) =>
@@ -1436,7 +1480,39 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
 
                   <div className="rounded-xl border border-line bg-panel-2/70 p-3.5 text-xs space-y-2">
                     <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-bold uppercase tracking-wider text-muted">
-                      <span>Casual Collector Reply (Editable before copying — auto-copies when you open thread)</span>
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span>Short Clever Reply (Editable):</span>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setRedditOpps((prev) =>
+                              prev.map((item) =>
+                                item.id === opp.id ? { ...item, helpfulReplyDraft: opp.shortReplyDraft } : item,
+                              ),
+                            )
+                          }
+                          className="rounded border border-line bg-bg px-2 py-0.5 text-[10px] font-semibold normal-case text-slate-300 hover:border-volt hover:text-volt"
+                        >
+                          ⚡ 1-Liner Version
+                        </button>
+                        {opp.altCleverDraft && (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setRedditOpps((prev) =>
+                                prev.map((item) =>
+                                  item.id === opp.id
+                                    ? { ...item, helpfulReplyDraft: opp.altCleverDraft! }
+                                    : item,
+                                ),
+                              )
+                            }
+                            className="rounded border border-line bg-bg px-2 py-0.5 text-[10px] font-semibold normal-case text-slate-300 hover:border-volt hover:text-volt"
+                          >
+                            🎯 Alt &ldquo;Sold Out&rdquo; Tip
+                          </button>
+                        )}
+                      </div>
                       <a
                         href={opp.permalink}
                         target="_blank"
@@ -1451,7 +1527,7 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                       </a>
                     </div>
                     <textarea
-                      rows={5}
+                      rows={3}
                       className="input w-full bg-bg/90 font-sans text-xs leading-relaxed text-slate-200"
                       value={opp.helpfulReplyDraft}
                       onChange={(e) => {

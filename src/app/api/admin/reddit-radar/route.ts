@@ -20,22 +20,27 @@ export const GET = route(async (req) => {
 
   const [row] = await db.select().from(settings).where(eq(settings.key, "redditOpportunitiesV1"));
   const cached = Array.isArray(row?.value) ? (row.value as RedditOpportunity[]) : [];
+  const ageMs = row?.updatedAt ? Date.now() - new Date(row.updatedAt).getTime() : Infinity;
+  const isStaleTtl = ageMs > 2 * 60_000; // Auto-refresh live Reddit threads every 2 minutes
   const hasLegacyCache =
     cached.length === 0 ||
+    isStaleTtl ||
     cached.some(
       (item) =>
         !item.permalink?.includes("/comments/") ||
+        !item.altCleverDraft ||
+        (item.helpfulReplyDraft?.length ?? 0) > 260 ||
         item.helpfulReplyDraft?.includes("utm_source=reddit") ||
         item.helpfulReplyDraft?.toLowerCase().includes("we track") ||
-        !/vending|machine|kiosk|safeway|kroger|fred meyer|king soopers|qfc/i.test(item.title),
+        !/vending|machine|kiosk|safeway|kroger|fred meyer|king soopers|qfc|restock|bundle/i.test(item.title),
     );
 
   if (!refresh && !hasLegacyCache) {
-    return { opportunities: cached };
+    return { opportunities: cached, lastUpdatedAt: row?.updatedAt };
   }
 
   const opportunities = await scanLiveRedditOpportunities(db);
-  return { opportunities };
+  return { opportunities, lastUpdatedAt: new Date().toISOString() };
 });
 
 const PostBody = z.discriminatedUnion("action", [
