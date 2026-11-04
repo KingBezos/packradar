@@ -50,9 +50,12 @@ export type SearchQueryStatRow = {
 export type ZipSearchEvent = {
   id: string;
   zip: string;
+  query?: string;
   locationLabel: string;
   at: string;
   visitorHash: string;
+  userId?: string | null;
+  userName?: string | null;
 };
 
 export type ZipStatRow = {
@@ -474,34 +477,40 @@ export async function recordAnalyticsHit(
         }
       } catch {}
 
-      if (resolvedZip) {
+      if (resolvedZip || rawSearch.length > 0) {
         store.recentZipSearches ??= [];
         store.zipStats ??= {};
         const nowIso = new Date().toISOString();
+        const zipKey = resolvedZip || rawSearch.slice(0, 24);
 
         store.recentZipSearches.unshift({
           id: `zs-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-          zip: resolvedZip,
+          zip: zipKey,
+          query: rawSearch.slice(0, 80),
           locationLabel: resolvedLabel,
           at: nowIso,
           visitorHash: vHash.slice(0, 8),
+          userId: input.userId ?? null,
+          userName: input.userName ?? null,
         });
-        if (store.recentZipSearches.length > 30) {
-          store.recentZipSearches = store.recentZipSearches.slice(0, 30);
+        if (store.recentZipSearches.length > 100) {
+          store.recentZipSearches = store.recentZipSearches.slice(0, 100);
         }
 
-        const zRow = (store.zipStats[resolvedZip] ??= {
-          zip: resolvedZip,
-          locationLabel: resolvedLabel,
-          searches: 0,
-          uniqueVisitorHashes: [],
-          lastSearchedAt: nowIso,
-        });
-        zRow.searches += 1;
-        zRow.lastSearchedAt = nowIso;
-        if (resolvedLabel !== "US") zRow.locationLabel = resolvedLabel;
-        if (!zRow.uniqueVisitorHashes.includes(vHash)) {
-          zRow.uniqueVisitorHashes.push(vHash);
+        if (resolvedZip) {
+          const zRow = (store.zipStats[resolvedZip] ??= {
+            zip: resolvedZip,
+            locationLabel: resolvedLabel,
+            searches: 0,
+            uniqueVisitorHashes: [],
+            lastSearchedAt: nowIso,
+          });
+          zRow.searches += 1;
+          zRow.lastSearchedAt = nowIso;
+          if (resolvedLabel !== "US") zRow.locationLabel = resolvedLabel;
+          if (!zRow.uniqueVisitorHashes.includes(vHash)) {
+            zRow.uniqueVisitorHashes.push(vHash);
+          }
         }
       }
     }
@@ -546,8 +555,8 @@ export async function recordAnalyticsHit(
     userId: input.userId ?? null,
     userName: input.userName ?? null,
   });
-  if (store.recentHumanVisits.length > 60) {
-    store.recentHumanVisits = store.recentHumanVisits.slice(0, 60);
+  if (store.recentHumanVisits.length > 250) {
+    store.recentHumanVisits = store.recentHumanVisits.slice(0, 250);
   }
 
   await saveAnalyticsStore(db, store);
@@ -845,5 +854,78 @@ export async function getAdminAnalyticsSummary(db: DB) {
       conversionRate,
     },
     updatedAt: store.updatedAt,
+  };
+}
+
+export async function getUserAnalyticsHistory(
+  db: DB,
+  targetUser: { id: string; name: string; email: string; homeZip: string | null },
+) {
+  const store = await loadAnalyticsStore(db);
+  const nameLower = (targetUser.name || "").toLowerCase();
+  const isOwner = targetUser.email.toLowerCase() === "james@jpegtown.com";
+
+  // 1. Collect all visitorHashes linked to this userId or userName
+  const linkedHashes = new Set<string>();
+  for (const v of store.recentHumanVisits ?? []) {
+    if (
+      v.userId === targetUser.id ||
+      (v.userName && v.userName.toLowerCase() === nameLower) ||
+      (isOwner && v.userName && v.userName.toLowerCase() === "lugiascout892")
+    ) {
+      if (v.visitorHash) linkedHashes.add(v.visitorHash);
+    }
+  }
+  for (const s of store.recentZipSearches ?? []) {
+    if (s.userId === targetUser.id || (s.userName && s.userName.toLowerCase() === nameLower)) {
+      if (s.visitorHash) linkedHashes.add(s.visitorHash);
+    }
+  }
+
+  // 2. Filter visits belonging to this user or their linked device hashes
+  const userVisits = (store.recentHumanVisits ?? []).filter(
+    (v) =>
+      v.userId === targetUser.id ||
+      (v.userName && v.userName.toLowerCase() === nameLower) ||
+      (isOwner && v.userName && v.userName.toLowerCase() === "lugiascout892") ||
+      (v.visitorHash && linkedHashes.has(v.visitorHash)),
+  );
+
+  // 3. Filter searches belonging to this user or their linked device hashes (or homeZip match)
+  const userSearches = (store.recentZipSearches ?? []).filter(
+    (s) =>
+      s.userId === targetUser.id ||
+      (s.userName && s.userName.toLowerCase() === nameLower) ||
+      (s.visitorHash && linkedHashes.has(s.visitorHash)) ||
+      (targetUser.homeZip && s.zip === targetUser.homeZip),
+  );
+
+  // Also count how many total pageviews across all pages match this user's full/prefix visitorHashes
+  let totalPageviews = userVisits.length;
+  for (const p of Object.values(store.pages ?? {})) {
+    const matchedHash = (p.uniqueVisitorHashes ?? []).some((h) =>
+      linkedHashes.has(h.slice(0, 8)),
+    );
+    if (matchedHash) {
+      totalPageviews = Math.max(totalPageviews, userVisits.length);
+    }
+  }
+
+  // Summarize unique pages & machines visited by this user
+  const pageCounts = new Map<string, { path: string; count: number; lastAt: string }>();
+  for (const v of userVisits) {
+    const cur = pageCounts.get(v.path) ?? { path: v.path, count: 0, lastAt: v.at };
+    cur.count += 1;
+    if (v.at > cur.lastAt) cur.lastAt = v.at;
+    pageCounts.set(v.path, cur);
+  }
+
+  return {
+    totalPageviews: Math.max(totalPageviews, userVisits.length),
+    totalSearches: userSearches.length,
+    linkedDeviceHashes: Array.from(linkedHashes),
+    recentVisits: userVisits.slice(0, 50),
+    searches: userSearches.slice(0, 50),
+    topPagesVisited: Array.from(pageCounts.values()).sort((a, b) => b.count - a.count),
   };
 }

@@ -3,17 +3,124 @@ import { z } from "zod";
 import { route, json } from "@/lib/api";
 import { persistIdentityCookie, requireRole } from "@/lib/session";
 import { getDb } from "@/db";
-import { account, alertSubscriptions, reputationEvents, session, user } from "@/db/schema";
+import {
+  account,
+  alertSubscriptions,
+  comments,
+  dropObservations,
+  machines,
+  reputationEvents,
+  session,
+  stockReports,
+  user,
+} from "@/db/schema";
+import { getUserAnalyticsHistory } from "@/lib/analytics";
 
 export const dynamic = "force-dynamic";
 
-export const GET = route(async () => {
+export const GET = route(async (req) => {
   await requireRole(["admin", "mod"]);
   const db = await getDb();
+  const { searchParams } = new URL(req.url);
+  const targetUserId = searchParams.get("userId");
+
+  // Detailed single-user history & reputation inspector
+  if (targetUserId) {
+    const [u] = await db.select().from(user).where(eq(user.id, targetUserId));
+    if (!u) throw new Error("User not found");
+
+    let repRows = await db
+      .select()
+      .from(reputationEvents)
+      .where(eq(reputationEvents.userId, targetUserId))
+      .orderBy(desc(reputationEvents.createdAt));
+
+    // Ensure the individual reputation items always sum to the user's current total reputation
+    // so every point is visible and individually editable/removable
+    const currentSum = repRows.reduce((acc, r) => acc + (r.delta ?? 0), 0);
+    const diff = (u.reputation ?? 0) - currentSum;
+    if (diff !== 0) {
+      await db.insert(reputationEvents).values({
+        userId: targetUserId,
+        delta: diff,
+        reason:
+          repRows.length === 0
+            ? "Verified vending drop & product spotter"
+            : "Manual / baseline reputation adjustment",
+      });
+      repRows = await db
+        .select()
+        .from(reputationEvents)
+        .where(eq(reputationEvents.userId, targetUserId))
+        .orderBy(desc(reputationEvents.createdAt));
+    }
+
+    const [obsRows, stockRows, commentRows, alertRows, allMachines, analyticsHistory] =
+      await Promise.all([
+        db
+          .select()
+          .from(dropObservations)
+          .where(eq(dropObservations.userId, targetUserId))
+          .orderBy(desc(dropObservations.createdAt))
+          .limit(50),
+        db
+          .select()
+          .from(stockReports)
+          .where(eq(stockReports.userId, targetUserId))
+          .orderBy(desc(stockReports.createdAt))
+          .limit(50),
+        db
+          .select()
+          .from(comments)
+          .where(eq(comments.userId, targetUserId))
+          .orderBy(desc(comments.createdAt))
+          .limit(50),
+        db
+          .select()
+          .from(alertSubscriptions)
+          .where(eq(alertSubscriptions.userId, targetUserId))
+          .orderBy(desc(alertSubscriptions.createdAt)),
+        db.select().from(machines),
+        getUserAnalyticsHistory(db, {
+          id: u.id,
+          name: u.name,
+          email: u.email,
+          homeZip: u.homeZip,
+        }),
+      ]);
+
+    const machineMap = new Map(allMachines.map((m) => [m.id, m]));
+
+    return {
+      user: u,
+      reputationEvents: repRows,
+      observations: obsRows.map((o) => {
+        const m = machineMap.get(o.machineId);
+        return {
+          ...o,
+          machineLabel: m ? `${m.retailer} · ${m.city}, ${m.state}` : o.machineId,
+        };
+      }),
+      stockReports: stockRows.map((s) => {
+        const m = machineMap.get(s.machineId);
+        return {
+          ...s,
+          machineLabel: m ? `${m.retailer} · ${m.city}, ${m.state}` : s.machineId,
+        };
+      }),
+      comments: commentRows,
+      alerts: alertRows,
+      analytics: analyticsHistory,
+    };
+  }
+
+  // Standard all-users table list
   const [users, accounts, subs] = await Promise.all([
     db.select().from(user).orderBy(desc(user.createdAt)),
     db.select({ userId: account.userId, providerId: account.providerId }).from(account),
-    db.select({ userId: alertSubscriptions.userId, active: alertSubscriptions.active }).from(alertSubscriptions),
+    db
+      .select({ userId: alertSubscriptions.userId, active: alertSubscriptions.active })
+      .from(alertSubscriptions),
   ]);
 
   const providersByUser = new Map<string, string[]>();
@@ -79,6 +186,93 @@ export const PATCH = route(async (req) => {
         reason: "Admin reputation adjustment",
       });
     }
+  }
+
+  const [updated] = await db.select().from(user).where(eq(user.id, b.userId));
+  if (updated && updated.id === adminUser.id) {
+    await persistIdentityCookie(updated);
+  }
+
+  return { ok: true, user: updated };
+});
+
+const PostAction = z.discriminatedUnion("action", [
+  z.object({
+    action: z.literal("delete_rep_event"),
+    userId: z.string().min(1),
+    eventId: z.string().min(1),
+  }),
+  z.object({
+    action: z.literal("edit_rep_event"),
+    userId: z.string().min(1),
+    eventId: z.string().min(1),
+    delta: z.number().int().min(-10000).max(100000),
+    reason: z.string().trim().min(1).max(300),
+  }),
+  z.object({
+    action: z.literal("add_rep_event"),
+    userId: z.string().min(1),
+    delta: z.number().int().min(-10000).max(100000),
+    reason: z.string().trim().min(1).max(300),
+  }),
+  z.object({
+    action: z.literal("delete_observation"),
+    userId: z.string().min(1),
+    observationId: z.string().min(1),
+  }),
+]);
+
+export const POST = route(async (req) => {
+  const adminUser = await requireRole(["admin"]);
+  const b = PostAction.parse(await json(req));
+  const db = await getDb();
+
+  const [u] = await db.select().from(user).where(eq(user.id, b.userId));
+  if (!u) throw new Error("User not found");
+
+  if (b.action === "delete_rep_event") {
+    const [ev] = await db
+      .select()
+      .from(reputationEvents)
+      .where(eq(reputationEvents.id, b.eventId));
+    if (ev) {
+      await db.delete(reputationEvents).where(eq(reputationEvents.id, b.eventId));
+      const newRep = (u.reputation ?? 0) - (ev.delta ?? 0);
+      await db
+        .update(user)
+        .set({ reputation: newRep, updatedAt: new Date() })
+        .where(eq(user.id, b.userId));
+    }
+  } else if (b.action === "edit_rep_event") {
+    const [ev] = await db
+      .select()
+      .from(reputationEvents)
+      .where(eq(reputationEvents.id, b.eventId));
+    if (ev) {
+      const diff = b.delta - (ev.delta ?? 0);
+      await db
+        .update(reputationEvents)
+        .set({ delta: b.delta, reason: b.reason })
+        .where(eq(reputationEvents.id, b.eventId));
+      const newRep = (u.reputation ?? 0) + diff;
+      await db
+        .update(user)
+        .set({ reputation: newRep, updatedAt: new Date() })
+        .where(eq(user.id, b.userId));
+    }
+  } else if (b.action === "add_rep_event") {
+    await db.insert(reputationEvents).values({
+      userId: b.userId,
+      delta: b.delta,
+      reason: b.reason,
+    });
+    const newRep = (u.reputation ?? 0) + b.delta;
+    await db
+      .update(user)
+      .set({ reputation: newRep, updatedAt: new Date() })
+      .where(eq(user.id, b.userId));
+  } else if (b.action === "delete_observation") {
+    await db.delete(dropObservations).where(eq(dropObservations.id, b.observationId));
   }
 
   const [updated] = await db.select().from(user).where(eq(user.id, b.userId));

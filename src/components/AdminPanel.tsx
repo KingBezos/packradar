@@ -121,6 +121,76 @@ type ManagedUser = {
   providers: string[];
   activeAlerts: number;
 };
+
+type UserDetailPayload = {
+  user: ManagedUser;
+  reputationEvents: {
+    id: string;
+    userId: string;
+    delta: number;
+    reason: string;
+    createdAt: string;
+  }[];
+  observations: {
+    id: string;
+    machineId: string;
+    machineLabel: string;
+    observedAt: string;
+    kind: string;
+    note: string | null;
+    createdAt: string;
+  }[];
+  stockReports: {
+    id: string;
+    machineId: string;
+    machineLabel: string;
+    status: string;
+    note: string | null;
+    createdAt: string;
+  }[];
+  comments: {
+    id: string;
+    targetType: string;
+    targetId: string;
+    body: string;
+    createdAt: string;
+  }[];
+  alerts: {
+    id: string;
+    kind: string;
+    machineId: string | null;
+    keyword: string | null;
+    active: boolean;
+    createdAt: string;
+  }[];
+  analytics: {
+    totalPageviews: number;
+    totalSearches: number;
+    linkedDeviceHashes: string[];
+    recentVisits: {
+      id: string;
+      at: string;
+      path: string;
+      referrer: string;
+      sourceLabel: string;
+      device: string;
+      visitorHash: string;
+    }[];
+    searches: {
+      id: string;
+      zip: string;
+      query?: string;
+      locationLabel: string;
+      at: string;
+      visitorHash: string;
+    }[];
+    topPagesVisited: {
+      path: string;
+      count: number;
+      lastAt: string;
+    }[];
+  };
+};
 type NewsArticle = {
   id: string;
   slug: string;
@@ -250,6 +320,13 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
   const [userSearch, setUserSearch] = useState("");
   const [editingNames, setEditingNames] = useState<Record<string, string>>({});
   const [editingReps, setEditingReps] = useState<Record<string, string>>({});
+  const [selectedUserDetail, setSelectedUserDetail] = useState<UserDetailPayload | null>(null);
+  const [userDetailLoading, setUserDetailLoading] = useState(false);
+  const [editingRepEvents, setEditingRepEvents] = useState<
+    Record<string, { delta: string; reason: string }>
+  >({});
+  const [newRepDelta, setNewRepDelta] = useState("5");
+  const [newRepReason, setNewRepReason] = useState("");
 
   // 3. Content (News, Machines, Retail, Sponsors, Comments)
   const [newsList, setNewsList] = useState<NewsArticle[]>([]);
@@ -435,12 +512,98 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
     loadContent();
   };
 
+  const loadUserDetail = async (userId: string) => {
+    setUserDetailLoading(true);
+    try {
+      const res = await call(`/api/admin/users?userId=${encodeURIComponent(userId)}`, "GET");
+      setSelectedUserDetail(res);
+    } catch (e) {
+      setMsg((e as Error).message);
+    } finally {
+      setUserDetailLoading(false);
+    }
+  };
+
   const patchUser = async (userId: string, patch: Record<string, unknown>, okMsg: string) => {
     try {
       await call("/api/admin/users", "PATCH", { userId, ...patch });
       setMsg(okMsg);
       loadUsers();
+      if (selectedUserDetail?.user.id === userId) {
+        void loadUserDetail(userId);
+      }
       router.refresh();
+    } catch (e) {
+      setMsg((e as Error).message);
+    }
+  };
+
+  const deleteRepEvent = async (userId: string, eventId: string, reason: string, delta: number) => {
+    try {
+      await call("/api/admin/users", "POST", {
+        action: "delete_rep_event",
+        userId,
+        eventId,
+      });
+      setMsg(`Removed "${reason}" (${delta >= 0 ? `-${delta}` : `+${Math.abs(delta)}`} rep adjusted)`);
+      loadUsers();
+      void loadUserDetail(userId);
+      router.refresh();
+    } catch (e) {
+      setMsg((e as Error).message);
+    }
+  };
+
+  const saveRepEvent = async (userId: string, eventId: string, delta: number, reason: string) => {
+    try {
+      await call("/api/admin/users", "POST", {
+        action: "edit_rep_event",
+        userId,
+        eventId,
+        delta,
+        reason,
+      });
+      setMsg(`Updated reputation item to ${delta >= 0 ? `+${delta}` : delta} (${reason})`);
+      const next = { ...editingRepEvents };
+      delete next[eventId];
+      setEditingRepEvents(next);
+      loadUsers();
+      void loadUserDetail(userId);
+      router.refresh();
+    } catch (e) {
+      setMsg((e as Error).message);
+    }
+  };
+
+  const addRepEvent = async (userId: string) => {
+    const parsed = parseInt(newRepDelta, 10);
+    if (Number.isNaN(parsed) || !newRepReason.trim()) return;
+    try {
+      await call("/api/admin/users", "POST", {
+        action: "add_rep_event",
+        userId,
+        delta: parsed,
+        reason: newRepReason.trim(),
+      });
+      setMsg(`Added ${parsed >= 0 ? `+${parsed}` : parsed} rep item ("${newRepReason.trim()}")`);
+      setNewRepReason("");
+      loadUsers();
+      void loadUserDetail(userId);
+      router.refresh();
+    } catch (e) {
+      setMsg((e as Error).message);
+    }
+  };
+
+  const deleteUserObservation = async (userId: string, observationId: string) => {
+    try {
+      await call("/api/admin/users", "POST", {
+        action: "delete_observation",
+        userId,
+        observationId,
+      });
+      setMsg("Removed drop observation report");
+      void loadUserDetail(userId);
     } catch (e) {
       setMsg((e as Error).message);
     }
@@ -2277,11 +2440,24 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
               <tbody className="divide-y divide-line">
                 {filteredUsers.map((u) => {
                   const draftName = editingNames[u.id] ?? u.name;
+                  const isSelected = selectedUserDetail?.user.id === u.id;
                   return (
-                    <tr key={u.id} className="hover:bg-panel-2/40">
+                    <tr
+                      key={u.id}
+                      className={`transition ${
+                        isSelected ? "bg-volt/10" : "hover:bg-panel-2/40"
+                      }`}
+                    >
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2.5">
-                          <Avatar name={u.name} size={28} />
+                          <button
+                            type="button"
+                            onClick={() => loadUserDetail(u.id)}
+                            className="flex items-center gap-2 text-left hover:opacity-90"
+                            title="Click to inspect user history, searches & repped items"
+                          >
+                            <Avatar name={u.name} size={28} />
+                          </button>
                           {isAdmin ? (
                             <div className="flex items-center gap-1">
                               <input
@@ -2301,6 +2477,13 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                           ) : (
                             <span className="font-bold text-white">{u.name}</span>
                           )}
+                          <button
+                            type="button"
+                            onClick={() => loadUserDetail(u.id)}
+                            className="rounded border border-volt/40 bg-volt/15 px-2 py-0.5 text-[10px] font-bold text-volt hover:bg-volt/25"
+                          >
+                            {isSelected ? "Viewing History" : "📜 History & Rep"}
+                          </button>
                         </div>
                       </td>
                       <td className="px-4 py-3">
@@ -2457,6 +2640,397 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
               </tbody>
             </table>
           </div>
+
+          {/* ── SELECTED USER HISTORY, SEARCHES & REPUTATION INSPECTOR ── */}
+          {userDetailLoading && (
+            <div className="card border-volt/40 p-6 text-center text-xs text-volt">
+              Loading user history, searches, pageviews &amp; reputation events…
+            </div>
+          )}
+
+          {selectedUserDetail && !userDetailLoading && (
+            <div className="card border-volt/50 bg-panel p-6 space-y-6">
+              <div className="flex flex-wrap items-start justify-between gap-4 border-b border-line pb-4">
+                <div className="flex items-center gap-3">
+                  <Avatar name={selectedUserDetail.user.name} size={42} />
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="text-lg font-black text-white">{selectedUserDetail.user.name}</h3>
+                      <span className="rounded-full bg-volt/20 px-2.5 py-0.5 font-mono text-xs font-bold text-volt">
+                        {selectedUserDetail.user.reputation} Rep
+                      </span>
+                      <span className="rounded bg-panel-2 px-2 py-0.5 text-[11px] font-semibold uppercase text-slate-300">
+                        {selectedUserDetail.user.role} · {selectedUserDetail.user.plan}
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted">
+                      {selectedUserDetail.user.email} · Home ZIP:{" "}
+                      <b className="text-slate-200">{selectedUserDetail.user.homeZip || "Not set"}</b> · Joined{" "}
+                      {timeAgo(selectedUserDetail.user.createdAt)}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => loadUserDetail(selectedUserDetail.user.id)}
+                    className="btn-ghost py-1.5 text-xs"
+                  >
+                    <RefreshCw className="h-3.5 w-3.5" /> Refresh User
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedUserDetail(null)}
+                    className="rounded-lg border border-line bg-panel-2 px-3 py-1.5 text-xs font-bold text-slate-300 hover:text-white"
+                  >
+                    Close Inspector ✕
+                  </button>
+                </div>
+              </div>
+
+              {/* KPI Summary Cards for This User */}
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+                <div className="rounded-xl border border-line bg-panel-2 p-3.5">
+                  <p className="text-[11px] font-bold uppercase text-muted">Total Reputation</p>
+                  <p className="mt-1 font-mono text-2xl font-black text-volt">
+                    {selectedUserDetail.user.reputation}
+                  </p>
+                  <p className="text-[11px] text-slate-400">
+                    {selectedUserDetail.reputationEvents.length} logged rep items
+                  </p>
+                </div>
+                <div className="rounded-xl border border-line bg-panel-2 p-3.5">
+                  <p className="text-[11px] font-bold uppercase text-muted">Pageviews Tracked</p>
+                  <p className="mt-1 font-mono text-2xl font-black text-white">
+                    {selectedUserDetail.analytics.totalPageviews}
+                  </p>
+                  <p className="text-[11px] text-slate-400">
+                    {selectedUserDetail.analytics.topPagesVisited.length} unique pages visited
+                  </p>
+                </div>
+                <div className="rounded-xl border border-line bg-panel-2 p-3.5">
+                  <p className="text-[11px] font-bold uppercase text-muted">Searches &amp; ZIP Lookups</p>
+                  <p className="mt-1 font-mono text-2xl font-black text-sky-400">
+                    {selectedUserDetail.analytics.totalSearches}
+                  </p>
+                  <p className="text-[11px] text-slate-400">
+                    Home ZIP: {selectedUserDetail.user.homeZip || "—"}
+                  </p>
+                </div>
+                <div className="rounded-xl border border-line bg-panel-2 p-3.5">
+                  <p className="text-[11px] font-bold uppercase text-muted">Drop &amp; Stock Reports</p>
+                  <p className="mt-1 font-mono text-2xl font-black text-green-400">
+                    {selectedUserDetail.observations.length + selectedUserDetail.stockReports.length}
+                  </p>
+                  <p className="text-[11px] text-slate-400">
+                    {selectedUserDetail.observations.length} drops · {selectedUserDetail.stockReports.length} stock
+                  </p>
+                </div>
+                <div className="rounded-xl border border-line bg-panel-2 p-3.5">
+                  <p className="text-[11px] font-bold uppercase text-muted">Comments &amp; Alerts</p>
+                  <p className="mt-1 font-mono text-2xl font-black text-amber-300">
+                    {selectedUserDetail.comments.length} / {selectedUserDetail.alerts.length}
+                  </p>
+                  <p className="text-[11px] text-slate-400">
+                    {selectedUserDetail.comments.length} comments · {selectedUserDetail.alerts.length} alerts
+                  </p>
+                </div>
+              </div>
+
+              {/* 1. INDIVIDUAL REPPED ITEMS MANAGER (EDIT OR REMOVE FALSE ITEMS) */}
+              <div className="rounded-xl border border-volt/30 bg-panel-2/60 p-4 space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <h4 className="text-sm font-black text-white">
+                      🏆 Things {selectedUserDetail.user.name} Got Rep For (Individual Repped Items)
+                    </h4>
+                    <p className="text-xs text-muted">
+                      Edit the points or reason on any item below, or click{" "}
+                      <b className="text-red-300">Remove / False Report</b> to delete the item and automatically deduct
+                      its points from {selectedUserDetail.user.name}&apos;s reputation.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Add a New Custom Rep Event */}
+                {isAdmin && (
+                  <div className="flex flex-wrap items-center gap-2 rounded-lg border border-line bg-bg/80 p-2.5 text-xs">
+                    <span className="font-bold text-slate-300">+ Award / Deduct Rep Item:</span>
+                    <input
+                      type="number"
+                      className="input w-20 px-2 py-1 font-mono text-xs font-bold text-volt"
+                      placeholder="+5"
+                      value={newRepDelta}
+                      onChange={(e) => setNewRepDelta(e.target.value)}
+                    />
+                    <input
+                      className="input flex-1 min-w-[220px] px-2.5 py-1 text-xs"
+                      placeholder="Reason (e.g., 'Verified drop time at Q01010' or 'Penalty: false stock report')…"
+                      value={newRepReason}
+                      onChange={(e) => setNewRepReason(e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      disabled={!newRepReason.trim()}
+                      onClick={() => addRepEvent(selectedUserDetail.user.id)}
+                      className="btn-primary py-1 text-xs font-bold"
+                    >
+                      <Plus className="h-3.5 w-3.5" /> Add Rep Item
+                    </button>
+                  </div>
+                )}
+
+                {selectedUserDetail.reputationEvents.length === 0 ? (
+                  <p className="py-3 text-center text-xs text-muted">
+                    No reputation events recorded for this user.
+                  </p>
+                ) : (
+                  <div className="divide-y divide-line rounded-lg border border-line bg-bg/60 text-xs">
+                    {selectedUserDetail.reputationEvents.map((ev) => {
+                      const draft = editingRepEvents[ev.id] ?? {
+                        delta: String(ev.delta),
+                        reason: ev.reason,
+                      };
+                      const isDirty =
+                        draft.delta !== String(ev.delta) || draft.reason !== ev.reason;
+
+                      return (
+                        <div
+                          key={ev.id}
+                          className="flex flex-wrap items-center justify-between gap-2 px-3.5 py-2.5"
+                        >
+                          <div className="flex flex-1 flex-wrap items-center gap-2 min-w-[260px]">
+                            <input
+                              type="number"
+                              disabled={!isAdmin}
+                              className={`input w-20 px-2 py-1 font-mono text-xs font-black ${
+                                Number(draft.delta) >= 0 ? "text-green-400" : "text-red-400"
+                              }`}
+                              value={draft.delta}
+                              onChange={(e) =>
+                                setEditingRepEvents({
+                                  ...editingRepEvents,
+                                  [ev.id]: { ...draft, delta: e.target.value },
+                                })
+                              }
+                            />
+                            <input
+                              disabled={!isAdmin}
+                              className="input flex-1 min-w-[200px] px-2.5 py-1 text-xs text-slate-200"
+                              value={draft.reason}
+                              onChange={(e) =>
+                                setEditingRepEvents({
+                                  ...editingRepEvents,
+                                  [ev.id]: { ...draft, reason: e.target.value },
+                                })
+                              }
+                            />
+                            <span className="text-[11px] text-muted whitespace-nowrap">
+                              {timeAgo(new Date(ev.createdAt))}
+                            </span>
+                          </div>
+
+                          {isAdmin && (
+                            <div className="flex items-center gap-1.5">
+                              {isDirty && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const parsed = parseInt(draft.delta, 10);
+                                    if (!Number.isNaN(parsed) && draft.reason.trim()) {
+                                      void saveRepEvent(
+                                        selectedUserDetail.user.id,
+                                        ev.id,
+                                        parsed,
+                                        draft.reason.trim(),
+                                      );
+                                    }
+                                  }}
+                                  className="rounded bg-volt px-2.5 py-1 text-[11px] font-bold text-slate-950"
+                                >
+                                  Save Edit
+                                </button>
+                              )}
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  deleteRepEvent(
+                                    selectedUserDetail.user.id,
+                                    ev.id,
+                                    ev.reason,
+                                    ev.delta,
+                                  )
+                                }
+                                className="rounded border border-red-500/30 bg-red-500/10 px-2.5 py-1 text-[11px] font-semibold text-red-300 hover:bg-red-500/20"
+                                title="Delete this repped item and reverse its points from the user's total rep"
+                              >
+                                🗑️ Remove / False ({ev.delta >= 0 ? `-${ev.delta}` : `+${Math.abs(ev.delta)}`} rep)
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {/* 2. USER'S SEARCHES + PAGEVIEWS + REPORTS GRID */}
+              <div className="grid gap-4 lg:grid-cols-3">
+                {/* User's Search History */}
+                <div className="rounded-xl border border-line bg-panel-2/60 p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-xs font-extrabold uppercase tracking-wider text-sky-300">
+                      🔍 Search History ({selectedUserDetail.analytics.searches.length})
+                    </h4>
+                  </div>
+                  {selectedUserDetail.analytics.searches.length === 0 ? (
+                    <p className="py-4 text-center text-xs text-muted">
+                      No searches recorded for this user yet.
+                    </p>
+                  ) : (
+                    <ul className="divide-y divide-line max-h-64 overflow-y-auto text-xs">
+                      {selectedUserDetail.analytics.searches.map((s) => (
+                        <li key={s.id} className="flex items-center justify-between gap-2 py-2">
+                          <div>
+                            <Link
+                              href={`/search?q=${encodeURIComponent(s.query || s.zip)}`}
+                              className="font-mono font-bold text-sky-400 hover:underline"
+                            >
+                              {s.query || s.zip}
+                            </Link>
+                            <span className="ml-2 text-slate-300">{s.locationLabel}</span>
+                          </div>
+                          <span className="text-[11px] text-muted whitespace-nowrap">
+                            {timeAgo(new Date(s.at))}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
+                {/* User's Pageview & Machine Visit History */}
+                <div className="rounded-xl border border-line bg-panel-2/60 p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-xs font-extrabold uppercase tracking-wider text-volt">
+                      🌐 Pageviews &amp; Machine Visits ({selectedUserDetail.analytics.recentVisits.length})
+                    </h4>
+                  </div>
+                  {selectedUserDetail.analytics.recentVisits.length === 0 ? (
+                    <p className="py-4 text-center text-xs text-muted">
+                      No pageviews linked to this user yet.
+                    </p>
+                  ) : (
+                    <ul className="divide-y divide-line max-h-64 overflow-y-auto text-xs">
+                      {selectedUserDetail.analytics.recentVisits.map((v) => (
+                        <li key={v.id} className="flex items-center justify-between gap-2 py-2">
+                          <div className="min-w-0">
+                            <Link
+                              href={v.path}
+                              className="truncate font-mono font-bold text-white hover:text-volt hover:underline"
+                            >
+                              {v.path}
+                            </Link>
+                            <p className="text-[10px] text-slate-400">
+                              {v.device} · {v.sourceLabel}
+                            </p>
+                          </div>
+                          <span className="text-[11px] text-muted whitespace-nowrap">
+                            {timeAgo(new Date(v.at))}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
+                {/* User's Submitted Drop Observations, Stock Reports & Comments */}
+                <div className="rounded-xl border border-line bg-panel-2/60 p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-xs font-extrabold uppercase tracking-wider text-green-400">
+                      📍 Drop Reports &amp; Check-Ins (
+                      {selectedUserDetail.observations.length +
+                        selectedUserDetail.stockReports.length +
+                        selectedUserDetail.comments.length}
+                      )
+                    </h4>
+                  </div>
+                  {selectedUserDetail.observations.length === 0 &&
+                  selectedUserDetail.stockReports.length === 0 &&
+                  selectedUserDetail.comments.length === 0 ? (
+                    <p className="py-4 text-center text-xs text-muted">
+                      No machine drop reports or comments submitted yet.
+                    </p>
+                  ) : (
+                    <ul className="divide-y divide-line max-h-64 overflow-y-auto text-xs">
+                      {selectedUserDetail.observations.map((o) => (
+                        <li key={o.id} className="flex items-center justify-between gap-2 py-2">
+                          <div className="min-w-0">
+                            <Link
+                              href={`/machines/${o.machineId}`}
+                              className="font-mono font-bold text-green-400 hover:underline"
+                            >
+                              {o.machineId}
+                            </Link>
+                            <span className="ml-1.5 text-slate-200">
+                              {o.kind === "dropped" ? "🎯 Reported Drop" : "⚪ No Drop"}
+                            </span>
+                            <p className="truncate text-[10px] text-slate-400">{o.machineLabel}</p>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[10px] text-muted">
+                              {timeAgo(new Date(o.createdAt))}
+                            </span>
+                            {isAdmin && (
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  deleteUserObservation(selectedUserDetail.user.id, o.id)
+                                }
+                                className="rounded bg-red-500/15 px-1.5 py-0.5 text-[10px] font-bold text-red-300 hover:bg-red-500/25"
+                                title="Delete false drop observation"
+                              >
+                                ✕
+                              </button>
+                            )}
+                          </div>
+                        </li>
+                      ))}
+                      {selectedUserDetail.stockReports.map((s) => (
+                        <li key={s.id} className="flex items-center justify-between gap-2 py-2">
+                          <div className="min-w-0">
+                            <Link
+                              href={`/machines/${s.machineId}`}
+                              className="font-mono font-bold text-volt hover:underline"
+                            >
+                              {s.machineId}
+                            </Link>
+                            <span className="ml-1.5 text-slate-200">Stock: {s.status}</span>
+                            <p className="truncate text-[10px] text-slate-400">{s.machineLabel}</p>
+                          </div>
+                          <span className="text-[10px] text-muted">
+                            {timeAgo(new Date(s.createdAt))}
+                          </span>
+                        </li>
+                      ))}
+                      {selectedUserDetail.comments.map((c) => (
+                        <li key={c.id} className="py-2">
+                          <div className="flex items-center justify-between text-[10px] text-muted">
+                            <span>
+                              Comment on {c.targetType} ({c.targetId})
+                            </span>
+                            <span>{timeAgo(new Date(c.createdAt))}</span>
+                          </div>
+                          <p className="mt-0.5 text-slate-200">{c.body}</p>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </section>
       )}
 
