@@ -114,13 +114,26 @@ export const GET = route(async (req) => {
     };
   }
 
-  // Standard all-users table list
-  const [users, accounts, subs] = await Promise.all([
+  // Standard all-users table list + global Live Reputation & Fair-Play Ledger (admin-only)
+  const [users, accounts, subs, recentLedgerRows] = await Promise.all([
     db.select().from(user).orderBy(desc(user.createdAt)),
     db.select({ userId: account.userId, providerId: account.providerId }).from(account),
     db
       .select({ userId: alertSubscriptions.userId, active: alertSubscriptions.active })
       .from(alertSubscriptions),
+    db
+      .select({
+        id: reputationEvents.id,
+        userId: reputationEvents.userId,
+        delta: reputationEvents.delta,
+        reason: reputationEvents.reason,
+        createdAt: reputationEvents.createdAt,
+        userName: user.name,
+      })
+      .from(reputationEvents)
+      .innerJoin(user, eq(user.id, reputationEvents.userId))
+      .orderBy(desc(reputationEvents.createdAt))
+      .limit(30),
   ]);
 
   const providersByUser = new Map<string, string[]>();
@@ -149,6 +162,7 @@ export const GET = route(async (req) => {
       providers: providersByUser.get(u.id) ?? ["credential"],
       activeAlerts: alertsByUser.get(u.id) ?? 0,
     })),
+    reputationLedger: recentLedgerRows,
   };
 });
 
@@ -178,7 +192,13 @@ export const PATCH = route(async (req) => {
   await db.update(user).set(patch).where(eq(user.id, b.userId));
 
   if (b.reputation !== undefined) {
-    const delta = b.reputation - (existing.reputation ?? 0);
+    // Reconcile against the actual sum of reputationEvents so reputationEvents ALWAYS sums to b.reputation
+    const currentEvents = await db
+      .select()
+      .from(reputationEvents)
+      .where(eq(reputationEvents.userId, b.userId));
+    const currentSum = currentEvents.reduce((acc, r) => acc + (r.delta ?? 0), 0);
+    const delta = b.reputation - currentSum;
     if (delta !== 0) {
       await db.insert(reputationEvents).values({
         userId: b.userId,

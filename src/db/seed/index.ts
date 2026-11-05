@@ -311,7 +311,7 @@ export async function seedIfEmpty(db: DB) {
         emailVerified: true,
         role: "admin",
         plan: "premium",
-        reputation: 100,
+        reputation: 90,
         homeZip: "97027",
       },
       {
@@ -343,7 +343,7 @@ export async function seedIfEmpty(db: DB) {
       {
         id: "rep-owner-seed-100",
         userId: "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
-        delta: 100,
+        delta: 90,
         reason: "Verified vending drop & product spotter",
       },
       {

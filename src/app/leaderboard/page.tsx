@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Trophy, Gift, Sparkles, Camera, ShieldAlert } from "lucide-react";
-import { leaderboard, recentReputationEvents } from "@/lib/queries";
-import { Avatar, reputationBadge, timeAgo } from "@/components/ui";
+import { leaderboard } from "@/lib/queries";
+import { Avatar, reputationBadge } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -18,10 +18,9 @@ const PRIZE_BADGES = [
 ];
 
 export default async function LeaderboardPage() {
-  const [month, all, repEvents] = await Promise.all([
+  const [month, all] = await Promise.all([
     leaderboard(30, 20),
     leaderboard(undefined, 25),
-    recentReputationEvents(12),
   ]);
   const monthName = new Date().toLocaleString("en-US", { month: "long" });
 
@@ -170,48 +169,6 @@ export default async function LeaderboardPage() {
       <div className="grid gap-6 md:grid-cols-2">
         <List rows={month} title={`This Month (${monthName} Prize Standings)`} showPrizes />
         <List rows={all} title="All-Time Legends" />
-      </div>
-
-      {/* Live Reputation & Anti-Cheat Ledger */}
-      <div className="card p-5">
-        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <div>
-            <h2 className="text-lg font-bold text-white">Live Reputation &amp; Fair-Play Ledger</h2>
-            <p className="text-xs text-muted">
-              Every reward, Truth Bonus (+3 Rep), and anti-spam / false-report deduction is audited in real time.
-            </p>
-          </div>
-          <span className="rounded-full border border-line bg-panel-2 px-2.5 py-0.5 text-[11px] text-muted">
-            🛡️ Automated Consensus Slashing Active
-          </span>
-        </div>
-        {repEvents.length === 0 ? (
-          <p className="text-sm text-muted">No reputation events recorded yet.</p>
-        ) : (
-          <ul className="divide-y divide-line text-sm">
-            {repEvents.map((ev) => (
-              <li key={ev.id} className="flex items-center justify-between gap-3 py-2.5">
-                <div className="flex min-w-0 items-center gap-2.5">
-                  <Avatar name={ev.userName} image={ev.userImage} size={24} />
-                  <span className="font-semibold text-white">{ev.userName}</span>
-                  <span className="truncate text-xs text-muted">{ev.reason.replace(/\s*\[[^\]]+\]/g, "")}</span>
-                </div>
-                <div className="flex shrink-0 items-center gap-3">
-                  <span
-                    className={`rounded-full px-2 py-0.5 font-mono text-xs font-bold ${
-                      ev.delta >= 0
-                        ? "bg-green-500/15 text-green-400"
-                        : "border border-red-500/40 bg-red-500/15 text-red-300"
-                    }`}
-                  >
-                    {ev.delta >= 0 ? `+${ev.delta}` : ev.delta} rep
-                  </span>
-                  <span className="text-xs text-muted">{timeAgo(ev.createdAt)}</span>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
       </div>
     </div>
   );

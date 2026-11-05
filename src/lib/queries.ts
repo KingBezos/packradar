@@ -385,10 +385,11 @@ export async function leaderboard(days?: number, limit = 25) {
   }
   const since = new Date(Date.now() - days * 86_400_000);
   const rows = await db.execute(sql`
-    select u.id, u.name, u.image, coalesce(sum(r.delta),0)::int as reputation
-    from reputation_events r join "user" u on u.id = r.user_id
-    where r.created_at >= ${since}
-    group by u.id, u.name, u.image
+    select u.id, u.name, u.image, coalesce(sum(r.delta), u.reputation, 0)::int as reputation
+    from "user" u
+    left join reputation_events r on r.user_id = u.id and r.created_at >= ${since}
+    group by u.id, u.name, u.image, u.reputation
+    having coalesce(sum(r.delta), u.reputation, 0) > 0
     order by reputation desc
     limit ${limit}`);
   type Row = { id: string; name: string; image: string | null; reputation: number };

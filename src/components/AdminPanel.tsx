@@ -328,6 +328,16 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
   >({});
   const [newRepDelta, setNewRepDelta] = useState("5");
   const [newRepReason, setNewRepReason] = useState("");
+  const [reputationLedger, setReputationLedger] = useState<
+    {
+      id: string;
+      userId: string;
+      userName: string;
+      delta: number;
+      reason: string;
+      createdAt: string;
+    }[]
+  >([]);
 
   // 3. Content (News, Machines, Retail, Sponsors, Comments)
   const [newsList, setNewsList] = useState<NewsArticle[]>([]);
@@ -372,7 +382,10 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
 
   const loadUsers = () =>
     call("/api/admin/users", "GET")
-      .then((r) => setUsers(r.users ?? []))
+      .then((r) => {
+        setUsers(r.users ?? []);
+        setReputationLedger(r.reputationLedger ?? []);
+      })
       .catch((e) => setMsg(e.message));
 
   const loadContent = () =>
@@ -3071,6 +3084,56 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
               </div>
             </div>
           )}
+
+          {/* ── ADMIN-ONLY LIVE REPUTATION & FAIR-PLAY LEDGER ── */}
+          <div className="card p-5 space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h3 className="text-base font-black text-white">
+                  🛡️ Live Reputation &amp; Fair-Play Ledger (Admin Only)
+                </h3>
+                <p className="text-xs text-muted">
+                  Real-time audit log of all reputation awards, Truth Bonuses (+3 Rep), and anti-spam / false-report deductions across all users. Click any user to inspect or edit their individual items.
+                </p>
+              </div>
+              <span className="rounded-full border border-line bg-panel-2 px-2.5 py-0.5 text-[11px] text-muted">
+                🔒 Hidden from public /leaderboard
+              </span>
+            </div>
+            {reputationLedger.length === 0 ? (
+              <p className="py-3 text-xs text-muted">No reputation events recorded yet.</p>
+            ) : (
+              <ul className="divide-y divide-line text-xs">
+                {reputationLedger.map((ev) => (
+                  <li key={ev.id} className="flex flex-wrap items-center justify-between gap-3 py-2.5">
+                    <div className="flex min-w-0 items-center gap-2.5">
+                      <Avatar name={ev.userName} size={24} />
+                      <button
+                        type="button"
+                        onClick={() => loadUserDetail(ev.userId)}
+                        className="font-bold text-white hover:text-volt hover:underline"
+                      >
+                        {ev.userName}
+                      </button>
+                      <span className="truncate text-slate-300">{ev.reason}</span>
+                    </div>
+                    <div className="flex shrink-0 items-center gap-3">
+                      <span
+                        className={`rounded-full px-2 py-0.5 font-mono text-xs font-bold ${
+                          ev.delta >= 0
+                            ? "bg-green-500/15 text-green-400"
+                            : "border border-red-500/40 bg-red-500/15 text-red-300"
+                        }`}
+                      >
+                        {ev.delta >= 0 ? `+${ev.delta}` : ev.delta} rep
+                      </span>
+                      <span className="text-[11px] text-muted">{timeAgo(new Date(ev.createdAt))}</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </section>
       )}
 

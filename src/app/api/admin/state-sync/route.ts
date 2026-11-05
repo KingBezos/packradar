@@ -345,6 +345,15 @@ export const POST = route(async (req) => {
   }
 
   if (Array.isArray(body.reputationEvents)) {
+    const affectedUserIds = new Set<string>();
+    for (const row of body.reputationEvents) {
+      if (row.userId) affectedUserIds.add(row.userId);
+    }
+    for (const uid of affectedUserIds) {
+      try {
+        await db.delete(reputationEvents).where(eq(reputationEvents.userId, uid));
+      } catch {}
+    }
     for (const row of body.reputationEvents) {
       try {
         await db
