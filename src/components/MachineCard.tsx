@@ -5,11 +5,15 @@ import { machineSchedule } from "@/lib/drops/engine";
 import { describeSchedule } from "@/lib/drops/schedule";
 import { LiveDropStatus } from "./live";
 import { AccuracyMeter } from "./AccuracyMeter";
+import { QuickAlertButton } from "./QuickAlertButton";
 
 export function MachineCard({ m, distance }: { m: Machine; distance?: number | null }) {
   const sched = machineSchedule(m);
   return (
-    <Link href={`/machines/${m.id}`} className="card group flex flex-col gap-3 p-4 transition hover:-translate-y-0.5 hover:border-volt/40">
+    <Link
+      href={`/machines/${m.id}`}
+      className="card group flex flex-col gap-3 p-4 transition hover:-translate-y-0.5 hover:border-volt/40"
+    >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="truncate font-bold text-white group-hover:text-volt">{m.retailer}</p>
@@ -32,11 +36,18 @@ export function MachineCard({ m, distance }: { m: Machine; distance?: number | n
       ) : (
         <p className="text-xs text-muted">No drop time yet. Be the first to report one (+10 rep “First Finder”).</p>
       )}
-      {m.status !== "active" && (
-        <span className="w-fit rounded-full bg-orange-500/15 px-2 py-0.5 text-[11px] font-semibold text-orange-300">
-          {m.status === "broken" ? "Reported out of order" : m.status === "unverified" ? "Community-added (unverified)" : m.status}
-        </span>
-      )}
+      <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-1">
+        <QuickAlertButton machineId={m.id} anchorMinute={m.anchorMinute} compact />
+        {m.status !== "active" && (
+          <span className="w-fit rounded-full bg-orange-500/15 px-2 py-0.5 text-[11px] font-semibold text-orange-300">
+            {m.status === "broken"
+              ? "Reported out of order"
+              : m.status === "unverified"
+                ? "Community-added (unverified)"
+                : m.status}
+          </span>
+        )}
+      </div>
     </Link>
   );
 }

@@ -17,6 +17,7 @@ import { DropMapClient } from "@/components/DropMapClient";
 import { MachineCard } from "@/components/MachineCard";
 import { SponsorSlot } from "@/components/SponsorSlot";
 import { AlertAdminButton } from "@/components/AlertAdminButton";
+import { QuickAlertButton } from "@/components/QuickAlertButton";
 import { Avatar, SectionTitle, reputationBadge, timeAgo } from "@/components/ui";
 import { toMapMachine } from "@/lib/queries";
 
@@ -87,7 +88,8 @@ export default async function MachinePage({ params }: { params: Promise<{ id: st
           <p className="mt-1 flex items-center gap-1.5 text-muted">
             <MapPin className="h-4 w-4" /> {m.street}, {m.city}, {m.state} {m.zip}
           </p>
-          <div className="mt-2 flex flex-wrap gap-2">
+          <div className="mt-2.5 flex flex-wrap items-center gap-2">
+            <QuickAlertButton machineId={m.id} anchorMinute={m.anchorMinute} />
             {m.status !== "active" && <span className="chip border-orange-400/40 text-orange-300">{m.status}</span>}
             <a
               className="chip hover:text-white"

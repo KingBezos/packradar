@@ -6,6 +6,7 @@ import { settings } from "@/db/schema";
 import { requireRole } from "@/lib/session";
 import {
   buildCleverFacebookReply,
+  getTop5SearchedZipTargets,
   scanFacebookOpportunities,
   type FacebookOpportunity,
 } from "@/lib/facebook-radar";
@@ -20,20 +21,26 @@ export const GET = route(async (req) => {
 
   const [row] = await db.select().from(settings).where(eq(settings.key, "facebookOpportunitiesV1"));
   const cached = Array.isArray(row?.value) ? (row.value as FacebookOpportunity[]) : [];
-  const hasStaleOrSalesyCache = cached.some(
-    (item) =>
-      item.permalink?.includes("/search/") ||
-      item.cleverReplyDraft?.includes("—") ||
-      item.cleverReplyDraft?.includes("MSRP") ||
-      item.cleverReplyDraft?.includes("kiosk"),
+  const hasTopZipOpps = cached.some(
+    (item) => item.category === "top_zip_group" || item.category === "top_zip_posts",
   );
+  const hasStaleOrSalesyCache =
+    !hasTopZipOpps ||
+    cached.some(
+      (item) =>
+        item.cleverReplyDraft?.includes("—") ||
+        item.cleverReplyDraft?.includes("MSRP") ||
+        item.cleverReplyDraft?.includes("kiosk"),
+    );
+
+  const top5Zips = await getTop5SearchedZipTargets(db);
 
   if (!refresh && cached.length > 0 && !hasStaleOrSalesyCache) {
-    return { opportunities: cached };
+    return { opportunities: cached, top5Zips };
   }
 
   const opportunities = await scanFacebookOpportunities(db);
-  return { opportunities };
+  return { opportunities, top5Zips };
 });
 
 const PostBody = z.discriminatedUnion("action", [
@@ -60,7 +67,8 @@ export const POST = route(async (req) => {
 
   if (b.action === "scan") {
     const opportunities = await scanFacebookOpportunities(db);
-    return { ok: true, opportunities };
+    const top5Zips = await getTop5SearchedZipTargets(db);
+    return { ok: true, opportunities, top5Zips };
   }
 
   if (b.action === "draft_custom") {

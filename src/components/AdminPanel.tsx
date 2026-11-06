@@ -34,7 +34,7 @@ import {
 import { Avatar, CATEGORY_LABEL, timeAgo } from "./ui";
 import type { AdminInboxItem } from "@/app/api/contact/route";
 import type { RedditOpportunity } from "@/lib/reddit-radar";
-import type { FacebookOpportunity } from "@/lib/facebook-radar";
+import type { FacebookOpportunity, TopZipTarget } from "@/lib/facebook-radar";
 
 type AnalyticsSummary = {
   liveActiveHumans: number;
@@ -305,6 +305,8 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
 
   // 0c. Facebook Groups & Posts Radar + Clever Short Reply Drafter
   const [facebookOpps, setFacebookOpps] = useState<FacebookOpportunity[]>([]);
+  const [facebookTopZips, setFacebookTopZips] = useState<TopZipTarget[]>([]);
+  const [facebookCategoryFilter, setFacebookCategoryFilter] = useState<"all" | "top_zips" | "curated">("all");
   const [facebookScanning, setFacebookScanning] = useState(false);
   const [customFbTitle, setCustomFbTitle] = useState("");
   const [customFbDraft, setCustomFbDraft] = useState<{
@@ -430,7 +432,12 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
   const loadFacebookRadar = (refresh = false) => {
     setFacebookScanning(true);
     call(`/api/admin/facebook-radar${refresh ? "?refresh=1" : ""}`, "GET")
-      .then((r) => setFacebookOpps(r.opportunities ?? []))
+      .then((r) => {
+        setFacebookOpps(r.opportunities ?? []);
+        if (Array.isArray(r.top5Zips)) {
+          setFacebookTopZips(r.top5Zips);
+        }
+      })
       .catch(() => {})
       .finally(() => setFacebookScanning(false));
   };
@@ -1819,13 +1826,14 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="flex items-center gap-2 text-2xl font-black text-white">
-                <Globe className="h-6 w-6 text-sky-400" /> Facebook Bot &amp; Clever Short Reply Drafter
+                <Globe className="h-6 w-6 text-sky-400" /> Facebook Bot &amp; Top 5 ZIP Code Reply Drafter
               </h2>
               <p className="text-xs text-muted">
-                Opens active Pokémon TCG &amp; vending machine Facebook posts/groups and drafts{" "}
-                <b className="text-white">short, clever 1–2 sentence replies</b> about getting lucky with packs by
-                timing the machine&apos;s <code className="text-volt">:XX</code> drop minute. Clicking any link
-                auto-copies the reply so you can paste it right into Facebook.
+                Targets your <b className="text-volt">Top 5 Live Searched ZIP Codes</b> alongside active Pokémon TCG
+                &amp; vending machine Facebook groups/posts, and drafts{" "}
+                <b className="text-white">short, clever 1–2 sentence replies</b> about timing the machine&apos;s{" "}
+                <code className="text-volt">:XX</code> drop minute. Clicking any link auto-copies the reply so you can
+                paste it right into Facebook.
               </p>
             </div>
             <button
@@ -1835,8 +1843,95 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
               className="btn-primary py-1.5 text-xs font-bold"
             >
               <RefreshCw className={`h-3.5 w-3.5 ${facebookScanning ? "animate-spin" : ""}`} />
-              {facebookScanning ? "Refreshing Feeds…" : "Refresh Facebook Feeds"}
+              {facebookScanning ? "Refreshing Feeds…" : "Refresh Facebook & Top ZIPs"}
             </button>
+          </div>
+
+          {/* Live Top 5 Searched ZIP Codes Target Banner */}
+          {facebookTopZips.length > 0 && (
+            <div className="card border-volt/40 bg-volt/5 p-4 space-y-2.5">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="text-xs font-black uppercase tracking-wider text-volt">
+                  🔥 Current Top 5 Searched ZIP Codes on PackRadar (Auto-Targeted in Feed Below)
+                </span>
+                <span className="text-[11px] text-muted">
+                  Click any ZIP to draft a custom local reply or jump to its local Facebook groups &amp; posts
+                </span>
+              </div>
+              <div className="grid gap-2 sm:grid-cols-5">
+                {facebookTopZips.map((z, idx) => (
+                  <button
+                    key={z.zip}
+                    type="button"
+                    onClick={async () => {
+                      setFacebookCategoryFilter("top_zips");
+                      setCustomFbTitle(`${z.city}, ${z.state} ${z.zip} ${z.sampleRetailer} ${z.sampleMachineId}`);
+                      const res = await call("/api/admin/facebook-radar", "POST", {
+                        action: "draft_custom",
+                        title: `${z.city}, ${z.state} ${z.zip} ${z.sampleRetailer} ${z.sampleMachineId}`,
+                      });
+                      setCustomFbDraft(res.draft);
+                    }}
+                    className="rounded-xl border border-line bg-panel-2 p-2.5 text-left transition hover:border-volt"
+                  >
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="font-mono font-black text-volt">
+                        #{idx + 1} · {z.zip}
+                      </span>
+                      <span className="rounded bg-volt/15 px-1.5 py-0.5 font-mono text-[10px] font-bold text-volt">
+                        {z.searches} searches
+                      </span>
+                    </div>
+                    <p className="mt-1 truncate text-xs font-bold text-white">
+                      {z.city}, {z.state}
+                    </p>
+                    <p className="mt-0.5 truncate text-[10px] text-muted">
+                      {z.sampleRetailer} ({z.sampleMachineId}) · :{z.sampleAnchorMinute}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Category Filter Pills */}
+          <div className="flex flex-wrap items-center gap-2">
+            {(
+              [
+                {
+                  key: "all",
+                  label: "All Facebook Feeds",
+                  count: facebookOpps.length,
+                },
+                {
+                  key: "top_zips",
+                  label: "🔥 Top 5 Searched ZIPs (Local Groups & Posts)",
+                  count: facebookOpps.filter(
+                    (o) => o.category === "top_zip_group" || o.category === "top_zip_posts",
+                  ).length,
+                },
+                {
+                  key: "curated",
+                  label: "📌 Direct Vending & TCG Threads",
+                  count: facebookOpps.filter(
+                    (o) => !o.category || o.category === "curated",
+                  ).length,
+                },
+              ] as const
+            ).map((pill) => (
+              <button
+                key={pill.key}
+                type="button"
+                onClick={() => setFacebookCategoryFilter(pill.key)}
+                className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition ${
+                  facebookCategoryFilter === pill.key
+                    ? "bg-volt text-slate-950"
+                    : "border border-line bg-panel-2 text-slate-300 hover:border-volt/50"
+                }`}
+              >
+                {pill.label} ({pill.count})
+              </button>
+            ))}
           </div>
 
           {/* Instant Custom Facebook Post / Comment Reply Generator */}
@@ -1939,7 +2034,15 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
 
           {/* Curated Live Facebook Feeds & Group Post Searches */}
           <div className="space-y-4">
-            {facebookOpps.map((opp) => {
+            {facebookOpps
+              .filter((opp) =>
+                facebookCategoryFilter === "all"
+                  ? true
+                  : facebookCategoryFilter === "top_zips"
+                    ? opp.category === "top_zip_group" || opp.category === "top_zip_posts"
+                    : !opp.category || opp.category === "curated",
+              )
+              .map((opp) => {
               const copyAndOpenFacebook = (textToCopy = opp.cleverReplyDraft) => {
                 navigator.clipboard.writeText(textToCopy);
                 setCopiedReplyId(opp.id);

@@ -225,12 +225,22 @@ export function MachineActions({
             <Heart className={clsx("h-4 w-4", fav && "fill-current")} /> {fav ? "Favorited" : "Favorite"}
           </button>
           <button
-            className="btn-ghost"
+            className="btn-primary font-extrabold"
             onClick={() =>
-              run("alert", () => post("/api/alerts", { kind: "machine_drop", machineId, leadMinutes: 5, channels: ["email", "push"] }), "Alert created – we'll ping you 5 min before each drop")
+              run(
+                "alert",
+                () =>
+                  post("/api/alerts", {
+                    kind: "machine_drop",
+                    machineId,
+                    leadMinutes: 10,
+                    channels: ["email", "push"],
+                  }),
+                "Alert created – we'll ping you 10 min before each drop!",
+              )
             }
           >
-            <Bell className="h-4 w-4" /> Alert me
+            <Bell className="h-4 w-4" /> Alert me 10m before drop
           </button>
         </div>
 

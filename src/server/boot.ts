@@ -21,12 +21,23 @@ export function boot() {
 async function doBoot() {
   await ensureMigrated();
   const db = await getDb();
+  const { prewarmMetroCorridors } = await import("@/lib/queries");
+  void prewarmMetroCorridors().catch(() => {});
 
   if (process.env.ENABLE_CRON === "false") return;
   const cron = (await import("node-cron")).default;
   const { runDropAlerts } = await import("@/lib/notify/dispatch");
   const { runAdapter } = await import("@/scrapers/runner");
   const tz = process.env.DAILY_JOB_TZ || "America/Los_Angeles";
+
+  // Every minute: keep the Top 15 Metro Corridors & map machines pre-warmed in RAM (<40ms mobile response)
+  cron.schedule(
+    "* * * * *",
+    async () => {
+      await prewarmMetroCorridors().catch(() => {});
+    },
+    { name: "prewarm-metro-corridors", noOverlap: true },
+  );
 
   cron.schedule(
     "*/5 * * * *",

@@ -28,9 +28,114 @@ import type { UpcomingDropIntel } from "@/scrapers/adapters/retail";
 import { refreshArea } from "@/scrapers/area";
 
 /** Trigger background refresh of official machines near a point without blocking user search requests. */
-async function ensureArea(lat: number, lng: number) {
-  const db = await getDb();
-  void refreshArea(db, lat, lng).catch(() => {});
+function ensureArea(lat: number, lng: number) {
+  void getDb()
+    .then((db) => refreshArea(db, lat, lng))
+    .catch(() => {});
+}
+
+export const TOP_15_METRO_CORRIDORS: { zip: string; city: string; label: string; lat: number; lng: number }[] = [
+  { zip: "20603", city: "Waldorf", label: "Waldorf / DMV, MD", lat: 38.613, lng: -76.939 },
+  { zip: "98101", city: "Seattle", label: "Seattle / Bellevue, WA", lat: 47.6062, lng: -122.3321 },
+  { zip: "97027", city: "Gladstone", label: "Portland / Gladstone, OR", lat: 45.381, lng: -122.593 },
+  { zip: "85013", city: "Phoenix", label: "Phoenix / Scottsdale, AZ", lat: 33.509, lng: -112.083 },
+  { zip: "92029", city: "Escondido", label: "San Diego / Escondido, CA", lat: 33.108, lng: -117.115 },
+  { zip: "90012", city: "Los Angeles", label: "Los Angeles / SoCal, CA", lat: 34.0522, lng: -118.2437 },
+  { zip: "92592", city: "Temecula", label: "Temecula / Inland Empire, CA", lat: 33.493, lng: -117.048 },
+  { zip: "95112", city: "San Jose", label: "San Jose / Bay Area, CA", lat: 37.3382, lng: -121.8863 },
+  { zip: "80202", city: "Denver", label: "Denver / Aurora, CO", lat: 39.7392, lng: -104.9903 },
+  { zip: "75229", city: "Dallas", label: "Dallas / Fort Worth, TX", lat: 32.896, lng: -96.866 },
+  { zip: "77002", city: "Houston", label: "Houston, TX", lat: 29.7604, lng: -95.3698 },
+  { zip: "78701", city: "Austin", label: "Austin, TX", lat: 30.2672, lng: -97.7431 },
+  { zip: "60613", city: "Chicago", label: "Chicago, IL", lat: 41.954, lng: -87.658 },
+  { zip: "43207", city: "Columbus", label: "Columbus, OH", lat: 39.881, lng: -82.953 },
+  { zip: "45036", city: "Lebanon", label: "Cincinnati / Lebanon, OH", lat: 39.435, lng: -84.203 },
+];
+
+type HotMachinesCache = {
+  machines: Machine[] | null;
+  mapMachines: MapMachine[] | null;
+  searchCache: Map<string, SearchResult>;
+  warmedAt: number;
+  warmingPromise: Promise<Machine[]> | null;
+};
+
+const gCache = globalThis as unknown as { __packradarHotCache?: HotMachinesCache };
+
+function getCacheStore(): HotMachinesCache {
+  if (!gCache.__packradarHotCache) {
+    gCache.__packradarHotCache = {
+      machines: null,
+      mapMachines: null,
+      searchCache: new Map(),
+      warmedAt: 0,
+      warmingPromise: null,
+    };
+  }
+  return gCache.__packradarHotCache;
+}
+
+export function invalidateMachinesCache() {
+  const store = getCacheStore();
+  store.warmedAt = 0;
+  store.searchCache.clear();
+}
+
+async function getHotMachines(): Promise<Machine[]> {
+  const store = getCacheStore();
+  const ageMs = Date.now() - store.warmedAt;
+  if (store.machines && ageMs < 60_000) {
+    return store.machines;
+  }
+  // If we already have a warm snapshot, serve it immediately (<1ms) and refresh in the background
+  if (store.machines) {
+    if (!store.warmingPromise) {
+      void prewarmMetroCorridors().catch(() => {});
+    }
+    return store.machines;
+  }
+  return prewarmMetroCorridors();
+}
+
+export async function prewarmMetroCorridors(): Promise<Machine[]> {
+  const store = getCacheStore();
+  if (store.warmingPromise) return store.warmingPromise;
+
+  store.warmingPromise = (async () => {
+    try {
+      const db = await getDb();
+      const rows = await db.select().from(machines).where(ne(machines.status, "removed"));
+      store.machines = rows;
+      store.mapMachines = rows.map(toMapMachine);
+      store.warmedAt = Date.now();
+
+      // Pre-compute all Top 15 Metro Corridors (by ZIP and city name) so /search renders in <2ms on mobile
+      const nextSearchCache = new Map<string, SearchResult>();
+      for (const corridor of TOP_15_METRO_CORRIDORS) {
+        const near = rows
+          .map((m) => ({ ...m, distance: haversineMiles(corridor.lat, corridor.lng, m.lat, m.lng) }))
+          .filter((m) => m.distance <= 25)
+          .sort((a, b) => a.distance - b.distance)
+          .slice(0, 60);
+
+        const zipRes: SearchResult = {
+          center: { lat: corridor.lat, lng: corridor.lng, label: `ZIP ${corridor.zip} (${corridor.label})` },
+          machines: near,
+        };
+        nextSearchCache.set(`${corridor.zip}:25`, zipRes);
+        nextSearchCache.set(`${corridor.city.toLowerCase()}:25`, {
+          center: { lat: corridor.lat, lng: corridor.lng, label: corridor.label },
+          machines: near,
+        });
+      }
+      store.searchCache = nextSearchCache;
+      return rows;
+    } finally {
+      store.warmingPromise = null;
+    }
+  })();
+
+  return store.warmingPromise;
 }
 
 /** Compact shape sent to the browser for live map pins. */
@@ -75,27 +180,19 @@ export function toMapMachine(m: Machine): MapMachine {
 }
 
 export async function getMapMachines(): Promise<MapMachine[]> {
-  const db = await getDb();
-  const rows = await db.select().from(machines).where(ne(machines.status, "removed"));
-  return rows.map(toMapMachine);
+  const store = getCacheStore();
+  if (store.mapMachines && Date.now() - store.warmedAt < 60_000) {
+    return store.mapMachines;
+  }
+  const rows = await getHotMachines();
+  return store.mapMachines ?? rows.map(toMapMachine);
 }
 
 export async function nearbyMachines(lat: number, lng: number, radiusMiles = 25, limit = 50) {
-  const db = await getDb();
+  const rows = await getHotMachines();
   const b = boundingBox(lat, lng, radiusMiles);
-  const rows = await db
-    .select()
-    .from(machines)
-    .where(
-      and(
-        ne(machines.status, "removed"),
-        gte(machines.lat, b.minLat),
-        lte(machines.lat, b.maxLat),
-        gte(machines.lng, b.minLng),
-        lte(machines.lng, b.maxLng),
-      ),
-    );
   return rows
+    .filter((m) => m.lat >= b.minLat && m.lat <= b.maxLat && m.lng >= b.minLng && m.lng <= b.maxLng)
     .map((m) => ({ ...m, distance: haversineMiles(lat, lng, m.lat, m.lng) }))
     .filter((m) => m.distance <= radiusMiles)
     .sort((a, b) => a.distance - b.distance)
@@ -116,7 +213,7 @@ async function geocode(q: string) {
   try {
     const res = await fetch(
       `https://nominatim.openstreetmap.org/search?format=json&countrycodes=us&limit=1&q=${encodeURIComponent(q)}`,
-      { headers: { "User-Agent": "PackRadar/0.1 (vending tracker)" }, signal: AbortSignal.timeout(6000) },
+      { headers: { "User-Agent": "PackRadar/0.1 (vending tracker)" }, signal: AbortSignal.timeout(4000) },
     );
     const j = (await res.json()) as { lat: string; lon: string; display_name: string }[];
     const r = j[0] ? { lat: Number(j[0].lat), lng: Number(j[0].lon), label: j[0].display_name.split(",").slice(0, 2).join(",") } : null;
@@ -128,62 +225,106 @@ async function geocode(q: string) {
 }
 
 export async function searchMachines(qRaw: string, radiusMiles = 25): Promise<SearchResult> {
-  const db = await getDb();
   const q = qRaw.trim();
   if (!q) return { center: null, machines: [] };
 
-  // Machine code
+  const store = getCacheStore();
+  const cacheKey = `${q.toLowerCase()}:${radiusMiles}`;
+  await getHotMachines();
+  const prewarmed = store.searchCache.get(cacheKey);
+  if (prewarmed) {
+    return prewarmed;
+  }
+
+  const allRows = await getHotMachines();
+
+  // Machine code (in-memory <1ms lookup)
   if (/^q\d{5}$/i.test(q)) {
-    const rows = await db.select().from(machines).where(eq(machines.id, q.toUpperCase()));
-    return { center: rows[0] ? { lat: rows[0].lat, lng: rows[0].lng, label: rows[0].id } : null, machines: rows };
+    const codeUpper = q.toUpperCase();
+    const rows = allRows.filter((m) => m.id === codeUpper || m.code === codeUpper);
+    const res: SearchResult = {
+      center: rows[0] ? { lat: rows[0].lat, lng: rows[0].lng, label: rows[0].id } : null,
+      machines: rows,
+    };
+    store.searchCache.set(cacheKey, res);
+    return res;
   }
   // lat,lng
   const ll = q.match(/^(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)$/);
   if (ll) {
     const lat = Number(ll[1]);
     const lng = Number(ll[2]);
-    await ensureArea(lat, lng);
+    ensureArea(lat, lng);
     return { center: { lat, lng, label: "Your location" }, machines: await nearbyMachines(lat, lng, radiusMiles, 60) };
   }
   // ZIP
   if (/^\d{5}$/.test(q)) {
-    const zMem = lookupZipCentroid(q);
-    const zDb = zMem ? null : (await db.select().from(zipCodes).where(eq(zipCodes.zip, q)))[0];
-    const c = zMem ?? zDb ?? (await geocode(q));
-    if (c) await ensureArea(c.lat, c.lng);
-    if (c) return { center: { lat: c.lat, lng: c.lng, label: `ZIP ${q}` }, machines: await nearbyMachines(c.lat, c.lng, radiusMiles, 60) };
+    const corridorHit = TOP_15_METRO_CORRIDORS.find((c) => c.zip === q);
+    const zMem = corridorHit ?? lookupZipCentroid(q);
+    let c = zMem ? { lat: zMem.lat, lng: zMem.lng } : null;
+    if (!c) {
+      const exactZipMatch = allRows.find((m) => m.zip === q);
+      if (exactZipMatch) {
+        c = { lat: exactZipMatch.lat, lng: exactZipMatch.lng };
+      } else {
+        const db = await getDb();
+        const zDb = (await db.select().from(zipCodes).where(eq(zipCodes.zip, q)))[0];
+        c = zDb ?? (await geocode(q));
+      }
+    }
+    if (c) {
+      ensureArea(c.lat, c.lng);
+      const res: SearchResult = {
+        center: { lat: c.lat, lng: c.lng, label: `ZIP ${q}` },
+        machines: await nearbyMachines(c.lat, c.lng, radiusMiles, 60),
+      };
+      store.searchCache.set(cacheKey, res);
+      return res;
+    }
   }
 
-  // Text: "seattle", "safeway bellevue", "kroger, columbus oh"
+  // Text: "seattle", "safeway bellevue", "kroger, columbus oh" — fast in-memory filter (<1.5ms)
   const terms = q
     .toLowerCase()
     .replace(/[,]+/g, " ")
     .split(/\s+/)
     .filter((t) => t.length > 1)
     .slice(0, 5);
-  const conds = terms.map((t) =>
-    or(
-      ilike(machines.city, `%${t}%`),
-      ilike(machines.retailer, `%${t}%`),
-      ilike(machines.street, `%${t}%`),
-      ilike(machines.zip, `${t}%`),
-      eq(machines.state, t.toUpperCase()),
-    ),
-  );
-  const rows = await db
-    .select()
-    .from(machines)
-    .where(and(ne(machines.status, "removed"), ...conds))
-    .limit(100);
-  if (rows.length) {
-    const lat = rows.reduce((s, m) => s + m.lat, 0) / rows.length;
-    const lng = rows.reduce((s, m) => s + m.lng, 0) / rows.length;
-    return { center: { lat, lng, label: q }, machines: rows.sort((a, b) => a.city.localeCompare(b.city)) };
+
+  const matchedRows = allRows
+    .filter((m) => {
+      const cityLower = m.city.toLowerCase();
+      const retailerLower = m.retailer.toLowerCase();
+      const streetLower = m.street.toLowerCase();
+      const stateLower = m.state.toLowerCase();
+      return terms.every(
+        (t) =>
+          cityLower.includes(t) ||
+          retailerLower.includes(t) ||
+          streetLower.includes(t) ||
+          m.zip.startsWith(t) ||
+          stateLower === t,
+      );
+    })
+    .slice(0, 100);
+
+  if (matchedRows.length) {
+    const lat = matchedRows.reduce((s, m) => s + m.lat, 0) / matchedRows.length;
+    const lng = matchedRows.reduce((s, m) => s + m.lng, 0) / matchedRows.length;
+    const res: SearchResult = {
+      center: { lat, lng, label: q },
+      machines: matchedRows.sort((a, b) => a.city.localeCompare(b.city)),
+    };
+    store.searchCache.set(cacheKey, res);
+    return res;
   }
+
   const g = await geocode(q);
   if (g) {
-    await ensureArea(g.lat, g.lng);
-    return { center: g, machines: await nearbyMachines(g.lat, g.lng, radiusMiles, 60) };
+    ensureArea(g.lat, g.lng);
+    const res: SearchResult = { center: g, machines: await nearbyMachines(g.lat, g.lng, radiusMiles, 60) };
+    store.searchCache.set(cacheKey, res);
+    return res;
   }
   return { center: null, machines: [] };
 }
