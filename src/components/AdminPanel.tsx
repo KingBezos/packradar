@@ -289,7 +289,7 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
   const [redditLastScanAt, setRedditLastScanAt] = useState<string | null>(null);
   const [redditExcludedCount, setRedditExcludedCount] = useState<number>(12);
   const [redditCategoryFilter, setRedditCategoryFilter] = useState<
-    "all" | "vending" | "restock" | "scalpers" | "pulls"
+    "all" | "news" | "restock" | "vending" | "scalpers" | "pulls"
   >("all");
   const [copiedReplyId, setCopiedReplyId] = useState<string | null>(null);
   const [customRedditTitle, setCustomRedditTitle] = useState("");
@@ -301,6 +301,9 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
     helpfulReplyDraft: string;
     shortReplyDraft: string;
     altCleverDraft?: string;
+    newsDraft?: string;
+    dropsDraft?: string;
+    vendingDraft?: string;
   } | null>(null);
 
   // 0c. Facebook Groups & Posts Radar + Clever Short Reply Drafter
@@ -1460,10 +1463,12 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
               <p className="mt-1 text-xs text-muted">
                 Live-scans <code className="text-white">r/PokemonTCG</code>,{" "}
                 <code className="text-white">r/PKMNTCGDeals</code> &amp;{" "}
-                <code className="text-white">r/PokeInvesting</code> for fresh daily Pokémon posts (vending machines,
-                Walmart/Target/Pokemon Center drops, empty shelves, and pack pulls) and drafts{" "}
-                <b className="text-white">short, clever 1–2 sentence replies</b>. Anything you&apos;ve commented on
-                with <code className="text-volt">u/Sharp-Lifeguard-8635</code> is automatically removed.
+                <code className="text-white">r/PokeInvesting</code> for fresh daily Pokémon posts across{" "}
+                <b className="text-volt">Breaking News &amp; Set Reprints (/news)</b>,{" "}
+                <b className="text-volt">Retail Drops &amp; Warehouse Pallets (/drops)</b>,{" "}
+                <b className="text-white">Vending Kiosks</b>, and <b className="text-white">Pack Pulls</b>, drafting
+                replies that link directly to your News articles, Retail Drops page, or Vending Map. Anything
+                commented on by <code className="text-volt">u/Sharp-Lifeguard-8635</code> is automatically removed.
                 {redditLastScanAt && (
                   <span className="ml-2 font-mono text-volt">· Last synced {redditLastScanAt}</span>
                 )}
@@ -1490,14 +1495,19 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                   count: redditOpps.filter((o) => o.status === "open").length,
                 },
                 {
-                  key: "vending",
-                  label: "🎰 Vending & Grocery Kiosks",
-                  count: redditOpps.filter((o) => o.status === "open" && o.category === "vending").length,
+                  key: "news",
+                  label: "📰 News, Reprints & Allocations (/news)",
+                  count: redditOpps.filter((o) => o.status === "open" && o.category === "news").length,
                 },
                 {
                   key: "restock",
-                  label: "🛒 Retail Drops (Walmart / Target / PC)",
+                  label: "🛒 Retail Drops & Pallets (/drops)",
                   count: redditOpps.filter((o) => o.status === "open" && o.category === "restock").length,
+                },
+                {
+                  key: "vending",
+                  label: "🎰 Vending & Grocery Kiosks",
+                  count: redditOpps.filter((o) => o.status === "open" && o.category === "vending").length,
                 },
                 {
                   key: "scalpers",
@@ -1530,16 +1540,17 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
           <div className="card border-volt/30 p-5 space-y-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h3 className="text-sm font-bold text-white">
-                ⚡ Custom Thread Reply Generator (Paste Any Reddit Question, Thread Title, or City / State / Q-Code)
+                ⚡ Custom Thread Reply Generator (Paste Any Reddit Question, News Topic, Retail Drop, or City / Zip)
               </h3>
               <span className="text-xs text-muted">
-                Generates 3 short, witty &ldquo;got lucky timing the drop&rdquo; replies
+                Generates replies linking to <code className="text-volt">/news</code>,{" "}
+                <code className="text-volt">/drops</code>, or <code className="text-volt">vending map</code>
               </span>
             </div>
             <div className="grid gap-2 sm:grid-cols-3">
               <input
                 className="input sm:col-span-2 text-xs"
-                placeholder="Paste a Reddit post title or question (e.g., 'Any luck with Kroger or Safeway vending machines in Seattle or Dallas?')…"
+                placeholder="Paste a Reddit post title or question (e.g., 'Sam's Club 151 mini tins drop date?' or 'Any Target/Kroger restocks in Dallas?')…"
                 value={customRedditTitle}
                 onChange={(e) => setCustomRedditTitle(e.target.value)}
               />
@@ -1568,6 +1579,48 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                       📍 {customRedditDraft.matchedLocationLabel} ({customRedditDraft.matchedMachinesCount}{" "}
                       machines)
                     </span>
+                    {customRedditDraft.newsDraft && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setCustomRedditDraft({
+                            ...customRedditDraft,
+                            helpfulReplyDraft: customRedditDraft.newsDraft!,
+                          })
+                        }
+                        className="chip text-[11px] py-0.5"
+                      >
+                        📰 Link to News Article (/news)
+                      </button>
+                    )}
+                    {customRedditDraft.dropsDraft && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setCustomRedditDraft({
+                            ...customRedditDraft,
+                            helpfulReplyDraft: customRedditDraft.dropsDraft!,
+                          })
+                        }
+                        className="chip text-[11px] py-0.5"
+                      >
+                        🛒 Link to Retail Drops (/drops)
+                      </button>
+                    )}
+                    {customRedditDraft.vendingDraft && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setCustomRedditDraft({
+                            ...customRedditDraft,
+                            helpfulReplyDraft: customRedditDraft.vendingDraft!,
+                          })
+                        }
+                        className="chip text-[11px] py-0.5"
+                      >
+                        🎰 Link to Vending Map
+                      </button>
+                    )}
                     <button
                       type="button"
                       onClick={() =>
@@ -1580,20 +1633,6 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                     >
                       ⚡ Use Ultra-Short 1-Liner
                     </button>
-                    {customRedditDraft.altCleverDraft && (
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setCustomRedditDraft({
-                            ...customRedditDraft,
-                            helpfulReplyDraft: customRedditDraft.altCleverDraft!,
-                          })
-                        }
-                        className="chip text-[11px] py-0.5"
-                      >
-                        🎯 Use Alt &ldquo;Sold Out&rdquo; Tip
-                      </button>
-                    )}
                   </div>
                   <button
                     type="button"
@@ -1663,13 +1702,15 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                 };
 
                 const categoryBadge =
-                  opp.category === "vending"
-                    ? { label: "🎰 Vending Kiosk", cls: "bg-emerald-500/20 text-emerald-300" }
+                  opp.category === "news"
+                    ? { label: "📰 News / Reprint / Allocation", cls: "bg-amber-500/20 text-amber-300" }
                     : opp.category === "restock"
-                      ? { label: "🛒 Retail Drop / Restock", cls: "bg-sky-500/20 text-sky-300" }
-                      : opp.category === "scalpers"
-                        ? { label: "🚫 Scalpers / Empty Shelves", cls: "bg-rose-500/20 text-rose-300" }
-                        : { label: "✨ Pack Pulls / Set Discussion", cls: "bg-purple-500/20 text-purple-300" };
+                      ? { label: "🛒 Retail Drop / Restock (/drops)", cls: "bg-sky-500/20 text-sky-300" }
+                      : opp.category === "vending"
+                        ? { label: "🎰 Vending Kiosk", cls: "bg-emerald-500/20 text-emerald-300" }
+                        : opp.category === "scalpers"
+                          ? { label: "🚫 Scalpers / Empty Shelves", cls: "bg-rose-500/20 text-rose-300" }
+                          : { label: "✨ Pack Pulls / Set Discussion", cls: "bg-purple-500/20 text-purple-300" };
 
                 return (
                   <div key={opp.id} className="card border-line p-5 space-y-3">
@@ -1685,6 +1726,11 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                           <span className="rounded-full bg-volt/15 px-2.5 py-0.5 font-bold text-volt">
                             📍 {opp.matchedLocationLabel} ({opp.matchedMachinesCount} machines)
                           </span>
+                          {opp.targetPackRadarUrl && (
+                            <span className="rounded-full bg-white/10 px-2.5 py-0.5 font-mono text-[10px] text-slate-300">
+                              🔗 Links to: {opp.targetPackRadarUrl.replace("https://packradar.onrender.com", "") || "/"}
+                            </span>
+                          )}
                           <span className="text-muted">
                             by {opp.author} · {timeAgo(new Date(opp.postedAt))}
                           </span>
@@ -1752,7 +1798,58 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                     <div className="rounded-xl border border-line bg-panel-2/70 p-3.5 text-xs space-y-2">
                       <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-bold uppercase tracking-wider text-muted">
                         <div className="flex flex-wrap items-center gap-1.5">
-                          <span>Short Clever Reply (Editable):</span>
+                          <span>Switch Reply Link Target:</span>
+                          {opp.newsDraft && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setRedditOpps((prev) =>
+                                  prev.map((item) =>
+                                    item.id === opp.id
+                                      ? { ...item, helpfulReplyDraft: opp.newsDraft! }
+                                      : item,
+                                  ),
+                                )
+                              }
+                              className="rounded border border-amber-400/40 bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold normal-case text-amber-300 hover:border-amber-400 hover:bg-amber-500/20"
+                            >
+                              📰 News Article (/news)
+                            </button>
+                          )}
+                          {opp.dropsDraft && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setRedditOpps((prev) =>
+                                  prev.map((item) =>
+                                    item.id === opp.id
+                                      ? { ...item, helpfulReplyDraft: opp.dropsDraft! }
+                                      : item,
+                                  ),
+                                )
+                              }
+                              className="rounded border border-sky-400/40 bg-sky-500/10 px-2 py-0.5 text-[10px] font-semibold normal-case text-sky-300 hover:border-sky-400 hover:bg-sky-500/20"
+                            >
+                              🛒 Retail Drops (/drops)
+                            </button>
+                          )}
+                          {opp.vendingDraft && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setRedditOpps((prev) =>
+                                  prev.map((item) =>
+                                    item.id === opp.id
+                                      ? { ...item, helpfulReplyDraft: opp.vendingDraft! }
+                                      : item,
+                                  ),
+                                )
+                              }
+                              className="rounded border border-emerald-400/40 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold normal-case text-emerald-300 hover:border-emerald-400 hover:bg-emerald-500/20"
+                            >
+                              🎰 Vending Map
+                            </button>
+                          )}
                           <button
                             type="button"
                             onClick={() =>
@@ -1766,23 +1863,6 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                           >
                             ⚡ 1-Liner Version
                           </button>
-                          {opp.altCleverDraft && (
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setRedditOpps((prev) =>
-                                  prev.map((item) =>
-                                    item.id === opp.id
-                                      ? { ...item, helpfulReplyDraft: opp.altCleverDraft! }
-                                      : item,
-                                  ),
-                                )
-                              }
-                              className="rounded border border-line bg-bg px-2 py-0.5 text-[10px] font-semibold normal-case text-slate-300 hover:border-volt hover:text-volt"
-                            >
-                              🎯 Alt Tip Version
-                            </button>
-                          )}
                         </div>
                         <a
                           href={opp.permalink}

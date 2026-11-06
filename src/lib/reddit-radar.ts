@@ -39,7 +39,7 @@ const STATE_NAMES: Record<string, string> = {
 
 export const REDDIT_USERNAME = "Sharp-Lifeguard-8635";
 
-export type RedditOpportunityCategory = "vending" | "restock" | "scalpers" | "pulls";
+export type RedditOpportunityCategory = "vending" | "restock" | "news" | "scalpers" | "pulls";
 
 export interface RedditOpportunity {
   id: string;
@@ -54,9 +54,13 @@ export interface RedditOpportunity {
   matchedCity: string | null;
   matchedLocationLabel: string;
   matchedMachinesCount: number;
+  targetPackRadarUrl?: string;
   helpfulReplyDraft: string;
   shortReplyDraft: string;
   altCleverDraft?: string;
+  newsDraft?: string;
+  dropsDraft?: string;
+  vendingDraft?: string;
   status: "open" | "replied" | "dismissed";
 }
 
@@ -343,6 +347,56 @@ const CURATED_DAILY_POKEMON_THREADS: Array<{
     excerpt:
       "Target drops are most common at Midnight PST (3am EST). Restocks have been happening in waves.",
   },
+  {
+    id: "t3_1xo8s9p",
+    subreddit: "r/PKMNTCGDeals",
+    title: "Sam's Club & Costco 151 Mini Tins / Blooming Waters Warehouse Allocation Discussion",
+    author: "u/WarehouseDropHunter",
+    permalink: "https://www.reddit.com/r/PKMNTCGDeals/search/?q=sams+club+151+mini+tins+OR+costco+blooming+waters&sort=new&restrict_sr=1",
+    postedAt: "2026-11-06T02:35:00.000Z",
+    excerpt:
+      "Tracking Sam's Club 151 Mini Tins & 30th Celebration 4-Pack Mini Tins ($34.98, 94,000 units across 414 clubs Nov 16–21) and Costco pallets.",
+  },
+  {
+    id: "t3_1xo7n4k",
+    subreddit: "r/PokemonTCG",
+    title: "Prismatic Evolutions & 151 Reprint News — When are waves hitting stores this month?",
+    author: "u/TcgNewsWatcher",
+    permalink: "https://www.reddit.com/r/PokemonTCG/search/?q=prismatic+reprint+OR+151+mini+tins+sams+club&sort=new&restrict_sr=1",
+    postedAt: "2026-11-06T02:25:00.000Z",
+    excerpt:
+      "Discussion on the upcoming November reprint allocations for 151 Mini Tins at Sam's Club and Prismatic Evolutions bundles.",
+  },
+  {
+    id: "t3_1xo6m2v",
+    subreddit: "r/PokeInvesting",
+    title: "Sam's Club 94,000 Unit 151 Mini Tins & 30th Celebration 4-Pack Drop ($34.98) — Impact on Sealed Prices?",
+    author: "u/SealedAllocation",
+    permalink: "https://www.reddit.com/r/PokeInvesting/search/?q=sams+club+151+OR+30th+celebration+mini+tins&sort=new&restrict_sr=1",
+    postedAt: "2026-11-06T02:18:00.000Z",
+    excerpt:
+      "With 414 of 600 Sam's Clubs getting 160 units per pallet starting Nov 20–21 at $34.98, how are collectors playing this drop?",
+  },
+  {
+    id: "t3_1xo5k1q",
+    subreddit: "r/PKMNTCGDeals",
+    title: "Best Buy, Target & Pokémon Center Restock Alerts — Where are you guys getting instant drop notifications?",
+    author: "u/DealAlertSeeker",
+    permalink: "https://www.reddit.com/r/PKMNTCGDeals/search/?q=restock+alert+OR+target+drop+OR+pokemon+center+queue&sort=new&restrict_sr=1",
+    postedAt: "2026-11-06T01:55:00.000Z",
+    excerpt:
+      "Looking for free restock trackers and drop alerts for Target, Best Buy, Sam's Club, and Pokemon Center queues.",
+  },
+  {
+    id: "t3_1xo4j9r",
+    subreddit: "r/PokemonTCG",
+    title: "2026 Release Schedule Roadmap: 30th Celebration, Delta Reign & Upcoming Special Sets",
+    author: "u/ModernSetCollector",
+    permalink: "https://www.reddit.com/r/PokemonTCG/search/?q=30th+celebration+OR+delta+reign+release&sort=new&restrict_sr=1",
+    postedAt: "2026-11-06T01:48:00.000Z",
+    excerpt:
+      "Breaking down the upcoming Pokémon TCG set calendar, 30th Celebration mini tins, and where to preorder at MSRP.",
+  },
 ];
 
 const REDDIT_RSS_FEEDS = [
@@ -355,12 +409,16 @@ const REDDIT_RSS_FEEDS = [
     url: "https://www.reddit.com/r/PokemonTCG/search.rss?q=vending+OR+restock+OR+walmart+OR+target+OR+scalpers+OR+kroger+OR+safeway&restrict_sr=1&sort=new&t=week",
   },
   {
+    subreddit: "r/PokemonTCG",
+    url: "https://www.reddit.com/r/PokemonTCG/search.rss?q=%22sam%27s+club%22+OR+costco+OR+reprint+OR+%22mini+tins%22+OR+%22pokemon+center%22+OR+%22best+buy%22+OR+news&restrict_sr=1&sort=new&t=week",
+  },
+  {
     subreddit: "r/PKMNTCGDeals",
-    url: "https://www.reddit.com/r/PKMNTCGDeals/new.rss?limit=25",
+    url: "https://www.reddit.com/r/PKMNTCGDeals/new.rss?limit=35",
   },
   {
     subreddit: "r/PokeInvesting",
-    url: "https://www.reddit.com/r/PokeInvesting/new.rss?limit=25",
+    url: "https://www.reddit.com/r/PokeInvesting/new.rss?limit=35",
   },
 ];
 
@@ -421,18 +479,25 @@ export function classifyPokemonPost(title: string, body = ""): RedditOpportunity
     return "vending";
   }
   if (
+    /reprint|wave 2|wave 3|allocation|distributor|94,000|414 of 600|roadmap|release date|upcoming set|announcement|announced|official|set list|leak|rumor|schedule|30th celebration|30th anniversary|mini tin|delta reign|ascended heroes/i.test(
+      text,
+    )
+  ) {
+    return "news";
+  }
+  if (
+    /walmart|target|costco|gamestop|best buy|sam'?s club|sams club|blooming waters|pallet|barnes|pokemon center|7-11|7-eleven|dicks|restock|in stock|lottery|raffle|queue|wait in line|6am|midnight|what drops|msrp|deal/i.test(
+      text,
+    )
+  ) {
+    return "restock";
+  }
+  if (
     /scalp|resell|empty|can'?t find|find anything|where to buy|over msrp|hopeless|no luck|wiped out|cleared out/i.test(
       text,
     )
   ) {
     return "scalpers";
-  }
-  if (
-    /walmart|target|costco|gamestop|best buy|sam'?s club|barnes|pokemon center|7-11|7-eleven|dicks|restock|in stock|lottery|raffle|queue|wait in line|6am|midnight|what drops/i.test(
-      text,
-    )
-  ) {
-    return "restock";
   }
   if (
     /booster|bundle|etb|upc|prismatic|destined|151|surging|delta|journey|pack|pull|chase|collection|gift|collector|30th/i.test(
@@ -442,6 +507,52 @@ export function classifyPokemonPost(title: string, body = ""): RedditOpportunity
     return "pulls";
   }
   return null;
+}
+
+export function resolveBestNewsArticle(text: string): {
+  url: string;
+  label: string;
+  topicHook: string;
+} {
+  const lower = text.toLowerCase();
+  if (/sam'?s club|sams club|mini tin|151|30th celebration|34\.98|pallet|costco|blooming waters/i.test(lower)) {
+    return {
+      url: "https://packradar.onrender.com/news/sams-club-pokemon-151-mini-tins-30th-celebration-4-pack-november-drop",
+      label: "Sam's Club 151 & 30th Celebration 4-Pack Mini Tins ($34.98) Drop Guide",
+      topicHook:
+        "Sam's Club is dropping ~94,000 units of the Pokemon 151 & 30th Celebration 4-Pack Mini Tins at $34.98 across 414 clubs (160 per pallet, shipments starting Nov 16 / hitting floors Nov 20-21)",
+    };
+  }
+  if (/prismatic|eevee|umbreon|reprint|surprise box/i.test(lower)) {
+    return {
+      url: "https://packradar.onrender.com/news/prismatic-evolutions-reprint-vending-machine-restock-guide-2026",
+      label: "Prismatic Evolutions Reprint & Restock Allocation Guide",
+      topicHook:
+        "the Prismatic Evolutions reprint wave is actively hitting regional warehouse allocations and grocery kiosks in staggered waves",
+    };
+  }
+  if (/destined rivals|team rocket|mewtwo|wave 2/i.test(lower)) {
+    return {
+      url: "https://packradar.onrender.com/news/destined-rivals-team-rocket-wave-2-msrp-drop-tracker",
+      label: "Destined Rivals (Team Rocket) Wave 2 MSRP Drop Tracker",
+      topicHook:
+        "Destined Rivals Wave 2 booster bundles and ETBs are restocking at MSRP across major retail queues and vending kiosks",
+    };
+  }
+  if (/delta|roadmap|upcoming|2026|ascended|set|schedule|release/i.test(lower)) {
+    return {
+      url: "https://packradar.onrender.com/news/2026-pokemon-tcg-expansion-roadmap-ascended-heroes-to-delta-reign",
+      label: "2026 Pokemon TCG Expansion & Reprint Roadmap",
+      topicHook:
+        "the full 2026 Pokemon TCG release calendar, reprint waves, and warehouse drop schedule are all mapped out in one place",
+    };
+  }
+  return {
+    url: "https://packradar.onrender.com/news/sams-club-pokemon-151-mini-tins-30th-celebration-4-pack-november-drop",
+    label: "Pokemon TCG Breaking News & Allocation Tracker",
+    topicHook:
+      "we track upcoming warehouse pallet allocations (like the $34.98 Sam's Club 151 & 30th Celebration Mini Tins hitting 414 clubs) and reprint waves",
+  };
 }
 
 export function detectLocationIntent(text: string): {
@@ -605,6 +716,9 @@ export async function buildDataBackedRedditReply(
   helpfulReplyDraft: string;
   shortReplyDraft: string;
   altCleverDraft: string;
+  newsDraft: string;
+  dropsDraft: string;
+  vendingDraft: string;
 }> {
   const combinedText = `${input.title} ${input.body ?? ""}`;
   const category = classifyPokemonPost(input.title, input.body ?? "") ?? "restock";
@@ -702,14 +816,6 @@ export async function buildDataBackedRedditReply(
       .limit(3);
   }
 
-  const recentObs = await db
-    .select({
-      observedAt: dropObservations.observedAt,
-    })
-    .from(dropObservations)
-    .orderBy(desc(dropObservations.observedAt))
-    .limit(5);
-
   const topMachine = sampleMachines[0];
   const sampleMinutes = [":15", ":22", ":35", ":42", ":48"];
   const hashIdx =
@@ -720,74 +826,113 @@ export async function buildDataBackedRedditReply(
       ? `:${String(topMachine.predictedDropMinute).padStart(2, "0")}`
       : sampleMinutes[hashIdx];
 
-  const siteUrl = intent.qCode
+  const vendingSiteUrl = intent.qCode
     ? `https://packradar.onrender.com/machines/${intent.qCode}`
     : intent.state
       ? `https://packradar.onrender.com/locations/${intent.state.toLowerCase()}`
       : "https://packradar.onrender.com";
 
+  const dropsUrl = "https://packradar.onrender.com/drops";
+  const matchedNews = resolveBestNewsArticle(combinedText);
+  const newsUrl = matchedNews.url;
+
   const lower = combinedText.toLowerCase();
   const seed =
     (input.title.length + (input.title.charCodeAt(0) || 0) + (input.title.charCodeAt(3) || 0)) % 4;
 
+  const placeName = intent.city
+    ? intent.city
+    : intent.state
+      ? (STATE_NAMES[intent.state] ?? intent.state)
+      : "local grocery";
+
+  const storeMention = /sam'?s club|sams club/i.test(lower)
+    ? "Sam's Club"
+    : /costco/i.test(lower)
+      ? "Costco"
+      : /walmart/i.test(lower)
+        ? "Walmart"
+        : /target/i.test(lower)
+          ? "Target"
+          : /gamestop/i.test(lower)
+            ? "GameStop"
+            : /best buy/i.test(lower)
+              ? "Best Buy"
+              : /pokemon center/i.test(lower)
+                ? "Pokemon Center"
+                : "retail";
+
+  // Always prepare 3 specialized one-click drafts so the user can link to /news, /drops, or vending map on ANY Reddit thread
+  const newsDraft = /sam'?s club|sams club|mini tin|151|30th|costco|blooming waters|pallet/i.test(lower)
+    ? `Full breakdown on this drop is up on ${newsUrl} — Sam's Club is getting ~94,000 units of the Pokemon 151 & 30th Celebration 4-Pack Mini Tins at $34.98 across 414 of 600 clubs (160 per pallet, shipping Nov 16 / hitting floors Nov 20-21). You can also tap "Get Alerts" on that page to get pinged the second SKUs go live.`
+    : `Been following this closely — there's a full breakdown with warehouse pallet numbers, reprint dates, and MSRP restock windows on ${newsUrl} (you can also click "Get Alerts" on the article so it pings you when stock drops).`;
+
+  const dropsDraft = `I've been tracking all the upcoming ${storeMention} restock windows, warehouse pallet allocations (like the $34.98 Sam's Club 151 & 30th Celebration Mini Tins), and online queue times on ${dropsUrl}. You can click "Get Alerts" on any drop there so you don't miss the restock window.`;
+
+  const vendingDraft = `Honestly the easiest way I've been catching packs at MSRP is timing the ${dropMinute} hourly cooldown unlock on ${placeName} Pokemon vending kiosks using ${vendingSiteUrl} instead of fighting store lines.`;
+
   let helpfulReplyDraft = "";
   let shortReplyDraft = "";
   let altCleverDraft = "";
+  let targetPackRadarUrl = vendingSiteUrl;
 
-  if (category === "vending" || intent.qCode || intent.state) {
-    const placeName = intent.city
-      ? intent.city
-      : intent.state
-        ? (STATE_NAMES[intent.state] ?? intent.state)
-        : "local grocery";
-
+  if (category === "news") {
+    targetPackRadarUrl = newsUrl;
+    const newsTemplates = [
+      newsDraft,
+      `If anyone wants the exact numbers and dates on this, ${ matchedNews.topicHook }. Full guide + SKU tracker is on ${newsUrl} and you can hit "Get Alerts" there to get notified when it drops.`,
+      `Bookmarking this! I've been checking ${newsUrl} for the distributor allocation numbers and release dates — they also let you sign up for instant restock alerts right on the article.`,
+      `For anyone trying to catch this wave at MSRP without paying scalpers, ${newsUrl} has the full allocation breakdown and a "Get Alerts" button for when shipments hit stores.`,
+    ];
+    helpfulReplyDraft = newsTemplates[seed];
+    shortReplyDraft = `Full breakdown + allocation dates are on ${newsUrl} — you can also click "Get Alerts" on the article to get pinged when it drops at MSRP.`;
+    altCleverDraft = dropsDraft;
+  } else if (category === "restock") {
+    const isSamsOr151 = /sam'?s club|sams club|mini tin|34\.98|414 of 600|94,000/i.test(lower);
+    targetPackRadarUrl = isSamsOr151 ? newsUrl : dropsUrl;
+    if (isSamsOr151) {
+      helpfulReplyDraft = newsDraft;
+      shortReplyDraft = `Sam's Club is getting ~94,000 units of the $34.98 151 & 30th Celebration 4-Pack Mini Tins across 414 clubs (Nov 20-21 in-store). Full details + "Get Alerts" button on ${newsUrl}`;
+      altCleverDraft = dropsDraft;
+    } else {
+      const restockTemplates = [
+        `Been tracking the ${storeMention} restock windows and warehouse pallet drops on ${dropsUrl} — you can tap "Get Alerts" on specific drops there, plus check local grocery Pokemon vending machine unlock minutes (${dropMinute}) so you don't waste a trip.`,
+        `If ${storeMention} is wiped out, check ${dropsUrl} for upcoming MSRP retail drop times (including the $34.98 Sam's Club 151 Mini Tins pallet drop) and local grocery vending kiosks that unlock stock every hour around ${dropMinute}.`,
+        `I stopped guessing when ${storeMention} restocks lol. Been using ${dropsUrl} to get alerts on retail drops and time the ${dropMinute} hourly cooldown reset on local grocery store Pokemon kiosks.`,
+        `Besides ${storeMention}, check ${dropsUrl} — it tracks live retail restock schedules, warehouse pallet allocations, and the exact ${dropMinute} hourly release minute on local grocery vending machines.`,
+      ];
+      helpfulReplyDraft = restockTemplates[seed];
+      shortReplyDraft = `Track live ${storeMention} restock windows and sign up for drop alerts on ${dropsUrl} (also shows local grocery vending machine ${dropMinute} unlock times).`;
+      altCleverDraft = newsDraft;
+    }
+  } else if (category === "vending" || intent.qCode || intent.state) {
+    targetPackRadarUrl = vendingSiteUrl;
     if (/sold out|empty|nothing|never|scalp|line/i.test(lower)) {
-      helpfulReplyDraft = `The "Sold Out" screen on the ${placeName} machines is usually just the hourly cooldown timer, not an empty kiosk. I started checking the ${dropMinute} release minute on ${siteUrl} before walking in and finally caught booster bundles at retail.`;
-      shortReplyDraft = `"Sold Out" is usually just the hourly cooldown lock lol. Check your machine's ${dropMinute} release minute on ${siteUrl} and tap the screen right when the timer flips.`;
-      altCleverDraft = `Half the time those kiosks aren't even empty, they're just on their hourly timer lock. I check ${siteUrl} for the exact ${dropMinute} drop minute and walk up right as it unlocks.`;
+      helpfulReplyDraft = `The "Sold Out" screen on the ${placeName} machines is usually just the hourly cooldown timer, not an empty kiosk. I started checking the ${dropMinute} release minute on ${vendingSiteUrl} before walking in and finally caught booster bundles at retail.`;
+      shortReplyDraft = `"Sold Out" is usually just the hourly cooldown lock lol. Check your machine's ${dropMinute} release minute on ${vendingSiteUrl} and tap the screen right when the timer flips.`;
+      altCleverDraft = dropsDraft;
     } else {
       const templates = [
-        `Honestly the only way I've been catching packs lately is timing the ${dropMinute} hourly cooldown minute on my ${placeName} machine instead of guessing. Been using ${siteUrl} to check the drop minute before I head in.`,
-        `Nice hit! Once I figured out the ${placeName} kiosks unlock stock on a set minute every hour (mine hits around ${dropMinute} on ${siteUrl}), I stopped walking up to Sold Out screens.`,
-        `I used to think my ${placeName} machine was always cleaned out until I checked its ${dropMinute} release minute on ${siteUrl}. Walking up right when the hourly lock resets is a cheat code.`,
-        `Timing that hourly cooldown reset is everything. I check the local machine drop times on ${siteUrl} before grocery runs and it's saved me so many wasted trips.`,
+        `Honestly the only way I've been catching packs lately is timing the ${dropMinute} hourly cooldown minute on my ${placeName} machine instead of guessing. Been using ${vendingSiteUrl} to check the drop minute before I head in.`,
+        `Nice hit! Once I figured out the ${placeName} kiosks unlock stock on a set minute every hour (mine hits around ${dropMinute} on ${vendingSiteUrl}), I stopped walking up to Sold Out screens.`,
+        `I used to think my ${placeName} machine was always cleaned out until I checked its ${dropMinute} release minute on ${vendingSiteUrl}. Walking up right when the hourly lock resets is a cheat code.`,
+        `Timing that hourly cooldown reset is everything. I check the local machine drop times on ${vendingSiteUrl} before grocery runs and it's saved me so many wasted trips.`,
       ];
       helpfulReplyDraft = templates[seed];
-      shortReplyDraft = `Timing the hourly ${dropMinute} release minute is the move. I check ${siteUrl} before walking in and it hasn't missed.`;
-      altCleverDraft = `If your machine says Sold Out, it's usually just the hourly cooldown timer. Check the exact :XX unlock minute for your store on ${siteUrl}.`;
+      shortReplyDraft = `Timing the hourly ${dropMinute} release minute is the move. I check ${vendingSiteUrl} before walking in and it hasn't missed.`;
+      altCleverDraft = newsDraft;
     }
-  } else if (category === "restock") {
-    const storeMention = /walmart/i.test(lower)
-      ? "Walmart"
-      : /target/i.test(lower)
-        ? "Target"
-        : /gamestop/i.test(lower)
-          ? "GameStop"
-          : /costco/i.test(lower)
-            ? "Costco"
-            : /pokemon center/i.test(lower)
-              ? "Pokemon Center"
-              : "big-box stores";
-
-    const restockTemplates = [
-      `If ${storeMention} is a zoo or cleaned out, check if your local Kroger/Safeway/Fred Meyer has a Pokemon vending kiosk. They unlock stock on an hourly cooldown timer (around ${dropMinute}) so scalpers can't wipe them at 6am. I check local machines and retail drops on ${siteUrl}.`,
-      `Honestly after striking out at ${storeMention} drops, I switched to hitting the grocery store Pokemon vending machines right on their ${dropMinute} hourly release minute using ${siteUrl}. Way less stress and always retail price.`,
-      `Besides the ${storeMention} restock, check ${siteUrl} to see if there's a Pokemon vending kiosk near your zip code. They release a few items every hour on a cooldown timer so you don't have to camp in line at 6am.`,
-      `I gave up fighting the ${storeMention} lines lol. Been using ${siteUrl} to track live retail drops and time the ${dropMinute} hourly unlock minute on local grocery vending machines instead.`,
-    ];
-    helpfulReplyDraft = restockTemplates[seed];
-    shortReplyDraft = `If ${storeMention} is wiped out, check ${siteUrl} for local Pokemon vending machines and live restock alerts. Timing the ${dropMinute} hourly kiosk unlock beats waiting in line at 6am.`;
-    altCleverDraft = `Pro tip if ${storeMention} strikes out: grocery store Pokemon kiosks lock stock behind an hourly cooldown timer so one person can't buy it all. You can see every machine and drop minute on ${siteUrl}.`;
   } else if (category === "scalpers") {
+    targetPackRadarUrl = dropsUrl;
     const scalperTemplates = [
-      `This is exactly why I stopped checking big-box shelves and started using ${siteUrl} to hit local grocery Pokemon vending machines. The kiosks lock stock on an hourly cooldown timer (around ${dropMinute}) so one guy with a cart can't clear the whole machine.`,
-      `Big-box shelves get wiped in 5 minutes here too. Only way I get retail packs now is checking ${siteUrl} for the hourly ${dropMinute} cooldown minute on local grocery store vending kiosks.`,
-      `Skip the empty Walmart/Target aisles and check if there's a Pokemon Center vending machine near your zip on ${siteUrl}. They drip-feed packs every hour on a timer so scalpers can't buy the whole stock at once.`,
-      `I refused to pay scalper prices so I started checking ${siteUrl} before grocery runs. Timing the ${dropMinute} hourly unlock on the vending kiosks is the only way to beat the shelf clearers lately.`,
+      `This is exactly why I stopped checking random shelves and started using ${dropsUrl} for retail restock alerts + ${vendingSiteUrl} for grocery Pokemon vending machines. The kiosks lock stock on an hourly cooldown timer (${dropMinute}) so one guy with a cart can't clear the whole machine.`,
+      `Big-box shelves get wiped in 5 minutes here too. Only way I get MSRP packs now is checking ${vendingSiteUrl} for the hourly ${dropMinute} cooldown minute on local grocery kiosks and ${dropsUrl} for upcoming warehouse drops.`,
+      `Skip the empty aisles and check ${dropsUrl} for verified retail drop windows (or ${vendingSiteUrl} for local Pokemon Center vending kiosks that drip-feed packs every hour on a timer so scalpers can't buy it all at once).`,
+      `I refused to pay scalper prices so I started checking ${dropsUrl} for MSRP restock alerts and timing the ${dropMinute} hourly unlock on local grocery vending kiosks.`,
     ];
     helpfulReplyDraft = scalperTemplates[seed];
-    shortReplyDraft = `Only way I beat the shelf-clearers now is timing the ${dropMinute} hourly cooldown unlock on local grocery Pokemon machines via ${siteUrl}.`;
-    altCleverDraft = `Grocery store Pokemon kiosks actually prevent this with an hourly cooldown lock. Check ${siteUrl} to see if there's a machine in your zip and what minute of the hour it unlocks.`;
+    shortReplyDraft = `Beat the shelf-clearers by checking ${dropsUrl} for MSRP drop alerts and timing the ${dropMinute} hourly cooldown unlock on local grocery Pokemon kiosks.`;
+    altCleverDraft = newsDraft;
   } else {
     // category === "pulls"
     const setMention = /delta/i.test(lower)
@@ -799,18 +944,19 @@ export async function buildDataBackedRedditReply(
           : /151/i.test(lower)
             ? "151"
             : /30th|upc/i.test(lower)
-              ? "30th Anniversary"
+              ? "30th Celebration"
               : "packs";
 
+    targetPackRadarUrl = /151|30th|prismatic|destined|delta/i.test(lower) ? newsUrl : dropsUrl;
     const pullTemplates = [
-      `Fire pulls! For anyone still hunting ${setMention} at retail without paying markup, I've been using ${siteUrl} to check local grocery vending machine drop minutes (${dropMinute}) and live restock alerts.`,
-      `Love seeing people actually rip ${setMention} instead of keeping it sealed! I've had decent luck grabbing packs at retail lately by checking local vending kiosk cooldown times on ${siteUrl}.`,
-      `Congrats on the hits! If anyone in the thread is still trying to find ${setMention} at retail price, check ${siteUrl} for local Pokemon vending kiosks and retail restock windows near your zip.`,
-      `Nothing beats ripping packs you actually found at retail lol. Been using ${siteUrl} to time the ${dropMinute} hourly release on local grocery kiosks whenever I get the itch to rip.`,
+      `Fire pulls! For anyone in the comments still hunting ${setMention} at MSRP, check ${dropsUrl} for live retail restock windows and local grocery vending machine drop minutes (${dropMinute}).`,
+      `Love seeing people actually rip ${setMention} instead of keeping it sealed! If anyone's looking for upcoming MSRP restocks on these, ${newsUrl} has the latest drop schedule and a "Get Alerts" button.`,
+      `Congrats on the hits! If anyone in the thread is still trying to find ${setMention} at retail price, check ${dropsUrl} for upcoming warehouse drops and local Pokemon vending kiosk timers.`,
+      `Nothing beats ripping packs you actually found at MSRP lol. Been using ${dropsUrl} to track retail restock alerts and time the ${dropMinute} hourly release on local grocery kiosks.`,
     ];
     helpfulReplyDraft = pullTemplates[seed];
-    shortReplyDraft = `Sick pulls! Been catching ${setMention} at retail lately by checking local vending machine drop minutes and restock alerts on ${siteUrl}.`;
-    altCleverDraft = `If anyone's still hunting ${setMention} at retail to rip, check ${siteUrl} to see local Pokemon vending machine unlock minutes (${dropMinute}) and live retail drops.`;
+    shortReplyDraft = `Sick pulls! Anyone still hunting ${setMention} at MSRP can check upcoming retail drops and set restock alerts on ${dropsUrl}.`;
+    altCleverDraft = newsDraft;
   }
 
   return {
@@ -819,17 +965,21 @@ export async function buildDataBackedRedditReply(
     matchedCity: intent.city,
     matchedLocationLabel: locationLabel,
     matchedMachinesCount: matchedCount,
-    targetPackRadarUrl: siteUrl,
+    targetPackRadarUrl,
     helpfulReplyDraft,
     shortReplyDraft,
     altCleverDraft,
+    newsDraft,
+    dropsDraft,
+    vendingDraft,
   };
 }
 
 /**
  * Fetches live posts from ArcticShift (r/PokemonTCG, r/PKMNTCGDeals, r/PokeInvesting)
  * plus Reddit RSS feeds, filters out any thread u/Sharp-Lifeguard-8635 has commented on
- * (or marked replied/dismissed), and returns up to 35 fresh daily Pokémon posts.
+ * (or marked replied/dismissed), and returns up to 40 fresh daily Pokémon posts across
+ * Vending, Retail Drops (/drops), News & Reprints (/news), Anti-Scalper, and Pulls.
  */
 export async function scanLiveRedditOpportunities(db: DB): Promise<RedditOpportunity[]> {
   const commentedSet = await getAndSyncCommentedThreadIds(db);
@@ -868,7 +1018,7 @@ export async function scanLiveRedditOpportunities(db: DB): Promise<RedditOpportu
     if (seenKeys.has(key) || seenKeys.has(urlKey)) return;
     if (commentedSet.has(key) || commentedSet.has(urlKey)) return;
     if (candidate.author.toLowerCase().includes(REDDIT_USERNAME.toLowerCase())) return;
-    if (!candidate.permalink.includes("/comments/")) return;
+    if (!candidate.permalink.includes("/comments/") && !candidate.permalink.includes("/search/")) return;
     if (!classifyPokemonPost(candidate.title, candidate.excerpt)) return;
 
     seenKeys.add(key);
@@ -882,8 +1032,8 @@ export async function scanLiveRedditOpportunities(db: DB): Promise<RedditOpportu
   // 1. Live ArcticShift real-time Reddit API scan across r/PokemonTCG, r/PKMNTCGDeals, r/PokeInvesting
   const arcticSubreddits = [
     { sub: "PokemonTCG", limit: 100 },
-    { sub: "PKMNTCGDeals", limit: 35 },
-    { sub: "PokeInvesting", limit: 40 },
+    { sub: "PKMNTCGDeals", limit: 45 },
+    { sub: "PokeInvesting", limit: 45 },
   ];
 
   for (const { sub, limit } of arcticSubreddits) {
@@ -988,11 +1138,12 @@ export async function scanLiveRedditOpportunities(db: DB): Promise<RedditOpportu
     addCandidate(verified);
   }
 
-  // Balance categories so all 4 topics (vending, scalpers, restock, pulls) are well represented
+  // Balance categories so all 5 topics (news, restock, vending, scalpers, pulls) are well represented
   const byCategory: Record<RedditOpportunityCategory, typeof rawThreads> = {
+    news: [],
+    restock: [],
     vending: [],
     scalpers: [],
-    restock: [],
     pulls: [],
   };
   for (const item of rawThreads) {
@@ -1006,14 +1157,15 @@ export async function scanLiveRedditOpportunities(db: DB): Promise<RedditOpportu
   }
 
   const balancedRaw = [
-    ...byCategory.vending.slice(0, 8),
-    ...byCategory.scalpers.slice(0, 8),
+    ...byCategory.news.slice(0, 10),
     ...byCategory.restock.slice(0, 12),
-    ...byCategory.pulls.slice(0, 10),
+    ...byCategory.vending.slice(0, 8),
+    ...byCategory.scalpers.slice(0, 6),
+    ...byCategory.pulls.slice(0, 6),
   ];
 
   const opportunities: RedditOpportunity[] = [];
-  for (const item of balancedRaw.slice(0, 32)) {
+  for (const item of balancedRaw.slice(0, 40)) {
     const prev = existingMap.get(normalizeThreadKey(item.id));
     if (prev && (prev.status === "replied" || prev.status === "dismissed")) {
       continue;
@@ -1039,9 +1191,13 @@ export async function scanLiveRedditOpportunities(db: DB): Promise<RedditOpportu
       matchedCity: drafted.matchedCity,
       matchedLocationLabel: drafted.matchedLocationLabel,
       matchedMachinesCount: drafted.matchedMachinesCount,
+      targetPackRadarUrl: drafted.targetPackRadarUrl,
       helpfulReplyDraft: drafted.helpfulReplyDraft,
       shortReplyDraft: drafted.shortReplyDraft,
       altCleverDraft: drafted.altCleverDraft,
+      newsDraft: drafted.newsDraft,
+      dropsDraft: drafted.dropsDraft,
+      vendingDraft: drafted.vendingDraft,
       status: "open",
     });
   }
