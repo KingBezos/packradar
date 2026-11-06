@@ -341,7 +341,7 @@ export async function seedIfEmpty(db: DB) {
         emailVerified: true,
         role: "user",
         plan: "premium",
-        reputation: 47,
+        reputation: 9,
         homeZip: "98107",
       },
     ])
@@ -369,10 +369,40 @@ export async function seedIfEmpty(db: DB) {
         reason: "Community drop confirmation",
       },
       {
-        id: "rep-seed-voltscoutbot-35",
+        id: "rep-pikachuelite-drop-q00810",
         userId: "u-packradar-worker-bot",
-        delta: 35,
-        reason: "Daily route spotter & usability verification",
+        delta: 2,
+        reason: "Report live drop at Q00810",
+      },
+      {
+        id: "rep-pikachuelite-stock-q00810",
+        userId: "u-packradar-worker-bot",
+        delta: 1,
+        reason: "Stock check at Q00810",
+      },
+      {
+        id: "rep-pikachuelite-drop-q01328",
+        userId: "u-packradar-worker-bot",
+        delta: 2,
+        reason: "Report live drop at Q01328",
+      },
+      {
+        id: "rep-pikachuelite-stock-q01328",
+        userId: "u-packradar-worker-bot",
+        delta: 1,
+        reason: "Stock check at Q01328",
+      },
+      {
+        id: "rep-pikachuelite-drop-q00901",
+        userId: "u-packradar-worker-bot",
+        delta: 2,
+        reason: "Report live drop at Q00901",
+      },
+      {
+        id: "rep-pikachuelite-stock-q00901",
+        userId: "u-packradar-worker-bot",
+        delta: 1,
+        reason: "Stock check at Q00901",
       },
     ])
     .onConflictDoNothing();

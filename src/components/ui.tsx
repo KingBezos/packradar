@@ -106,12 +106,111 @@ export function Avatar({ name, size = 28 }: { name: string; image?: string | nul
   );
 }
 
-export function reputationBadge(rep: number): { label: string; color: string } {
-  if (rep <= -5) return { label: "Flagged Spammer (Muted)", color: "text-red-400" };
-  if (rep < 0) return { label: "Probation (-Rep)", color: "text-amber-300" };
-  if (rep >= 1000) return { label: "Legend", color: "text-volt" };
-  if (rep >= 300) return { label: "Elite Tracker", color: "text-purple-300" };
-  if (rep >= 100) return { label: "Ace Spotter", color: "text-sky-300" };
-  if (rep >= 25) return { label: "Trainer", color: "text-green-400" };
-  return { label: "Rookie", color: "text-muted" };
+export const EARNABLE_RANKS = [
+  {
+    rank: 1,
+    label: "Rookie",
+    icon: "🌱",
+    minRep: 0,
+    maxRep: 1,
+    rangeLabel: "0 – 1 Rep / day",
+    color: "text-slate-300",
+    badgeCls: "border-slate-500/40 bg-slate-500/10 text-slate-200",
+    perk: "Starting daily rank — resets every day at 12:00 AM PT",
+  },
+  {
+    rank: 2,
+    label: "Trainer",
+    icon: "⚡",
+    minRep: 2,
+    maxRep: 4,
+    rangeLabel: "2 – 4 Rep / day",
+    color: "text-green-400",
+    badgeCls: "border-green-500/40 bg-green-500/15 text-green-300",
+    perk: "Earned by logging 1 live drop (+2 Rep) or 2 stock checks today",
+  },
+  {
+    rank: 3,
+    label: "Ace Spotter",
+    icon: "🎯",
+    minRep: 5,
+    maxRep: 9,
+    rangeLabel: "5 – 9 Rep / day",
+    color: "text-sky-300",
+    badgeCls: "border-sky-500/40 bg-sky-500/15 text-sky-300",
+    perk: "Earned by confirming a corroborated drop (+5 Rep) or multi-stop check-in today",
+  },
+  {
+    rank: 4,
+    label: "Elite Tracker",
+    icon: "🔥",
+    minRep: 10,
+    maxRep: 24,
+    rangeLabel: "10 – 24 Rep / day",
+    color: "text-purple-300",
+    badgeCls: "border-purple-500/40 bg-purple-500/15 text-purple-300",
+    perk: "Earned by hitting First Finder (+10 Rep) or a full metro corridor run today",
+  },
+  {
+    rank: 5,
+    label: "Legend",
+    icon: "👑",
+    minRep: 25,
+    maxRep: null,
+    rangeLabel: "25+ Rep / day",
+    color: "text-volt",
+    badgeCls: "border-volt/50 bg-volt/15 text-volt",
+    perk: "Master daily rank — earned via Photo Verification (+25 Rep) or top daily route hunting",
+  },
+] as const;
+
+export function reputationBadge(rep: number): { label: string; color: string; icon: string; badgeCls: string } {
+  if (rep <= -5)
+    return {
+      label: "Flagged Spammer (Muted)",
+      color: "text-red-400",
+      icon: "🚫",
+      badgeCls: "border-red-500/40 bg-red-500/15 text-red-300",
+    };
+  if (rep < 0)
+    return {
+      label: "Probation (-Rep)",
+      color: "text-amber-300",
+      icon: "⚠️",
+      badgeCls: "border-amber-500/40 bg-amber-500/15 text-amber-200",
+    };
+  if (rep >= 25)
+    return {
+      label: "Legend",
+      color: "text-volt",
+      icon: "👑",
+      badgeCls: "border-volt/50 bg-volt/15 text-volt",
+    };
+  if (rep >= 10)
+    return {
+      label: "Elite Tracker",
+      color: "text-purple-300",
+      icon: "🔥",
+      badgeCls: "border-purple-500/40 bg-purple-500/15 text-purple-300",
+    };
+  if (rep >= 5)
+    return {
+      label: "Ace Spotter",
+      color: "text-sky-300",
+      icon: "🎯",
+      badgeCls: "border-sky-500/40 bg-sky-500/15 text-sky-300",
+    };
+  if (rep >= 2)
+    return {
+      label: "Trainer",
+      color: "text-green-400",
+      icon: "⚡",
+      badgeCls: "border-green-500/40 bg-green-500/15 text-green-300",
+    };
+  return {
+    label: "Rookie",
+    color: "text-slate-300",
+    icon: "🌱",
+    badgeCls: "border-slate-500/40 bg-slate-500/10 text-slate-200",
+  };
 }

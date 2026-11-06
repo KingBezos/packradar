@@ -147,17 +147,8 @@ export const workerUserBot: Adapter = {
           emailVerified: true,
           role: "user",
           plan: "premium",
-          reputation: 35,
+          reputation: 0,
           homeZip: WORKER_BOT_USER.homeZip,
-        })
-        .onConflictDoNothing();
-      await db
-        .insert(reputationEvents)
-        .values({
-          id: "rep-seed-voltscoutbot-35",
-          userId: WORKER_BOT_USER.id,
-          delta: 35,
-          reason: "Daily route spotter & usability verification",
         })
         .onConflictDoNothing();
       log(`Created registered collector user ${WORKER_BOT_USER.name} (${WORKER_BOT_USER.email})`);
@@ -169,6 +160,56 @@ export const workerUserBot: Adapter = {
       botDisplayName = WORKER_BOT_USER.name;
     } else if (existingBot.name) {
       botDisplayName = existingBot.name;
+    }
+
+    // 1b. Clean up any legacy synthetic +35 or bundled +6 rep events on PikachuElite and replace with real +2 (drop) / +1 (stock) events
+    const botRepEvents = await db
+      .select()
+      .from(reputationEvents)
+      .where(eq(reputationEvents.userId, WORKER_BOT_USER.id));
+    const invalidBotEvents = botRepEvents.filter(
+      (ev) => ev.id === "rep-seed-voltscoutbot-35" || ev.delta === 35 || ev.delta === 6,
+    );
+    if (invalidBotEvents.length > 0) {
+      for (const bad of invalidBotEvents) {
+        await db.delete(reputationEvents).where(eq(reputationEvents.id, bad.id));
+      }
+      // Backfill individual +2 Rep (Report live drop) & +1 Rep (Stock check) events from PikachuElite's actual observations
+      const remainingEvents = botRepEvents.filter(
+        (ev) => ev.id !== "rep-seed-voltscoutbot-35" && ev.delta !== 35 && ev.delta !== 6,
+      );
+      if (remainingEvents.length === 0) {
+        const botObs = await db
+          .select()
+          .from(dropObservations)
+          .where(eq(dropObservations.userId, WORKER_BOT_USER.id))
+          .orderBy(desc(dropObservations.createdAt))
+          .limit(6);
+        for (const obs of botObs) {
+          await db.insert(reputationEvents).values({
+            userId: WORKER_BOT_USER.id,
+            delta: 2,
+            reason: `Report live drop at ${obs.machineId}`,
+            createdAt: obs.createdAt,
+          });
+          await db.insert(reputationEvents).values({
+            userId: WORKER_BOT_USER.id,
+            delta: 1,
+            reason: `Stock check at ${obs.machineId}`,
+            createdAt: obs.createdAt,
+          });
+        }
+      }
+      const updatedBotEvents = await db
+        .select()
+        .from(reputationEvents)
+        .where(eq(reputationEvents.userId, WORKER_BOT_USER.id));
+      const cleanBotRep = updatedBotEvents.reduce((sum, e) => sum + (e.delta ?? 0), 0);
+      await db
+        .update(user)
+        .set({ reputation: cleanBotRep, updatedAt: new Date() })
+        .where(eq(user.id, WORKER_BOT_USER.id));
+      fixesApplied += invalidBotEvents.length;
     }
 
     // Ensure any legacy "VoltScoutBot" strings in the public activity ticker use the Stealth Display Name (PikachuElite)
@@ -304,22 +345,32 @@ export const workerUserBot: Adapter = {
           createdAt: new Date(Date.now() - i * 8 * 60_000),
         });
 
+        await db.insert(reputationEvents).values({
+          userId: WORKER_BOT_USER.id,
+          delta: 2,
+          reason: `Report live drop at ${m.id}`,
+          createdAt: new Date(Date.now() - i * 12 * 60_000),
+        });
+        await db.insert(reputationEvents).values({
+          userId: WORKER_BOT_USER.id,
+          delta: 1,
+          reason: `Stock check at ${m.id}`,
+          createdAt: new Date(Date.now() - i * 12 * 60_000),
+        });
+
         dropsLogged++;
       }
 
       if (dropsLogged > 0) {
-        const repGain = dropsLogged * 2;
-        const [botNow] = await db.select().from(user).where(eq(user.id, WORKER_BOT_USER.id));
-        const nextRep = (botNow?.reputation ?? 35) + repGain;
+        const allBotEvs = await db
+          .select()
+          .from(reputationEvents)
+          .where(eq(reputationEvents.userId, WORKER_BOT_USER.id));
+        const nextRep = allBotEvs.reduce((sum, e) => sum + (e.delta ?? 0), 0);
         await db
           .update(user)
           .set({ reputation: nextRep, updatedAt: new Date() })
           .where(eq(user.id, WORKER_BOT_USER.id));
-        await db.insert(reputationEvents).values({
-          userId: WORKER_BOT_USER.id,
-          delta: repGain,
-          reason: `Confirmed ${dropsLogged} live machine drop windows`,
-        });
       }
     }
 
