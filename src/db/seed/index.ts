@@ -9,7 +9,7 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
-import { sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import type { DB } from "@/db";
 import { activity, alertSubscriptions, dropCandidates, machines, newsPosts, releases, reputationEvents, settings, sponsors, user } from "@/db/schema";
 import { titleCase, type OfficialMachine } from "@/lib/machines";
@@ -336,16 +336,22 @@ export async function seedIfEmpty(db: DB) {
       },
       {
         id: "u-packradar-worker-bot",
-        name: "VoltScoutBot",
+        name: "PikachuElite",
         email: "bot@packradar.com",
         emailVerified: true,
         role: "user",
         plan: "premium",
-        reputation: 35,
+        reputation: 47,
         homeZip: "98107",
       },
     ])
     .onConflictDoNothing();
+
+  // If the worker bot user was previously seeded with "VoltScoutBot", update its name to "PikachuElite"
+  await db
+    .update(user)
+    .set({ name: "PikachuElite" })
+    .where(and(eq(user.id, "u-packradar-worker-bot"), eq(user.name, "VoltScoutBot")));
 
   await db
     .insert(reputationEvents)

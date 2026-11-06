@@ -3782,7 +3782,7 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
             {isAdmin && (
               <div className="flex flex-wrap gap-2">
                 <button className="btn-ghost text-xs" onClick={() => runBot("worker-user-bot", { forceReport: true })}>
-                  <Bot className="h-4 w-4 text-volt" /> Run VoltScoutBot (User + Audit)
+                  <Bot className="h-4 w-4 text-volt" /> Run PikachuElite (User + Audit)
                 </button>
                 <button className="btn-ghost text-xs" onClick={() => runBot("discord-outreach")}>
                   <MessageSquare className="h-4 w-4 text-indigo-400" /> Run Discord Outreach Bot

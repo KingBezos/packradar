@@ -1,7 +1,7 @@
 /**
  * PackRadar Daily Worker User Bot (`worker-user-bot`)
  *
- * Acts as an actual registered collector user on PackRadar (`VoltScoutBot`, `bot@packradar.com`)
+ * Acts as an actual registered collector user on PackRadar (`PikachuElite`, `bot@packradar.com`)
  * who logs in every day (and every 6 hours) to:
  *  1. Walk & audit the live website for usability, broken links, missing coordinates, uncalibrated
  *     schedules, search/alert friction, and conversion bottlenecks.
@@ -15,7 +15,7 @@
  *     - Logs a fresh stock check-in on an active machine
  */
 import crypto from "node:crypto";
-import { and, desc, eq, gte, isNotNull, sql } from "drizzle-orm";
+import { and, desc, eq, gte, isNotNull, like, sql } from "drizzle-orm";
 import {
   activity,
   alertSubscriptions,
@@ -40,7 +40,7 @@ import type { AdminInboxItem } from "@/app/api/contact/route";
 
 export const WORKER_BOT_USER = {
   id: "u-packradar-worker-bot",
-  name: "VoltScoutBot",
+  name: "PikachuElite",
   email: "bot@packradar.com",
   homeZip: "98107",
 };
@@ -124,9 +124,9 @@ const TRAFFIC_AND_EFFICIENCY_PLAYBOOK: {
 
 export const workerUserBot: Adapter = {
   name: "worker-user-bot",
-  label: "VoltScoutBot (Daily User & Usability/Traffic Advisor Bot)",
+  label: "PikachuElite (Daily User & Usability/Traffic Advisor Bot)",
   description:
-    "Acts as a real collector user (VoltScoutBot): scans the site daily for usability, auto-fixes issues, logs aligned drop times & helpful comments to spark activity, and posts traffic/efficiency ideas to the Admin Inbox.",
+    "Acts as a real collector user (PikachuElite): scans the site daily for usability, auto-fixes issues, logs aligned drop times & helpful comments to spark activity, and posts traffic/efficiency ideas to the Admin Inbox.",
   daily: true,
   async run({ db, log, options }) {
     const forceReport = Boolean(options?.forceReport);
@@ -134,8 +134,9 @@ export const workerUserBot: Adapter = {
     let dropsLogged = 0;
     let commentsPosted = 0;
 
-    // 1. Ensure VoltScoutBot exists as an actual registered user in the `user` table
+    // 1. Ensure PikachuElite exists as an actual registered user in the `user` table and respect any custom rename
     const [existingBot] = await db.select().from(user).where(eq(user.id, WORKER_BOT_USER.id));
+    let botDisplayName = WORKER_BOT_USER.name;
     if (!existingBot) {
       await db
         .insert(user)
@@ -160,6 +161,27 @@ export const workerUserBot: Adapter = {
         })
         .onConflictDoNothing();
       log(`Created registered collector user ${WORKER_BOT_USER.name} (${WORKER_BOT_USER.email})`);
+    } else if (existingBot.name === "VoltScoutBot") {
+      await db
+        .update(user)
+        .set({ name: WORKER_BOT_USER.name, updatedAt: new Date() })
+        .where(eq(user.id, WORKER_BOT_USER.id));
+      botDisplayName = WORKER_BOT_USER.name;
+    } else if (existingBot.name) {
+      botDisplayName = existingBot.name;
+    }
+
+    // Ensure any legacy "VoltScoutBot" strings in the public activity ticker use the Stealth Display Name (PikachuElite)
+    const legacyActivityRows = await db
+      .select()
+      .from(activity)
+      .where(like(activity.message, "%VoltScoutBot%"));
+    for (const act of legacyActivityRows) {
+      await db
+        .update(activity)
+        .set({ message: act.message.replace(/VoltScoutBot/g, botDisplayName) })
+        .where(eq(activity.id, act.id));
+      fixesApplied++;
     }
 
     // 2. Scan website data & usability health + auto-fix any anomalies
@@ -277,7 +299,7 @@ export const workerUserBot: Adapter = {
           type: "drop_observed",
           machineId: m.id,
           userId: WORKER_BOT_USER.id,
-          message: `🟢 ${WORKER_BOT_USER.name} confirmed :${String(m.anchorMinute).padStart(2, "0")} drop at ${m.retailer} ${m.city} (${m.id})`,
+          message: `🟢 ${botDisplayName} confirmed :${String(m.anchorMinute).padStart(2, "0")} drop at ${m.retailer} ${m.city} (${m.id})`,
           url: `/machines/${m.id}`,
           createdAt: new Date(Date.now() - i * 8 * 60_000),
         });
@@ -364,8 +386,10 @@ export const workerUserBot: Adapter = {
       year: "numeric",
       timeZone: "America/Los_Angeles",
     });
-    const reportSubject = `🤖 VoltScoutBot Daily Audit & Growth Report (${todayStr})`;
-    const alreadyReportedToday = currentInbox.some((it) => it.subject === reportSubject);
+    const reportSubject = `🤖 ${botDisplayName} Daily Audit & Growth Report (${todayStr})`;
+    const alreadyReportedToday = currentInbox.some(
+      (it) => it.subject === reportSubject || it.subject.includes(`Daily Audit & Growth Report (${todayStr})`),
+    );
 
     if (!alreadyReportedToday || forceReport) {
       const playbook =
@@ -390,7 +414,7 @@ export const workerUserBot: Adapter = {
         `✅ DAILY USABILITY & SELF-HEAL SCAN (${todayStr}):`,
         `• Audited ${activeMachines.length} active machines (${scheduledMachines.length} with calibrated timers, ${highConfidenceMachines.length} high-confidence ≥85%).`,
         `• Verified ${zipPassCount}/${Math.max(1, topZips.length)} top searched US ZIP centroids, ${allListings.length} retail listings, ${allNews.length} news posts, and ${allReleases.length} upcoming TCG sets.`,
-        `• Auto-healed ${fixesApplied} schedule/candidate links and logged ${dropsLogged} aligned drop confirmations + ${commentsPosted} collector comments as ${WORKER_BOT_USER.name}.`,
+        `• Auto-healed ${fixesApplied} schedule/candidate links and logged ${dropsLogged} aligned drop confirmations + ${commentsPosted} collector comments as ${botDisplayName}.`,
         ``,
         `📈 LIVE TRAFFIC SNAPSHOT:`,
         `• Human Pageviews: ${analytics.totalHumanPageviews ?? 0} (${analytics.allTimeUniqueVisitorHashes?.length ?? 0} unique collectors · ${analytics.totalSearches ?? 0} searches · ${allAlerts.length} active user alerts).`,
@@ -405,7 +429,19 @@ export const workerUserBot: Adapter = {
         `• Usability Note: ${playbook.usabilityNote}`,
       ].join("\n");
 
-      const filteredInbox = currentInbox.filter((it) => it.subject !== reportSubject);
+      const filteredInbox = currentInbox
+        .filter(
+          (it) =>
+            it.subject !== reportSubject &&
+            !it.subject.includes(`Daily Audit & Growth Report (${todayStr})`),
+        )
+        .map((it) => ({
+          ...it,
+          subject: it.subject.replace(/VoltScoutBot/g, botDisplayName),
+          senderName: it.senderName?.replace(/VoltScoutBot/g, botDisplayName),
+          message: it.message.replace(/VoltScoutBot/g, botDisplayName),
+        }));
+
       const newItem: AdminInboxItem = {
         id: `bot-report-${new Date().toISOString().slice(0, 10)}`,
         kind: "admin_alert",
@@ -413,7 +449,7 @@ export const workerUserBot: Adapter = {
         subject: reportSubject,
         message,
         pageUrl: "/admin",
-        senderName: `${WORKER_BOT_USER.name} (Autonomous Worker User)`,
+        senderName: `${botDisplayName} (Autonomous Worker User)`,
         senderEmail: WORKER_BOT_USER.email,
         status: "open",
         emailStatus: "none",
@@ -442,7 +478,7 @@ export const workerUserBot: Adapter = {
       found: activeMachines.length,
       created: dropsLogged + commentsPosted,
       updated: fixesApplied,
-      note: `VoltScoutBot logged ${dropsLogged} aligned drops, ${commentsPosted} comments, ${fixesApplied} auto-fixes, and updated Admin Inbox report.`,
+      note: `${botDisplayName} logged ${dropsLogged} aligned drops, ${commentsPosted} comments, ${fixesApplied} auto-fixes, and updated Admin Inbox report.`,
     };
   },
 };
