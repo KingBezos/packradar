@@ -39,6 +39,12 @@ const STATE_NAMES: Record<string, string> = {
 
 export const REDDIT_USERNAME = "Sharp-Lifeguard-8635";
 
+/**
+ * Once a Reddit thread link is clicked, keep it flagged at the bottom for 2 hours
+ * ("a couple hours") and then automatically mark it as commented/removed so you never double-post.
+ */
+export const CLICKED_HOLD_DURATION_MS = 2 * 60 * 60 * 1000;
+
 export type RedditOpportunityCategory = "vending" | "restock" | "news" | "scalpers" | "pulls";
 
 export interface RedditOpportunity {
@@ -61,7 +67,8 @@ export interface RedditOpportunity {
   newsDraft?: string;
   dropsDraft?: string;
   vendingDraft?: string;
-  status: "open" | "replied" | "dismissed";
+  status: "open" | "clicked" | "replied" | "dismissed";
+  clickedAt?: string | null;
 }
 
 /**
@@ -591,25 +598,117 @@ export function detectLocationIntent(text: string): {
 }
 
 /**
+ * Reads `redditClickedTimestampsV1` (map of normalizedThreadKey -> clickedAt ISO timestamp),
+ * expires any thread clicked >= 2 hours (`CLICKED_HOLD_DURATION_MS`) ago so it gets permanently
+ * promoted into `redditCommentedIdsV1`, and returns the still-active (< 2h) clicked map.
+ */
+export async function getAndPruneClickedThreadMap(db: DB): Promise<{
+  activeClickedMap: Record<string, string>;
+  expiredIds: string[];
+}> {
+  const [clickRow] = await db
+    .select()
+    .from(settings)
+    .where(eq(settings.key, "redditClickedTimestampsV1"));
+  const rawMap: Record<string, string> =
+    clickRow?.value && typeof clickRow.value === "object" && !Array.isArray(clickRow.value)
+      ? (clickRow.value as Record<string, string>)
+      : {};
+
+  const activeClickedMap: Record<string, string> = {};
+  const expiredIds: string[] = [];
+  const now = Date.now();
+  let changed = false;
+
+  for (const [k, ts] of Object.entries(rawMap)) {
+    const key = normalizeThreadKey(k);
+    const clickedMs = new Date(ts).getTime();
+    if (!Number.isFinite(clickedMs) || now - clickedMs >= CLICKED_HOLD_DURATION_MS) {
+      expiredIds.push(key);
+      changed = true;
+    } else {
+      activeClickedMap[key] = ts;
+    }
+  }
+
+  if (changed) {
+    await db
+      .insert(settings)
+      .values({ key: "redditClickedTimestampsV1", value: activeClickedMap })
+      .onConflictDoUpdate({
+        target: settings.key,
+        set: { value: activeClickedMap, updatedAt: new Date() },
+      });
+  }
+
+  return { activeClickedMap, expiredIds };
+}
+
+/**
+ * Flags a thread as clicked right now (moving it to the bottom for 2 hours before permanent removal).
+ */
+export async function markRedditThreadClicked(
+  db: DB,
+  id: string,
+  permalink?: string,
+): Promise<string> {
+  const { activeClickedMap } = await getAndPruneClickedThreadMap(db);
+  const nowIso = new Date().toISOString();
+  const key = normalizeThreadKey(id);
+  activeClickedMap[key] = activeClickedMap[key] || nowIso;
+  if (permalink) {
+    const urlKey = normalizeThreadKey(permalink);
+    activeClickedMap[urlKey] = activeClickedMap[urlKey] || nowIso;
+  }
+  await db
+    .insert(settings)
+    .values({ key: "redditClickedTimestampsV1", value: activeClickedMap })
+    .onConflictDoUpdate({
+      target: settings.key,
+      set: { value: activeClickedMap, updatedAt: new Date() },
+    });
+  return activeClickedMap[key];
+}
+
+export function sortOpportunitiesOpenFirst(list: RedditOpportunity[]): RedditOpportunity[] {
+  const openItems = list.filter((o) => o.status === "open");
+  const clickedItems = list
+    .filter((o) => o.status === "clicked")
+    .sort((a, b) => {
+      const ta = a.clickedAt ? new Date(a.clickedAt).getTime() : 0;
+      const tb = b.clickedAt ? new Date(b.clickedAt).getTime() : 0;
+      return tb - ta;
+    });
+  return [...openItems, ...clickedItems];
+}
+
+/**
  * Fetches live comments by u/Sharp-Lifeguard-8635 from ArcticShift and Reddit RSS,
- * merges them with persistent `redditCommentedIdsV1` in `settings` and `INITIAL_COMMENTED_THREAD_IDS`,
- * and saves the updated set back to DB.
+ * merges them with persistent `redditCommentedIdsV1` in `settings`, `INITIAL_COMMENTED_THREAD_IDS`,
+ * and any clicked threads whose 2-hour hold timer has expired, and saves the updated set back to DB.
  */
 export async function getAndSyncCommentedThreadIds(db: DB): Promise<Set<string>> {
+  const { expiredIds } = await getAndPruneClickedThreadMap(db);
   const [row] = await db.select().from(settings).where(eq(settings.key, "redditCommentedIdsV1"));
   const stored: string[] = Array.isArray(row?.value) ? (row.value as string[]) : [];
   const commentedSet = new Set<string>([
     ...INITIAL_COMMENTED_THREAD_IDS.map(normalizeThreadKey),
     ...stored.map(normalizeThreadKey),
+    ...expiredIds.map(normalizeThreadKey),
   ]);
 
-  // Also check any threads marked as replied/dismissed in redditOpportunitiesV1
+  // Also check any threads marked as replied/dismissed or expired-clicked in redditOpportunitiesV1
   const [oppRow] = await db.select().from(settings).where(eq(settings.key, "redditOpportunitiesV1"));
   const existingOpps: RedditOpportunity[] = Array.isArray(oppRow?.value)
     ? (oppRow.value as RedditOpportunity[])
     : [];
+  const now = Date.now();
   for (const o of existingOpps) {
-    if (o.status === "replied" || o.status === "dismissed") {
+    const isExpiredClick =
+      o.status === "clicked" &&
+      o.clickedAt &&
+      now - new Date(o.clickedAt).getTime() >= CLICKED_HOLD_DURATION_MS;
+    if (o.status === "replied" || o.status === "dismissed" || isExpiredClick) {
       commentedSet.add(normalizeThreadKey(o.id));
       if (o.permalink) commentedSet.add(normalizeThreadKey(o.permalink));
     }
@@ -1164,10 +1263,26 @@ export async function scanLiveRedditOpportunities(db: DB): Promise<RedditOpportu
     ...byCategory.pulls.slice(0, 6),
   ];
 
+  const { activeClickedMap } = await getAndPruneClickedThreadMap(db);
   const opportunities: RedditOpportunity[] = [];
   for (const item of balancedRaw.slice(0, 40)) {
-    const prev = existingMap.get(normalizeThreadKey(item.id));
+    const key = normalizeThreadKey(item.id);
+    const urlKey = normalizeThreadKey(item.permalink);
+    const prev = existingMap.get(key);
     if (prev && (prev.status === "replied" || prev.status === "dismissed")) {
+      continue;
+    }
+
+    const clickedAt =
+      activeClickedMap[key] ||
+      activeClickedMap[urlKey] ||
+      (prev?.status === "clicked" && prev.clickedAt ? prev.clickedAt : null);
+
+    if (
+      clickedAt &&
+      Date.now() - new Date(clickedAt).getTime() >= CLICKED_HOLD_DURATION_MS
+    ) {
+      await markRedditThreadCommented(db, item.id, item.permalink);
       continue;
     }
 
@@ -1198,17 +1313,20 @@ export async function scanLiveRedditOpportunities(db: DB): Promise<RedditOpportu
       newsDraft: drafted.newsDraft,
       dropsDraft: drafted.dropsDraft,
       vendingDraft: drafted.vendingDraft,
-      status: "open",
+      status: clickedAt ? "clicked" : "open",
+      clickedAt,
     });
   }
 
+  const sortedOpportunities = sortOpportunitiesOpenFirst(opportunities);
+
   await db
     .insert(settings)
-    .values({ key: "redditOpportunitiesV1", value: opportunities })
+    .values({ key: "redditOpportunitiesV1", value: sortedOpportunities })
     .onConflictDoUpdate({
       target: settings.key,
-      set: { value: opportunities, updatedAt: new Date() },
+      set: { value: sortedOpportunities, updatedAt: new Date() },
     });
 
-  return opportunities;
+  return sortedOpportunities;
 }

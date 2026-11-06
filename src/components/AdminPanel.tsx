@@ -1492,32 +1492,42 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                 {
                   key: "all",
                   label: "All Daily Pokémon Posts",
-                  count: redditOpps.filter((o) => o.status === "open").length,
+                  count: redditOpps.filter((o) => o.status === "open" || o.status === "clicked").length,
                 },
                 {
                   key: "news",
                   label: "📰 News, Reprints & Allocations (/news)",
-                  count: redditOpps.filter((o) => o.status === "open" && o.category === "news").length,
+                  count: redditOpps.filter(
+                    (o) => (o.status === "open" || o.status === "clicked") && o.category === "news",
+                  ).length,
                 },
                 {
                   key: "restock",
                   label: "🛒 Retail Drops & Pallets (/drops)",
-                  count: redditOpps.filter((o) => o.status === "open" && o.category === "restock").length,
+                  count: redditOpps.filter(
+                    (o) => (o.status === "open" || o.status === "clicked") && o.category === "restock",
+                  ).length,
                 },
                 {
                   key: "vending",
                   label: "🎰 Vending & Grocery Kiosks",
-                  count: redditOpps.filter((o) => o.status === "open" && o.category === "vending").length,
+                  count: redditOpps.filter(
+                    (o) => (o.status === "open" || o.status === "clicked") && o.category === "vending",
+                  ).length,
                 },
                 {
                   key: "scalpers",
                   label: "🚫 Scalpers & Empty Shelves",
-                  count: redditOpps.filter((o) => o.status === "open" && o.category === "scalpers").length,
+                  count: redditOpps.filter(
+                    (o) => (o.status === "open" || o.status === "clicked") && o.category === "scalpers",
+                  ).length,
                 },
                 {
                   key: "pulls",
                   label: "✨ Pack Pulls & New Sets",
-                  count: redditOpps.filter((o) => o.status === "open" && o.category === "pulls").length,
+                  count: redditOpps.filter(
+                    (o) => (o.status === "open" || o.status === "clicked") && o.category === "pulls",
+                  ).length,
                 },
               ] as const
             ).map((pill) => (
@@ -1667,15 +1677,40 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
             )}
           </div>
 
-          {/* Live Scanned Reddit Threads */}
+          {/* Live Scanned Reddit Threads (Unclicked first, Clicked moved to bottom for 2h before auto-removal) */}
           <div className="space-y-4">
-            {redditOpps
-              .filter(
-                (opp) =>
-                  opp.status === "open" &&
-                  (redditCategoryFilter === "all" || opp.category === redditCategoryFilter),
-              )
-              .map((opp) => {
+            {(() => {
+              const nowMs = Date.now();
+              const twoHoursMs = 2 * 60 * 60 * 1000;
+              const visibleOpps = redditOpps
+                .filter((opp) => {
+                  if (opp.status !== "open" && opp.status !== "clicked") return false;
+                  if (
+                    opp.status === "clicked" &&
+                    opp.clickedAt &&
+                    nowMs - new Date(opp.clickedAt).getTime() >= twoHoursMs
+                  ) {
+                    return false;
+                  }
+                  return redditCategoryFilter === "all" || opp.category === redditCategoryFilter;
+                })
+                .sort((a, b) => {
+                  if (a.status === "clicked" && b.status !== "clicked") return 1;
+                  if (a.status !== "clicked" && b.status === "clicked") return -1;
+                  return 0;
+                });
+
+              let shownClickedHeader = false;
+
+              return visibleOpps.map((opp) => {
+                const isClicked = opp.status === "clicked";
+                const showDividerBefore = isClicked && !shownClickedHeader;
+                if (isClicked) shownClickedHeader = true;
+
+                const elapsedMs =
+                  isClicked && opp.clickedAt ? Math.max(0, nowMs - new Date(opp.clickedAt).getTime()) : 0;
+                const remainingMins = Math.max(1, Math.ceil((twoHoursMs - elapsedMs) / 60_000));
+
                 const removeAndMarkCommented = (status: "replied" | "dismissed" = "replied") => {
                   setRedditOpps((prev) => prev.filter((item) => item.id !== opp.id));
                   setRedditExcludedCount((c) => c + 1);
@@ -1691,14 +1726,37 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                   });
                 };
 
-                const copyAndOpenThread = () => {
-                  navigator.clipboard.writeText(opp.helpfulReplyDraft);
+                const flagClickedAndMoveToBottom = (draftToCopy?: string) => {
+                  const textToCopy = draftToCopy ?? opp.helpfulReplyDraft;
+                  navigator.clipboard.writeText(textToCopy);
                   setCopiedReplyId(opp.id);
+                  const clickedAtIso = opp.clickedAt || new Date().toISOString();
                   setMsg(
-                    "Reply copied to clipboard! Opening Reddit thread and removing it from your uncommented queue.",
+                    "Reply copied & thread flagged as CLICKED! Moved to the bottom for 2 hours (then auto-removed so you don't double post).",
                   );
                   window.open(opp.permalink, "_blank", "noopener,noreferrer");
-                  removeAndMarkCommented("replied");
+
+                  setRedditOpps((prev) => {
+                    const updated = prev.map((item) =>
+                      item.id === opp.id
+                        ? { ...item, status: "clicked" as const, clickedAt: clickedAtIso }
+                        : item,
+                    );
+                    const openItems = updated.filter((i) => i.status === "open");
+                    const clickedItems = updated.filter((i) => i.status === "clicked");
+                    return [...openItems, ...clickedItems];
+                  });
+
+                  void call("/api/admin/reddit-radar", "POST", {
+                    action: "set_status",
+                    id: opp.id,
+                    permalink: opp.permalink,
+                    status: "clicked",
+                  }).then((r) => {
+                    if (Array.isArray(r.opportunities)) {
+                      setRedditOpps(r.opportunities);
+                    }
+                  });
                 };
 
                 const categoryBadge =
@@ -1713,187 +1771,209 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                           : { label: "✨ Pack Pulls / Set Discussion", cls: "bg-purple-500/20 text-purple-300" };
 
                 return (
-                  <div key={opp.id} className="card border-line p-5 space-y-3">
-                    <div className="flex flex-wrap items-start justify-between gap-3">
-                      <div className="space-y-1">
-                        <div className="flex flex-wrap items-center gap-2 text-xs">
-                          <span className="rounded-full bg-orange-500/20 px-2.5 py-0.5 font-bold text-orange-300">
-                            {opp.subreddit}
-                          </span>
-                          <span className={`rounded-full px-2.5 py-0.5 font-bold ${categoryBadge.cls}`}>
-                            {categoryBadge.label}
-                          </span>
-                          <span className="rounded-full bg-volt/15 px-2.5 py-0.5 font-bold text-volt">
-                            📍 {opp.matchedLocationLabel} ({opp.matchedMachinesCount} machines)
-                          </span>
-                          {opp.targetPackRadarUrl && (
-                            <span className="rounded-full bg-white/10 px-2.5 py-0.5 font-mono text-[10px] text-slate-300">
-                              🔗 Links to: {opp.targetPackRadarUrl.replace("https://packradar.onrender.com", "") || "/"}
+                  <div key={opp.id} className="space-y-3">
+                    {showDividerBefore && (
+                      <div className="mt-6 rounded-xl border border-amber-400/40 bg-amber-500/10 px-4 py-2.5 text-xs font-bold text-amber-200 flex flex-wrap items-center justify-between gap-2">
+                        <span>
+                          🕒 Recently Clicked / Opened on Reddit — Flagged &amp; Moved to Bottom (Auto-Removes After
+                          2 Hours So You Don&apos;t Double Post)
+                        </span>
+                        <span className="text-[11px] font-normal text-amber-300/90">
+                          Click &ldquo;Remove Immediately&rdquo; on any card to clear it right away
+                        </span>
+                      </div>
+                    )}
+                    <div
+                      className={`card p-5 space-y-3 transition ${
+                        isClicked
+                          ? "border-amber-400/40 bg-panel-2/40 opacity-80"
+                          : "border-line"
+                      }`}
+                    >
+                      <div className="flex flex-wrap items-start justify-between gap-3">
+                        <div className="space-y-1">
+                          <div className="flex flex-wrap items-center gap-2 text-xs">
+                            {isClicked && (
+                              <span className="rounded-full border border-amber-400/60 bg-amber-500/25 px-2.5 py-0.5 font-extrabold text-amber-200">
+                                ✓ CLICKED ON REDDIT · Auto-removes in {remainingMins}m (Do Not Double Post)
+                              </span>
+                            )}
+                            <span className="rounded-full bg-orange-500/20 px-2.5 py-0.5 font-bold text-orange-300">
+                              {opp.subreddit}
                             </span>
+                            <span className={`rounded-full px-2.5 py-0.5 font-bold ${categoryBadge.cls}`}>
+                              {categoryBadge.label}
+                            </span>
+                            <span className="rounded-full bg-volt/15 px-2.5 py-0.5 font-bold text-volt">
+                              📍 {opp.matchedLocationLabel} ({opp.matchedMachinesCount} machines)
+                            </span>
+                            {opp.targetPackRadarUrl && (
+                              <span className="rounded-full bg-white/10 px-2.5 py-0.5 font-mono text-[10px] text-slate-300">
+                                🔗 Links to: {opp.targetPackRadarUrl.replace("https://packradar.onrender.com", "") || "/"}
+                              </span>
+                            )}
+                            <span className="text-muted">
+                              by {opp.author} · {timeAgo(new Date(opp.postedAt))}
+                            </span>
+                          </div>
+                          <h3 className="text-base font-bold text-white">
+                            <a
+                              href={opp.permalink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                flagClickedAndMoveToBottom();
+                              }}
+                              className="hover:text-volt hover:underline"
+                            >
+                              {opp.title}
+                            </a>
+                          </h3>
+                          {opp.excerpt && opp.excerpt !== opp.title && (
+                            <p className="text-xs text-slate-300">{opp.excerpt}</p>
                           )}
-                          <span className="text-muted">
-                            by {opp.author} · {timeAgo(new Date(opp.postedAt))}
-                          </span>
+                          <p className="font-mono text-[11px] text-slate-400 break-all">
+                            Thread: {opp.permalink}
+                          </p>
                         </div>
-                        <h3 className="text-base font-bold text-white">
+
+                        <div className="flex flex-wrap items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => flagClickedAndMoveToBottom()}
+                            className="btn-primary py-1.5 text-xs font-bold"
+                          >
+                            <Copy className="h-3.5 w-3.5" />
+                            {isClicked ? "Clicked · Copy & Open Again ↗" : "Copy Reply & Open Thread ↗"}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => flagClickedAndMoveToBottom(opp.shortReplyDraft)}
+                            className="btn-ghost py-1.5 text-xs"
+                          >
+                            Copy Short &amp; Open ↗
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setMsg(`Removed "${opp.title.slice(0, 40)}…" permanently.`);
+                              removeAndMarkCommented("dismissed");
+                            }}
+                            className="btn-ghost py-1.5 text-xs text-slate-400 hover:border-red-400/50 hover:text-red-300"
+                            title="Already commented on this thread with u/Sharp-Lifeguard-8635 — remove permanently right now"
+                          >
+                            <Check className="h-3.5 w-3.5" />
+                            {isClicked ? "Remove Immediately" : "Already Commented / Remove"}
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="rounded-xl border border-line bg-panel-2/70 p-3.5 text-xs space-y-2">
+                        <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-bold uppercase tracking-wider text-muted">
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <span>Switch Reply Link Target:</span>
+                            {opp.newsDraft && (
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setRedditOpps((prev) =>
+                                    prev.map((item) =>
+                                      item.id === opp.id
+                                        ? { ...item, helpfulReplyDraft: opp.newsDraft! }
+                                        : item,
+                                    ),
+                                  )
+                                }
+                                className="rounded border border-amber-400/40 bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold normal-case text-amber-300 hover:border-amber-400 hover:bg-amber-500/20"
+                              >
+                                📰 News Article (/news)
+                              </button>
+                            )}
+                            {opp.dropsDraft && (
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setRedditOpps((prev) =>
+                                    prev.map((item) =>
+                                      item.id === opp.id
+                                        ? { ...item, helpfulReplyDraft: opp.dropsDraft! }
+                                        : item,
+                                    ),
+                                  )
+                                }
+                                className="rounded border border-sky-400/40 bg-sky-500/10 px-2 py-0.5 text-[10px] font-semibold normal-case text-sky-300 hover:border-sky-400 hover:bg-sky-500/20"
+                              >
+                                🛒 Retail Drops (/drops)
+                              </button>
+                            )}
+                            {opp.vendingDraft && (
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setRedditOpps((prev) =>
+                                    prev.map((item) =>
+                                      item.id === opp.id
+                                        ? { ...item, helpfulReplyDraft: opp.vendingDraft! }
+                                        : item,
+                                    ),
+                                  )
+                                }
+                                className="rounded border border-emerald-400/40 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold normal-case text-emerald-300 hover:border-emerald-400 hover:bg-emerald-500/20"
+                              >
+                                🎰 Vending Map
+                              </button>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setRedditOpps((prev) =>
+                                  prev.map((item) =>
+                                    item.id === opp.id ? { ...item, helpfulReplyDraft: opp.shortReplyDraft } : item,
+                                  ),
+                                )
+                              }
+                              className="rounded border border-line bg-bg px-2 py-0.5 text-[10px] font-semibold normal-case text-slate-300 hover:border-volt hover:text-volt"
+                            >
+                              ⚡ 1-Liner Version
+                            </button>
+                          </div>
                           <a
                             href={opp.permalink}
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={(e) => {
                               e.preventDefault();
-                              copyAndOpenThread();
+                              flagClickedAndMoveToBottom();
                             }}
-                            className="hover:text-volt hover:underline"
+                            className={`font-bold hover:underline ${
+                              isClicked ? "text-amber-300" : "text-volt"
+                            }`}
                           >
-                            {opp.title}
+                            {isClicked
+                              ? `✓ Clicked (Moved to Bottom · Auto-Removes in ${remainingMins}m) — Open on Reddit ↗`
+                              : "View on Reddit (Flags Clicked & Moves to Bottom for 2h) ↗"}
                           </a>
-                        </h3>
-                        {opp.excerpt && opp.excerpt !== opp.title && (
-                          <p className="text-xs text-slate-300">{opp.excerpt}</p>
-                        )}
-                        <p className="font-mono text-[11px] text-slate-400 break-all">
-                          Thread: {opp.permalink}
-                        </p>
-                      </div>
-
-                      <div className="flex flex-wrap items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={copyAndOpenThread}
-                          className="btn-primary py-1.5 text-xs font-bold"
-                        >
-                          <Copy className="h-3.5 w-3.5" />
-                          Copy Reply &amp; Open Thread ↗
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            navigator.clipboard.writeText(opp.shortReplyDraft);
-                            setMsg(
-                              "Short reply copied! Opening Reddit thread and removing from uncommented queue…",
-                            );
-                            window.open(opp.permalink, "_blank", "noopener,noreferrer");
-                            removeAndMarkCommented("replied");
-                          }}
-                          className="btn-ghost py-1.5 text-xs"
-                        >
-                          Copy Short &amp; Open ↗
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setMsg(`Removed "${opp.title.slice(0, 40)}…" (marked as already commented).`);
-                            removeAndMarkCommented("dismissed");
-                          }}
-                          className="btn-ghost py-1.5 text-xs text-slate-400 hover:border-red-400/50 hover:text-red-300"
-                          title="Already commented on this thread with u/Sharp-Lifeguard-8635 — remove permanently"
-                        >
-                          <Check className="h-3.5 w-3.5" />
-                          Already Commented / Remove
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="rounded-xl border border-line bg-panel-2/70 p-3.5 text-xs space-y-2">
-                      <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-bold uppercase tracking-wider text-muted">
-                        <div className="flex flex-wrap items-center gap-1.5">
-                          <span>Switch Reply Link Target:</span>
-                          {opp.newsDraft && (
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setRedditOpps((prev) =>
-                                  prev.map((item) =>
-                                    item.id === opp.id
-                                      ? { ...item, helpfulReplyDraft: opp.newsDraft! }
-                                      : item,
-                                  ),
-                                )
-                              }
-                              className="rounded border border-amber-400/40 bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold normal-case text-amber-300 hover:border-amber-400 hover:bg-amber-500/20"
-                            >
-                              📰 News Article (/news)
-                            </button>
-                          )}
-                          {opp.dropsDraft && (
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setRedditOpps((prev) =>
-                                  prev.map((item) =>
-                                    item.id === opp.id
-                                      ? { ...item, helpfulReplyDraft: opp.dropsDraft! }
-                                      : item,
-                                  ),
-                                )
-                              }
-                              className="rounded border border-sky-400/40 bg-sky-500/10 px-2 py-0.5 text-[10px] font-semibold normal-case text-sky-300 hover:border-sky-400 hover:bg-sky-500/20"
-                            >
-                              🛒 Retail Drops (/drops)
-                            </button>
-                          )}
-                          {opp.vendingDraft && (
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setRedditOpps((prev) =>
-                                  prev.map((item) =>
-                                    item.id === opp.id
-                                      ? { ...item, helpfulReplyDraft: opp.vendingDraft! }
-                                      : item,
-                                  ),
-                                )
-                              }
-                              className="rounded border border-emerald-400/40 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold normal-case text-emerald-300 hover:border-emerald-400 hover:bg-emerald-500/20"
-                            >
-                              🎰 Vending Map
-                            </button>
-                          )}
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setRedditOpps((prev) =>
-                                prev.map((item) =>
-                                  item.id === opp.id ? { ...item, helpfulReplyDraft: opp.shortReplyDraft } : item,
-                                ),
-                              )
-                            }
-                            className="rounded border border-line bg-bg px-2 py-0.5 text-[10px] font-semibold normal-case text-slate-300 hover:border-volt hover:text-volt"
-                          >
-                            ⚡ 1-Liner Version
-                          </button>
                         </div>
-                        <a
-                          href={opp.permalink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            copyAndOpenThread();
+                        <textarea
+                          rows={3}
+                          className="input w-full bg-bg/90 font-sans text-xs leading-relaxed text-slate-200"
+                          value={opp.helpfulReplyDraft}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setRedditOpps((prev) =>
+                              prev.map((item) =>
+                                item.id === opp.id ? { ...item, helpfulReplyDraft: val } : item,
+                              ),
+                            );
                           }}
-                          className="text-volt hover:underline"
-                        >
-                          View on Reddit (Auto-Copies &amp; Marks Commented) ↗
-                        </a>
+                        />
                       </div>
-                      <textarea
-                        rows={3}
-                        className="input w-full bg-bg/90 font-sans text-xs leading-relaxed text-slate-200"
-                        value={opp.helpfulReplyDraft}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          setRedditOpps((prev) =>
-                            prev.map((item) =>
-                              item.id === opp.id ? { ...item, helpfulReplyDraft: val } : item,
-                            ),
-                          );
-                        }}
-                      />
                     </div>
                   </div>
                 );
-              })}
+              });
+            })()}
           </div>
         </section>
       )}

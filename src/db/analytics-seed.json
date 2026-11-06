@@ -1,5 +1,5 @@
 {
-  "totalHumanPageviews": 272,
+  "totalHumanPageviews": 273,
   "allTimeUniqueVisitorHashes": [
     "9a3d1f0b2c8e4511",
     "4c7b82e10f9d32a6",
@@ -64,26 +64,26 @@
     "396edb818e2633a2",
     "2cfa574dc0d20aa5"
   ],
-  "totalBotHitsExcluded": 1500,
+  "totalBotHitsExcluded": 1514,
   "botBreakdown": {
-    "Internal QA & Health Checks": 1340,
+    "Internal QA & Health Checks": 1353,
     "Discord Link Preview (Discordbot)": 3,
     "Search Engine Crawler (Google/Bing/DuckDuckGo)": 1,
-    "Headless Browser / Automation (Puppeteer/Playwright/Curl/Node)": 16,
+    "Headless Browser / Automation (Puppeteer/Playwright/Curl/Node)": 17,
     "Empty or Synthetic User-Agent": 23,
     "Social Preview Bot (Twitter/FB/Slack/Telegram/Reddit)": 103,
     "Non-Browser HTTP Client": 12,
     "Headless Webdriver Flag (navigator.webdriver)": 2
   },
   "deviceBreakdown": {
-    "mobile": 242,
+    "mobile": 243,
     "desktop": 30,
     "tablet": 0
   },
   "pages": {
     "/": {
       "path": "/",
-      "views": 70,
+      "views": 71,
       "uniqueVisitorHashes": [
         "9a3d1f0b2c8e4511",
         "4c7b82e10f9d32a6",
@@ -133,7 +133,7 @@
         "2cfa574dc0d20aa5",
         "0d1dd19288169b75"
       ],
-      "lastVisitedAt": "2026-11-06T04:24:40.432Z"
+      "lastVisitedAt": "2026-11-06T04:46:05.396Z"
     },
     "/map": {
       "path": "/map",
@@ -579,7 +579,7 @@
     },
     "Direct / Shared Link (Discord/SMS/App)": {
       "source": "Direct / Shared Link (Discord/SMS/App)",
-      "visits": 114,
+      "visits": 115,
       "uniqueVisitorHashes": [
         "692f65999f08d194",
         "4c61408b0d9751e3",
@@ -603,7 +603,7 @@
         "396edb818e2633a2",
         "2cfa574dc0d20aa5"
       ],
-      "lastSeenAt": "2026-11-06T01:28:45.776Z"
+      "lastSeenAt": "2026-11-06T04:46:05.396Z"
     }
   },
   "daily": {
@@ -701,17 +701,28 @@
     },
     "2026-11-06": {
       "date": "2026-11-06",
-      "humanViews": 17,
+      "humanViews": 18,
       "uniqueVisitorHashes": [
         "4c61408b0d9751e3",
         "2cfa574dc0d20aa5",
         "0d1dd19288169b75"
       ],
-      "botHitsBlocked": 146,
+      "botHitsBlocked": 160,
       "signUps": 0
     }
   },
   "recentHumanVisits": [
+    {
+      "id": "v-1793940365396-isy6",
+      "at": "2026-11-06T04:46:05.396Z",
+      "path": "/",
+      "referrer": "",
+      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
+      "device": "mobile",
+      "visitorHash": "4c61408b",
+      "userId": "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+      "userName": "King_Bezos"
+    },
     {
       "id": "v-1793939223470-8kie",
       "at": "2026-11-06T04:27:03.470Z",
@@ -1374,7 +1385,7 @@
     }
   ],
   "activeVisitorsMap": {
-    "0d1dd19288169b75": 1793939223470
+    "4c61408b0d9751e3": 1793940365396
   },
   "totalSearches": 39,
   "searchQueries": {
@@ -1962,5 +1973,5 @@
       "lastSearchedAt": "2026-11-04T00:24:43.766Z"
     }
   },
-  "updatedAt": "2026-11-06T04:30:44.041Z"
+  "updatedAt": "2026-11-06T04:46:05.396Z"
 }

@@ -6,11 +6,14 @@ import { settings } from "@/db/schema";
 import { requireRole } from "@/lib/session";
 import {
   REDDIT_USERNAME,
+  CLICKED_HOLD_DURATION_MS,
   INITIAL_COMMENTED_THREAD_IDS,
   buildDataBackedRedditReply,
   getAndSyncCommentedThreadIds,
+  markRedditThreadClicked,
   markRedditThreadCommented,
   scanLiveRedditOpportunities,
+  sortOpportunitiesOpenFirst,
   type RedditOpportunity,
 } from "@/lib/reddit-radar";
 
@@ -33,17 +36,44 @@ export const GET = route(async (req) => {
     isStaleTtl ||
     cached.some(
       (item) =>
-        !item.permalink?.includes("/comments/") ||
+        (!item.permalink?.includes("/comments/") && !item.permalink?.includes("/search/")) ||
         !item.category ||
-        item.status !== "open" ||
+        (item.status !== "open" && item.status !== "clicked") ||
         retiredSet.has(item.id.toLowerCase()),
     );
 
   if (!refresh && !hasLegacyOrCommentedCache) {
+    // Auto-expire any clicked threads older than 2 hours
+    const now = Date.now();
+    let prunedAny = false;
+    const kept: RedditOpportunity[] = [];
+    for (const item of cached) {
+      if (
+        item.status === "clicked" &&
+        item.clickedAt &&
+        now - new Date(item.clickedAt).getTime() >= CLICKED_HOLD_DURATION_MS
+      ) {
+        await markRedditThreadCommented(db, item.id, item.permalink);
+        prunedAny = true;
+      } else {
+        kept.push(item);
+      }
+    }
+    const sorted = sortOpportunitiesOpenFirst(kept);
+    if (prunedAny) {
+      await db
+        .insert(settings)
+        .values({ key: "redditOpportunitiesV1", value: sorted })
+        .onConflictDoUpdate({
+          target: settings.key,
+          set: { value: sorted, updatedAt: new Date() },
+        });
+    }
+
     const [cRow] = await db.select().from(settings).where(eq(settings.key, "redditCommentedIdsV1"));
     const cList = Array.isArray(cRow?.value) ? (cRow.value as string[]) : INITIAL_COMMENTED_THREAD_IDS;
     return {
-      opportunities: cached,
+      opportunities: sorted,
       redditUsername: REDDIT_USERNAME,
       excludedCommentedCount: cList.length,
       lastUpdatedAt: row?.updatedAt,
@@ -74,7 +104,7 @@ const PostBody = z.discriminatedUnion("action", [
     action: z.literal("set_status"),
     id: z.string(),
     permalink: z.string().optional(),
-    status: z.enum(["open", "replied", "dismissed"]),
+    status: z.enum(["open", "clicked", "replied", "dismissed"]),
   }),
 ]);
 
@@ -112,11 +142,40 @@ export const POST = route(async (req) => {
       await markRedditThreadCommented(db, b.id, b.permalink || target?.permalink);
     }
 
-    // Remove commented/dismissed threads from the active list so they never clutter the scanner again
-    const updated =
-      b.status === "open"
-        ? list.map((item) => (item.id === b.id ? { ...item, status: "open" as const } : item))
-        : list.filter((item) => item.id !== b.id);
+    let clickedAtIso: string | null = null;
+    if (b.status === "clicked") {
+      clickedAtIso = await markRedditThreadClicked(db, b.id, b.permalink || target?.permalink);
+    }
+
+    const now = Date.now();
+    const updatedRaw: RedditOpportunity[] = [];
+    for (const item of list) {
+      if (item.id === b.id) {
+        if (b.status === "open") {
+          updatedRaw.push({ ...item, status: "open", clickedAt: null });
+        } else if (b.status === "clicked") {
+          updatedRaw.push({
+            ...item,
+            status: "clicked",
+            clickedAt: clickedAtIso || new Date().toISOString(),
+          });
+        }
+        // if replied or dismissed, omit from list (removed immediately)
+        continue;
+      }
+      // Also auto-expire any other clicked thread that passed 2 hours
+      if (
+        item.status === "clicked" &&
+        item.clickedAt &&
+        now - new Date(item.clickedAt).getTime() >= CLICKED_HOLD_DURATION_MS
+      ) {
+        await markRedditThreadCommented(db, item.id, item.permalink);
+        continue;
+      }
+      updatedRaw.push(item);
+    }
+
+    const updated = sortOpportunitiesOpenFirst(updatedRaw);
 
     await db
       .insert(settings)
