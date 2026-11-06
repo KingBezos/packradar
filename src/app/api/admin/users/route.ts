@@ -5,6 +5,7 @@ import { persistIdentityCookie, requireRole } from "@/lib/session";
 import { getDb } from "@/db";
 import {
   account,
+  activity,
   alertSubscriptions,
   comments,
   dropObservations,
@@ -15,6 +16,7 @@ import {
   user,
 } from "@/db/schema";
 import { getUserAnalyticsHistory } from "@/lib/analytics";
+import { recomputeMachine } from "@/lib/drops/engine";
 
 export const dynamic = "force-dynamic";
 
@@ -292,7 +294,22 @@ export const POST = route(async (req) => {
       .set({ reputation: newRep, updatedAt: new Date() })
       .where(eq(user.id, b.userId));
   } else if (b.action === "delete_observation") {
+    const [obs] = await db
+      .select()
+      .from(dropObservations)
+      .where(eq(dropObservations.id, b.observationId));
     await db.delete(dropObservations).where(eq(dropObservations.id, b.observationId));
+    if (obs) {
+      await recomputeMachine(db, obs.machineId, "admin deleted observation");
+      // Also clean up any matching ticker activity for this machine & user if it was the only report
+      const remaining = await db
+        .select()
+        .from(dropObservations)
+        .where(eq(dropObservations.machineId, obs.machineId));
+      if (remaining.length === 0) {
+        await db.delete(activity).where(eq(activity.machineId, obs.machineId)).catch(() => {});
+      }
+    }
   }
 
   const [updated] = await db.select().from(user).where(eq(user.id, b.userId));

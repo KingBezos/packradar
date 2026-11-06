@@ -3,7 +3,7 @@ import { z } from "zod";
 import { route, json } from "@/lib/api";
 import { requireRole } from "@/lib/session";
 import { getDb } from "@/db";
-import { comments, machines, newsPosts, products, retailListings, sponsors, user } from "@/db/schema";
+import { comments, dropCandidates, machines, newsPosts, products, retailListings, sponsors, user } from "@/db/schema";
 import { slugify } from "@/lib/geo";
 import { loadCommentFlags } from "@/app/api/comments/flag/route";
 
@@ -161,6 +161,17 @@ export const PATCH = route(async (req) => {
     if (b.accuracy !== undefined) patch.accuracy = b.accuracy;
     if (b.scheduleVerified !== undefined) patch.scheduleVerified = b.scheduleVerified;
     await db.update(machines).set(patch).where(eq(machines.id, b.id));
+    const [mRow] = await db.select().from(machines).where(eq(machines.id, b.id));
+    if (mRow?.activeCandidateId) {
+      const candPatch: Partial<typeof dropCandidates.$inferInsert> = {};
+      if (b.intervalMinutes != null) candPatch.intervalMinutes = b.intervalMinutes;
+      if (b.anchorMinute != null) candPatch.anchorMinute = b.anchorMinute;
+      if (b.accuracy != null) candPatch.accuracy = b.accuracy;
+      if (b.scheduleVerified !== undefined) candPatch.verified = b.scheduleVerified;
+      if (Object.keys(candPatch).length > 0) {
+        await db.update(dropCandidates).set(candPatch).where(eq(dropCandidates.id, mRow.activeCandidateId));
+      }
+    }
     return { ok: true };
   }
 
