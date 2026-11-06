@@ -51,10 +51,24 @@ export const POST = route(async (req) => {
   const db = await getDb();
   const plan = effectivePlan(u);
   const limits = PLAN_LIMITS[plan];
-  const [{ n }] = await db
-    .select({ n: sql<number>`count(*)::int` })
+
+  // Avoid duplicate active alert if user taps the same machine or news/drop topic twice
+  const existingUserSubs = await db
+    .select()
     .from(alertSubscriptions)
     .where(and(eq(alertSubscriptions.userId, u.id), eq(alertSubscriptions.active, true)));
+  const resolvedKeyword = b.keyword ?? (b.kind === "area_drop" && b.zip ? `ZIP ${b.zip}` : null);
+  const duplicate = existingUserSubs.find((s) => {
+    if (s.kind !== b.kind) return false;
+    if (b.machineId && s.machineId === b.machineId) return true;
+    if (resolvedKeyword && s.keyword && s.keyword.toLowerCase() === resolvedKeyword.toLowerCase()) return true;
+    return false;
+  });
+  if (duplicate) {
+    return { ok: true, id: duplicate.id, alreadySubscribed: true };
+  }
+
+  const n = existingUserSubs.length;
   if (n >= limits.maxAlerts) throw new Error(`Alert limit reached (${limits.maxAlerts} active alerts).`);
   if (b.leadMinutes > limits.maxLeadMinutes) throw new Error(`Lead time must be ${limits.maxLeadMinutes} minutes or less.`);
   if (b.channels.includes("sms") && !limits.channels.includes("sms")) throw new Error("SMS alerts are coming soon.");

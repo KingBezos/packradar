@@ -195,8 +195,17 @@ async function subsOfKind(db: DB, kind: string) {
 }
 
 export async function notifyNews(db: DB, n: { title: string; slug: string; category: string }) {
+  const haystack = `${n.title} ${n.category}`.toLowerCase();
   for (const { s, u } of await subsOfKind(db, "news")) {
-    if (s.keyword && !`${n.title} ${n.category}`.toLowerCase().includes(s.keyword.toLowerCase())) continue;
+    if (s.keyword) {
+      const kwLower = s.keyword.toLowerCase();
+      const tokens = kwLower
+        .replace(/[^a-z0-9\s]/g, " ")
+        .split(/\s+/)
+        .filter((w) => w.length >= 3 && !["the", "and", "for", "with", "new", "pack", "packs", "pokemon", "tcg"].includes(w));
+      const matched = haystack.includes(kwLower) || tokens.some((tk) => haystack.includes(tk));
+      if (!matched) continue;
+    }
     await deliver(db, u, { title: `📰 ${n.title}`, body: "New on PackRadar News", url: `/news/${n.slug}` }, {
       dedupeKey: `news:${n.slug}:${s.id}`,
       channels: s.channels,

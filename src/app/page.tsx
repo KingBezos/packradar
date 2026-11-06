@@ -6,6 +6,7 @@ import { DroppingSoon } from "@/components/DroppingSoon";
 import { SponsorSlot } from "@/components/SponsorSlot";
 import { NewsCard } from "@/components/NewsCard";
 import { ShareButtons } from "@/components/ShareButtons";
+import { TopicAlertButton } from "@/components/TopicAlertButton";
 import { SectionTitle } from "@/components/ui";
 import { getMapMachines, getRetailDropIntel, latestNews, siteStats, upcomingReleases } from "@/lib/queries";
 import { getCurrentUser } from "@/lib/session";
@@ -225,7 +226,18 @@ export default async function Home() {
                       ⏰ {item.expectedWindow}
                     </p>
                   </div>
-                  <div className="mt-3 border-t border-line/60 pt-2">
+                  <div className="mt-3 space-y-2 border-t border-line/60 pt-2.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[11px] text-muted">Instant SKU &amp; Restock Alert</span>
+                      <TopicAlertButton
+                        topicKeyword={item.title}
+                        path={sharePath}
+                        kind="product_restock"
+                        retailer={item.retailer}
+                        compact
+                        buttonLabel="Get Alerts"
+                      />
+                    </div>
                     <ShareButtons
                       path={sharePath}
                       title={item.title}

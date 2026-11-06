@@ -5,6 +5,7 @@ import { getProductsWithListings, getRetailDropIntel } from "@/lib/queries";
 import { RetailScanBar } from "@/components/RetailScanBar";
 import { AlertAdminButton } from "@/components/AlertAdminButton";
 import { ShareButtons } from "@/components/ShareButtons";
+import { TopicAlertButton } from "@/components/TopicAlertButton";
 import { timeAgo } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
@@ -170,7 +171,17 @@ export default async function DropsPage() {
                     <span className="inline-flex items-center gap-1 font-semibold text-amber-200">
                       <Flame className="h-3.5 w-3.5 text-volt" /> {item.expectedWindow}
                     </span>
-                    <span className="text-[11px] text-muted">{timeAgo(new Date(item.spottedAt))}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] text-muted">{timeAgo(new Date(item.spottedAt))}</span>
+                      <TopicAlertButton
+                        topicKeyword={item.title}
+                        path={sharePath}
+                        kind="product_restock"
+                        retailer={item.retailer}
+                        compact
+                        buttonLabel="Get Alerts"
+                      />
+                    </div>
                   </div>
                   <ShareButtons
                     path={sharePath}

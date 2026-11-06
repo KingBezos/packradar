@@ -8,6 +8,7 @@ import { CategoryBadge, Avatar, timeAgo } from "@/components/ui";
 import { CommentForm, CommentFlagButton } from "@/components/MachineActions";
 import { SponsorSlot } from "@/components/SponsorSlot";
 import { ShareButtons } from "@/components/ShareButtons";
+import { TopicAlertButton } from "@/components/TopicAlertButton";
 
 export const dynamic = "force-dynamic";
 
@@ -49,7 +50,13 @@ export default async function NewsPostPage({ params }: { params: Promise<{ slug:
         <span>· {post.author}</span>
       </div>
       <h1 className="mt-3 text-3xl font-black leading-tight text-white">{post.title}</h1>
-      <div className="mt-4">
+      <div className="mt-4 space-y-3">
+        <TopicAlertButton
+          topicKeyword={post.title}
+          path={`/news/${post.slug}`}
+          kind="news"
+          buttonLabel="Get Alerts for This Drop"
+        />
         <ShareButtons path={`/news/${post.slug}`} title={post.title} summary={post.summary ?? undefined} />
       </div>
       {post.imageUrl && (
@@ -61,7 +68,13 @@ export default async function NewsPostPage({ params }: { params: Promise<{ slug:
       ) : (
         <p className="prose-pr mt-5 text-lg">{post.summary}</p>
       )}
-      <div className="mt-8">
+      <div className="mt-8 space-y-3">
+        <TopicAlertButton
+          topicKeyword={post.title}
+          path={`/news/${post.slug}`}
+          kind="news"
+          buttonLabel="Get Alerts for This Drop"
+        />
         <ShareButtons path={`/news/${post.slug}`} title={post.title} summary={post.summary ?? undefined} />
       </div>
       {post.sourceUrl && (

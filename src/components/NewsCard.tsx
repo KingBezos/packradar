@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { NewsPost } from "@/db/schema";
 import { CategoryBadge, timeAgo } from "./ui";
 import { ShareButtons } from "./ShareButtons";
+import { TopicAlertButton } from "./TopicAlertButton";
 
 export function NewsCard({ post, large }: { post: NewsPost; large?: boolean }) {
   return (
@@ -50,7 +51,20 @@ export function NewsCard({ post, large }: { post: NewsPost; large?: boolean }) {
           <p className="mt-1 line-clamp-3 text-sm text-muted">{post.summary}</p>
         </Link>
         <div className="mt-auto pt-3 space-y-2">
-          {post.sourceName && <p className="text-xs text-muted">via {post.sourceName}</p>}
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            {post.sourceName ? (
+              <p className="text-xs text-muted">via {post.sourceName}</p>
+            ) : (
+              <span />
+            )}
+            <TopicAlertButton
+              topicKeyword={post.title}
+              path={`/news/${post.slug}`}
+              kind="news"
+              compact
+              buttonLabel="Get Alerts"
+            />
+          </div>
           <ShareButtons
             path={`/news/${post.slug}`}
             title={post.title}
