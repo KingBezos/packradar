@@ -287,6 +287,10 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
   const [redditOpps, setRedditOpps] = useState<RedditOpportunity[]>([]);
   const [redditScanning, setRedditScanning] = useState(false);
   const [redditLastScanAt, setRedditLastScanAt] = useState<string | null>(null);
+  const [redditExcludedCount, setRedditExcludedCount] = useState<number>(12);
+  const [redditCategoryFilter, setRedditCategoryFilter] = useState<
+    "all" | "vending" | "restock" | "scalpers" | "pulls"
+  >("all");
   const [copiedReplyId, setCopiedReplyId] = useState<string | null>(null);
   const [customRedditTitle, setCustomRedditTitle] = useState("");
   const [customRedditBody, setCustomRedditBody] = useState("");
@@ -414,6 +418,9 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
     call(`/api/admin/reddit-radar${refresh ? "?refresh=1" : ""}`, "GET")
       .then((r) => {
         setRedditOpps(r.opportunities ?? []);
+        if (typeof r.excludedCommentedCount === "number") {
+          setRedditExcludedCount(r.excludedCommentedCount);
+        }
         setRedditLastScanAt(new Date().toLocaleTimeString());
       })
       .catch(() => {})
@@ -1435,15 +1442,21 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
         <section className="space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="flex items-center gap-2 text-2xl font-black text-white">
-                <Sparkles className="h-6 w-6 text-volt" /> Reddit Thread Finder &amp; Clever Short Reply Drafter
-              </h2>
-              <p className="text-xs text-muted">
-                Auto-scans <code className="text-white">r/PokemonTCG</code>,{" "}
+              <div className="flex flex-wrap items-center gap-2">
+                <h2 className="flex items-center gap-2 text-2xl font-black text-white">
+                  <Sparkles className="h-6 w-6 text-volt" /> Daily Pokémon Reddit Scanner &amp; Reply Drafter
+                </h2>
+                <span className="rounded-full border border-green-500/40 bg-green-500/15 px-3 py-0.5 font-mono text-[11px] font-bold text-green-300">
+                  ✓ Filtering out u/Sharp-Lifeguard-8635 ({redditExcludedCount} commented threads hidden)
+                </span>
+              </div>
+              <p className="mt-1 text-xs text-muted">
+                Live-scans <code className="text-white">r/PokemonTCG</code>,{" "}
                 <code className="text-white">r/PKMNTCGDeals</code> &amp;{" "}
-                <code className="text-white">r/PokeInvesting</code> every 60s for direct comment threads and drafts{" "}
-                <b className="text-white">short, clever 1–2 sentence replies</b> about timing the{" "}
-                <code className="text-volt">:XX</code> drop minute.
+                <code className="text-white">r/PokeInvesting</code> for fresh daily Pokémon posts (vending machines,
+                Walmart/Target/Pokemon Center drops, empty shelves, and pack pulls) and drafts{" "}
+                <b className="text-white">short, clever 1–2 sentence replies</b>. Anything you&apos;ve commented on
+                with <code className="text-volt">u/Sharp-Lifeguard-8635</code> is automatically removed.
                 {redditLastScanAt && (
                   <span className="ml-2 font-mono text-volt">· Last synced {redditLastScanAt}</span>
                 )}
@@ -1456,8 +1469,54 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
               className="btn-primary py-1.5 text-xs font-bold"
             >
               <RefreshCw className={`h-3.5 w-3.5 ${redditScanning ? "animate-spin" : ""}`} />
-              {redditScanning ? "Scanning Subreddits…" : "Scan Live Reddit Threads Now"}
+              {redditScanning ? "Scanning Subreddits…" : "Scan Fresh Daily Posts Now"}
             </button>
+          </div>
+
+          {/* Category Filter Pills */}
+          <div className="flex flex-wrap items-center gap-2">
+            {(
+              [
+                {
+                  key: "all",
+                  label: "All Daily Pokémon Posts",
+                  count: redditOpps.filter((o) => o.status === "open").length,
+                },
+                {
+                  key: "vending",
+                  label: "🎰 Vending & Grocery Kiosks",
+                  count: redditOpps.filter((o) => o.status === "open" && o.category === "vending").length,
+                },
+                {
+                  key: "restock",
+                  label: "🛒 Retail Drops (Walmart / Target / PC)",
+                  count: redditOpps.filter((o) => o.status === "open" && o.category === "restock").length,
+                },
+                {
+                  key: "scalpers",
+                  label: "🚫 Scalpers & Empty Shelves",
+                  count: redditOpps.filter((o) => o.status === "open" && o.category === "scalpers").length,
+                },
+                {
+                  key: "pulls",
+                  label: "✨ Pack Pulls & New Sets",
+                  count: redditOpps.filter((o) => o.status === "open" && o.category === "pulls").length,
+                },
+              ] as const
+            ).map((pill) => (
+              <button
+                key={pill.key}
+                type="button"
+                onClick={() => setRedditCategoryFilter(pill.key)}
+                className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition ${
+                  redditCategoryFilter === pill.key
+                    ? "bg-volt text-slate-950"
+                    : "border border-line bg-panel-2 text-slate-300 hover:border-volt/50"
+                }`}
+              >
+                {pill.label} ({pill.count})
+              </button>
+            ))}
           </div>
 
           {/* Instant Custom Reddit Thread / Question Reply Generator */}
@@ -1564,50 +1623,160 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
 
           {/* Live Scanned Reddit Threads */}
           <div className="space-y-4">
-            {redditOpps.map((opp) => {
-              const copyAndOpenThread = () => {
-                navigator.clipboard.writeText(opp.helpfulReplyDraft);
-                setCopiedReplyId(opp.id);
-                setMsg("Reply copied to clipboard! Opening the Reddit thread so you can paste it.");
-                setTimeout(() => setCopiedReplyId(null), 3000);
-                window.open(opp.permalink, "_blank", "noopener,noreferrer");
-                void call("/api/admin/reddit-radar", "POST", {
-                  action: "set_status",
-                  id: opp.id,
-                  status: "replied",
-                }).then((r) => setRedditOpps(r.opportunities ?? []));
-              };
+            {redditOpps
+              .filter(
+                (opp) =>
+                  opp.status === "open" &&
+                  (redditCategoryFilter === "all" || opp.category === redditCategoryFilter),
+              )
+              .map((opp) => {
+                const removeAndMarkCommented = (status: "replied" | "dismissed" = "replied") => {
+                  setRedditOpps((prev) => prev.filter((item) => item.id !== opp.id));
+                  setRedditExcludedCount((c) => c + 1);
+                  void call("/api/admin/reddit-radar", "POST", {
+                    action: "set_status",
+                    id: opp.id,
+                    permalink: opp.permalink,
+                    status,
+                  }).then((r) => {
+                    if (Array.isArray(r.opportunities)) {
+                      setRedditOpps(r.opportunities);
+                    }
+                  });
+                };
 
-              return (
-                <div
-                  key={opp.id}
-                  className={`card p-5 space-y-3 ${
-                    opp.status === "replied"
-                      ? "border-green-500/40 bg-green-500/5"
-                      : opp.status === "dismissed"
-                        ? "opacity-50"
-                        : "border-line"
-                  }`}
-                >
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div className="space-y-1">
-                      <div className="flex flex-wrap items-center gap-2 text-xs">
-                        <span className="rounded-full bg-orange-500/20 px-2.5 py-0.5 font-bold text-orange-300">
-                          {opp.subreddit}
-                        </span>
-                        <span className="rounded-full bg-volt/15 px-2.5 py-0.5 font-bold text-volt">
-                          📍 {opp.matchedLocationLabel} ({opp.matchedMachinesCount} machines)
-                        </span>
-                        <span className="text-muted">
-                          by {opp.author} · {timeAgo(new Date(opp.postedAt))}
-                        </span>
-                        {opp.status === "replied" && (
-                          <span className="rounded-full bg-green-500/20 px-2 py-0.5 font-bold text-green-400">
-                            ✓ Opened &amp; Copied
+                const copyAndOpenThread = () => {
+                  navigator.clipboard.writeText(opp.helpfulReplyDraft);
+                  setCopiedReplyId(opp.id);
+                  setMsg(
+                    "Reply copied to clipboard! Opening Reddit thread and removing it from your uncommented queue.",
+                  );
+                  window.open(opp.permalink, "_blank", "noopener,noreferrer");
+                  removeAndMarkCommented("replied");
+                };
+
+                const categoryBadge =
+                  opp.category === "vending"
+                    ? { label: "🎰 Vending Kiosk", cls: "bg-emerald-500/20 text-emerald-300" }
+                    : opp.category === "restock"
+                      ? { label: "🛒 Retail Drop / Restock", cls: "bg-sky-500/20 text-sky-300" }
+                      : opp.category === "scalpers"
+                        ? { label: "🚫 Scalpers / Empty Shelves", cls: "bg-rose-500/20 text-rose-300" }
+                        : { label: "✨ Pack Pulls / Set Discussion", cls: "bg-purple-500/20 text-purple-300" };
+
+                return (
+                  <div key={opp.id} className="card border-line p-5 space-y-3">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div className="space-y-1">
+                        <div className="flex flex-wrap items-center gap-2 text-xs">
+                          <span className="rounded-full bg-orange-500/20 px-2.5 py-0.5 font-bold text-orange-300">
+                            {opp.subreddit}
                           </span>
+                          <span className={`rounded-full px-2.5 py-0.5 font-bold ${categoryBadge.cls}`}>
+                            {categoryBadge.label}
+                          </span>
+                          <span className="rounded-full bg-volt/15 px-2.5 py-0.5 font-bold text-volt">
+                            📍 {opp.matchedLocationLabel} ({opp.matchedMachinesCount} machines)
+                          </span>
+                          <span className="text-muted">
+                            by {opp.author} · {timeAgo(new Date(opp.postedAt))}
+                          </span>
+                        </div>
+                        <h3 className="text-base font-bold text-white">
+                          <a
+                            href={opp.permalink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              copyAndOpenThread();
+                            }}
+                            className="hover:text-volt hover:underline"
+                          >
+                            {opp.title}
+                          </a>
+                        </h3>
+                        {opp.excerpt && opp.excerpt !== opp.title && (
+                          <p className="text-xs text-slate-300">{opp.excerpt}</p>
                         )}
+                        <p className="font-mono text-[11px] text-slate-400 break-all">
+                          Thread: {opp.permalink}
+                        </p>
                       </div>
-                      <h3 className="text-base font-bold text-white">
+
+                      <div className="flex flex-wrap items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={copyAndOpenThread}
+                          className="btn-primary py-1.5 text-xs font-bold"
+                        >
+                          <Copy className="h-3.5 w-3.5" />
+                          Copy Reply &amp; Open Thread ↗
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            navigator.clipboard.writeText(opp.shortReplyDraft);
+                            setMsg(
+                              "Short reply copied! Opening Reddit thread and removing from uncommented queue…",
+                            );
+                            window.open(opp.permalink, "_blank", "noopener,noreferrer");
+                            removeAndMarkCommented("replied");
+                          }}
+                          className="btn-ghost py-1.5 text-xs"
+                        >
+                          Copy Short &amp; Open ↗
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setMsg(`Removed "${opp.title.slice(0, 40)}…" (marked as already commented).`);
+                            removeAndMarkCommented("dismissed");
+                          }}
+                          className="btn-ghost py-1.5 text-xs text-slate-400 hover:border-red-400/50 hover:text-red-300"
+                          title="Already commented on this thread with u/Sharp-Lifeguard-8635 — remove permanently"
+                        >
+                          <Check className="h-3.5 w-3.5" />
+                          Already Commented / Remove
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="rounded-xl border border-line bg-panel-2/70 p-3.5 text-xs space-y-2">
+                      <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-bold uppercase tracking-wider text-muted">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <span>Short Clever Reply (Editable):</span>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setRedditOpps((prev) =>
+                                prev.map((item) =>
+                                  item.id === opp.id ? { ...item, helpfulReplyDraft: opp.shortReplyDraft } : item,
+                                ),
+                              )
+                            }
+                            className="rounded border border-line bg-bg px-2 py-0.5 text-[10px] font-semibold normal-case text-slate-300 hover:border-volt hover:text-volt"
+                          >
+                            ⚡ 1-Liner Version
+                          </button>
+                          {opp.altCleverDraft && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setRedditOpps((prev) =>
+                                  prev.map((item) =>
+                                    item.id === opp.id
+                                      ? { ...item, helpfulReplyDraft: opp.altCleverDraft! }
+                                      : item,
+                                  ),
+                                )
+                              }
+                              className="rounded border border-line bg-bg px-2 py-0.5 text-[10px] font-semibold normal-case text-slate-300 hover:border-volt hover:text-volt"
+                            >
+                              🎯 Alt Tip Version
+                            </button>
+                          )}
+                        </div>
                         <a
                           href={opp.permalink}
                           target="_blank"
@@ -1616,117 +1785,28 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                             e.preventDefault();
                             copyAndOpenThread();
                           }}
-                          className="hover:text-volt hover:underline"
+                          className="text-volt hover:underline"
                         >
-                          {opp.title}
+                          View on Reddit (Auto-Copies &amp; Marks Commented) ↗
                         </a>
-                      </h3>
-                      {opp.excerpt && opp.excerpt !== opp.title && (
-                        <p className="text-xs text-slate-300">{opp.excerpt}</p>
-                      )}
-                      <p className="font-mono text-[11px] text-slate-400 break-all">
-                        Thread: {opp.permalink}
-                      </p>
-                    </div>
-
-                    <div className="flex flex-wrap items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={copyAndOpenThread}
-                        className="btn-primary py-1.5 text-xs font-bold"
-                      >
-                        {copiedReplyId === opp.id ? (
-                          <Check className="h-3.5 w-3.5" />
-                        ) : (
-                          <Copy className="h-3.5 w-3.5" />
-                        )}
-                        {copiedReplyId === opp.id
-                          ? "Reply Copied! Paste in Thread ↗"
-                          : "Copy Reply & Open Thread ↗"}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          navigator.clipboard.writeText(opp.shortReplyDraft);
-                          setCopiedReplyId(`${opp.id}-short`);
-                          setMsg("Short reply copied! Opening Reddit thread…");
-                          setTimeout(() => setCopiedReplyId(null), 2500);
-                          window.open(opp.permalink, "_blank", "noopener,noreferrer");
-                        }}
-                        className="btn-ghost py-1.5 text-xs"
-                      >
-                        {copiedReplyId === `${opp.id}-short`
-                          ? "Copied Short! Opening…"
-                          : "Copy Short & Open ↗"}
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="rounded-xl border border-line bg-panel-2/70 p-3.5 text-xs space-y-2">
-                    <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-bold uppercase tracking-wider text-muted">
-                      <div className="flex flex-wrap items-center gap-1.5">
-                        <span>Short Clever Reply (Editable):</span>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setRedditOpps((prev) =>
-                              prev.map((item) =>
-                                item.id === opp.id ? { ...item, helpfulReplyDraft: opp.shortReplyDraft } : item,
-                              ),
-                            )
-                          }
-                          className="rounded border border-line bg-bg px-2 py-0.5 text-[10px] font-semibold normal-case text-slate-300 hover:border-volt hover:text-volt"
-                        >
-                          ⚡ 1-Liner Version
-                        </button>
-                        {opp.altCleverDraft && (
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setRedditOpps((prev) =>
-                                prev.map((item) =>
-                                  item.id === opp.id
-                                    ? { ...item, helpfulReplyDraft: opp.altCleverDraft! }
-                                    : item,
-                                ),
-                              )
-                            }
-                            className="rounded border border-line bg-bg px-2 py-0.5 text-[10px] font-semibold normal-case text-slate-300 hover:border-volt hover:text-volt"
-                          >
-                            🎯 Alt &ldquo;Sold Out&rdquo; Tip
-                          </button>
-                        )}
                       </div>
-                      <a
-                        href={opp.permalink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          copyAndOpenThread();
+                      <textarea
+                        rows={3}
+                        className="input w-full bg-bg/90 font-sans text-xs leading-relaxed text-slate-200"
+                        value={opp.helpfulReplyDraft}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setRedditOpps((prev) =>
+                            prev.map((item) =>
+                              item.id === opp.id ? { ...item, helpfulReplyDraft: val } : item,
+                            ),
+                          );
                         }}
-                        className="text-volt hover:underline"
-                      >
-                        View on Reddit (Auto-Copies Reply) ↗
-                      </a>
+                      />
                     </div>
-                    <textarea
-                      rows={3}
-                      className="input w-full bg-bg/90 font-sans text-xs leading-relaxed text-slate-200"
-                      value={opp.helpfulReplyDraft}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        setRedditOpps((prev) =>
-                          prev.map((item) =>
-                            item.id === opp.id ? { ...item, helpfulReplyDraft: val } : item,
-                          ),
-                        );
-                      }}
-                    />
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
           </div>
         </section>
       )}
