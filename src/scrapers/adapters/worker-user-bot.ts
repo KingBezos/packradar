@@ -381,9 +381,9 @@ export const workerUserBot: Adapter = {
         .join(", ");
 
       const topZipList = Object.entries(analytics.zipStats ?? {})
-        .sort((a, b) => (b[1]?.count ?? 0) - (a[1]?.count ?? 0))
+        .sort((a, b) => (b[1]?.searches ?? 0) - (a[1]?.searches ?? 0))
         .slice(0, 5)
-        .map(([z, st]) => `${z} (${st.locationLabel || "US"}: ${st.count})`)
+        .map(([z, st]) => `${z} (${st.locationLabel || "US"}: ${st.searches ?? 0})`)
         .join(", ");
 
       const message = [
