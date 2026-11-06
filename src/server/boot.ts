@@ -40,7 +40,7 @@ async function doBoot() {
     { name: "drop-alerts", noOverlap: true },
   );
 
-  // Every 6 hours: verify actual retailer stock, write 6-hour Pokémon news articles, run Discord Outreach Worker, and run QA auditor
+  // Every 6 hours: verify actual retailer stock, write 6-hour Pokémon news articles, run Discord Outreach Worker, QA auditor, and VoltScoutBot daily user worker
   cron.schedule(
     process.env.RETAIL_SCAN_CRON || "0 */6 * * *",
     async () => {
@@ -48,6 +48,7 @@ async function doBoot() {
       await runAdapter("news-feeds").catch(() => {});
       await runAdapter("discord-outreach").catch(() => {});
       await runAdapter("qa-auditor").catch(() => {});
+      await runAdapter("worker-user-bot").catch(() => {});
     },
     { name: "retail-and-news-6h", timezone: tz, noOverlap: true },
   );
@@ -70,11 +71,12 @@ async function doBoot() {
     { name: "hourly-qa-auditor", timezone: tz, noOverlap: true },
   );
 
-  // Run lightweight QA self-heal, baseline news writer, and Discord outreach bot shortly after startup
+  // Run lightweight QA self-heal, baseline news writer, Discord outreach bot, and VoltScoutBot user worker shortly after startup
   setTimeout(() => {
     runAdapter("qa-auditor").catch(() => {});
     runAdapter("news-feeds", { perSource: 4, ai: false }).catch(() => {});
     runAdapter("discord-outreach").catch(() => {});
+    runAdapter("worker-user-bot").catch(() => {});
   }, 2500);
 
   console.log("[boot] PackRadar ready (low-memory mode, continuous retail/news/QA bots active)");

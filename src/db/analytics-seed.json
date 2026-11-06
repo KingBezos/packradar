@@ -64,12 +64,12 @@
     "396edb818e2633a2",
     "2cfa574dc0d20aa5"
   ],
-  "totalBotHitsExcluded": 1399,
+  "totalBotHitsExcluded": 1413,
   "botBreakdown": {
-    "Internal QA & Health Checks": 1262,
+    "Internal QA & Health Checks": 1275,
     "Discord Link Preview (Discordbot)": 3,
     "Search Engine Crawler (Google/Bing/DuckDuckGo)": 1,
-    "Headless Browser / Automation (Puppeteer/Playwright/Curl/Node)": 14,
+    "Headless Browser / Automation (Puppeteer/Playwright/Curl/Node)": 15,
     "Empty or Synthetic User-Agent": 14,
     "Social Preview Bot (Twitter/FB/Slack/Telegram/Reddit)": 91,
     "Non-Browser HTTP Client": 12,
@@ -688,7 +688,7 @@
         "2cfa574dc0d20aa5",
         "0d1dd19288169b75"
       ],
-      "botHitsBlocked": 45,
+      "botHitsBlocked": 59,
       "signUps": 0
     }
   },

@@ -334,6 +334,16 @@ export async function seedIfEmpty(db: DB) {
         reputation: 0,
         homeZip: null,
       },
+      {
+        id: "u-packradar-worker-bot",
+        name: "VoltScoutBot",
+        email: "bot@packradar.com",
+        emailVerified: true,
+        role: "user",
+        plan: "premium",
+        reputation: 35,
+        homeZip: "98107",
+      },
     ])
     .onConflictDoNothing();
 
@@ -351,6 +361,12 @@ export async function seedIfEmpty(db: DB) {
         userId: "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
         delta: 2,
         reason: "Community drop confirmation",
+      },
+      {
+        id: "rep-seed-voltscoutbot-35",
+        userId: "u-packradar-worker-bot",
+        delta: 35,
+        reason: "Daily route spotter & usability verification",
       },
     ])
     .onConflictDoNothing();

@@ -721,6 +721,12 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
       await call("/api/admin/scrape", "POST", { adapter, options });
       setMsg(`Started ${adapter}`);
       loadScrapers();
+      setTimeout(() => {
+        loadInbox();
+        loadUsers();
+        loadContent();
+        loadScrapers();
+      }, 2200);
     } catch (e) {
       setMsg((e as Error).message);
     }
@@ -3592,6 +3598,9 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
             </div>
             {isAdmin && (
               <div className="flex flex-wrap gap-2">
+                <button className="btn-ghost text-xs" onClick={() => runBot("worker-user-bot", { forceReport: true })}>
+                  <Bot className="h-4 w-4 text-volt" /> Run VoltScoutBot (User + Audit)
+                </button>
                 <button className="btn-ghost text-xs" onClick={() => runBot("discord-outreach")}>
                   <MessageSquare className="h-4 w-4 text-indigo-400" /> Run Discord Outreach Bot
                 </button>

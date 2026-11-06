@@ -12,8 +12,9 @@ import { retailStock } from "./adapters/retail";
 import { dailyReport } from "./adapters/daily-report";
 import { qaAuditor } from "./adapters/qa-auditor";
 import { discordOutreach } from "./adapters/discord-outreach";
+import { workerUserBot } from "./adapters/worker-user-bot";
 
-/** Order matters for the daily job: locations → social/video drop times → cluster propagation → releases → retail → news → discord outreach → qa → report. */
+/** Order matters for the daily job: locations → social/video drop times → cluster propagation → releases → retail → news → discord outreach → qa → worker user bot → report. */
 export const ADAPTERS: Adapter[] = [
   officialLocator,
   redditDropTimes,
@@ -24,6 +25,7 @@ export const ADAPTERS: Adapter[] = [
   newsFeeds,
   discordOutreach,
   qaAuditor,
+  workerUserBot,
   dailyReport,
 ];
 
