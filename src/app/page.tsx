@@ -1,24 +1,26 @@
 import Link from "next/link";
-import { CalendarDays, Newspaper, Radar, ShieldCheck, Users, Bell, Trophy } from "lucide-react";
+import { CalendarDays, Newspaper, Radar, ShieldCheck, Users, Bell, Trophy, Flame } from "lucide-react";
 import { SearchBox } from "@/components/SearchBox";
 import { DropMapClient } from "@/components/DropMapClient";
 import { DroppingSoon } from "@/components/DroppingSoon";
 import { SponsorSlot } from "@/components/SponsorSlot";
 import { NewsCard } from "@/components/NewsCard";
+import { ShareButtons } from "@/components/ShareButtons";
 import { SectionTitle } from "@/components/ui";
-import { getMapMachines, latestNews, siteStats, upcomingReleases } from "@/lib/queries";
+import { getMapMachines, getRetailDropIntel, latestNews, siteStats, upcomingReleases } from "@/lib/queries";
 import { getCurrentUser } from "@/lib/session";
 import { ReleaseCountdown } from "@/components/ReleaseCountdown";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const [stats, news, releases, user, mapMachines] = await Promise.all([
+  const [stats, news, releases, user, mapMachines, retailIntel] = await Promise.all([
     siteStats(),
     latestNews(6),
     upcomingReleases(4),
     getCurrentUser(),
     getMapMachines(),
+    getRetailDropIntel(),
   ]);
 
   return (
@@ -171,6 +173,70 @@ export default async function Home() {
               <p className="mt-1 text-sm leading-6 text-muted">{c.body}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Breaking Retail & Warehouse Drop Radar */}
+      <section className="mx-auto mt-12 max-w-7xl px-4">
+        <div className="card border-volt/35 bg-gradient-to-br from-emerald-500/10 via-panel to-panel p-6">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-volt/15 px-3 py-1 text-xs font-black uppercase tracking-wider text-volt">
+                <Flame className="h-3.5 w-3.5" /> Breaking Retail &amp; Warehouse Drop Radar (Scanned Every 2h)
+              </span>
+              <h2 className="mt-2 text-2xl font-black text-white">
+                Upcoming Big-Box &amp; Warehouse Drops (Sam&apos;s Club, Costco, Target &amp; Pokémon Center)
+              </h2>
+            </div>
+            <Link href="/drops" className="btn-ghost text-xs font-bold text-volt">
+              View All Retail Drops →
+            </Link>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            {retailIntel.items.slice(0, 3).map((item, idx) => {
+              const sharePath = item.url.startsWith("/") ? item.url : "/drops";
+              return (
+                <div
+                  key={item.id}
+                  className={`flex flex-col justify-between rounded-2xl border p-4 ${
+                    idx === 0
+                      ? "border-volt/50 bg-volt/10"
+                      : "border-line bg-panel-2/80"
+                  }`}
+                >
+                  <div>
+                    <div className="flex flex-wrap items-center justify-between gap-2 text-[11px]">
+                      <span className="rounded-full bg-volt px-2.5 py-0.5 font-black uppercase text-slate-950">
+                        {item.retailer === "samsclub" ? "Sam's Club" : item.retailer.replace("_", " ")}
+                      </span>
+                      <span className="rounded-full bg-green-500/15 px-2 py-0.5 text-[10px] font-bold uppercase text-green-400">
+                        {idx === 0 ? "🚨 Breaking Alert" : "High Signal"}
+                      </span>
+                    </div>
+                    <Link
+                      href={sharePath}
+                      className="mt-2.5 block text-base font-black leading-snug text-white hover:text-volt"
+                    >
+                      {item.title}
+                    </Link>
+                    <p className="mt-1 text-xs text-slate-300">{item.productName}</p>
+                    <p className="mt-2 text-xs font-semibold text-amber-200">
+                      ⏰ {item.expectedWindow}
+                    </p>
+                  </div>
+                  <div className="mt-3 border-t border-line/60 pt-2">
+                    <ShareButtons
+                      path={sharePath}
+                      title={item.title}
+                      summary={`${item.productName} · ${item.expectedWindow}`}
+                      compact
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </section>
 

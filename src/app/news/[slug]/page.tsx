@@ -7,13 +7,32 @@ import { Markdown } from "@/components/Markdown";
 import { CategoryBadge, Avatar, timeAgo } from "@/components/ui";
 import { CommentForm, CommentFlagButton } from "@/components/MachineActions";
 import { SponsorSlot } from "@/components/SponsorSlot";
+import { ShareButtons } from "@/components/ShareButtons";
 
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const r = await getNewsPost(slug);
-  return r ? { title: r.post.title, description: r.post.summary } : { title: "Not found" };
+  if (!r) return { title: "Not found" };
+  return {
+    title: r.post.title,
+    description: r.post.summary,
+    openGraph: {
+      title: `${r.post.title} | PackRadar`,
+      description: r.post.summary ?? undefined,
+      url: `https://packradar.onrender.com/news/${r.post.slug}`,
+      siteName: "PackRadar — Pokémon Vending & Retail Drop Radar",
+      images: r.post.imageUrl ? [{ url: r.post.imageUrl }] : undefined,
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: r.post.title,
+      description: r.post.summary ?? undefined,
+      images: r.post.imageUrl ? [r.post.imageUrl] : undefined,
+    },
+  };
 }
 
 export default async function NewsPostPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -30,6 +49,9 @@ export default async function NewsPostPage({ params }: { params: Promise<{ slug:
         <span>· {post.author}</span>
       </div>
       <h1 className="mt-3 text-3xl font-black leading-tight text-white">{post.title}</h1>
+      <div className="mt-4">
+        <ShareButtons path={`/news/${post.slug}`} title={post.title} summary={post.summary ?? undefined} />
+      </div>
       {post.imageUrl && (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={post.imageUrl} alt="" className="mt-5 max-h-96 w-full rounded-2xl object-cover" />
@@ -39,6 +61,9 @@ export default async function NewsPostPage({ params }: { params: Promise<{ slug:
       ) : (
         <p className="prose-pr mt-5 text-lg">{post.summary}</p>
       )}
+      <div className="mt-8">
+        <ShareButtons path={`/news/${post.slug}`} title={post.title} summary={post.summary ?? undefined} />
+      </div>
       {post.sourceUrl && (
         <a
           href={post.sourceUrl}

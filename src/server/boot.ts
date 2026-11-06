@@ -51,9 +51,9 @@ async function doBoot() {
     { name: "drop-alerts", noOverlap: true },
   );
 
-  // Every 6 hours: verify actual retailer stock, write 6-hour Pokémon news articles, run Discord Outreach Worker, QA auditor, and VoltScoutBot daily user worker
+  // Every 2 hours (12x daily): verify actual retailer stock, scrub breaking drop leaks, and write Pokémon news articles
   cron.schedule(
-    process.env.RETAIL_SCAN_CRON || "0 */6 * * *",
+    process.env.RETAIL_SCAN_CRON || "0 */2 * * *",
     async () => {
       await runAdapter("retail-stock").catch(() => {});
       await runAdapter("news-feeds").catch(() => {});
@@ -61,7 +61,7 @@ async function doBoot() {
       await runAdapter("qa-auditor").catch(() => {});
       await runAdapter("worker-user-bot").catch(() => {});
     },
-    { name: "retail-and-news-6h", timezone: tz, noOverlap: true },
+    { name: "retail-and-news-2h", timezone: tz, noOverlap: true },
   );
 
   // Every 2 hours: run Autonomous Discord Conversational & Group Outreach Worker

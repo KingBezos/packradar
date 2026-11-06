@@ -4,18 +4,24 @@ import { ShoppingCart, Bell, ExternalLink, Store, Clock, Radar, Flame } from "lu
 import { getProductsWithListings, getRetailDropIntel } from "@/lib/queries";
 import { RetailScanBar } from "@/components/RetailScanBar";
 import { AlertAdminButton } from "@/components/AlertAdminButton";
+import { ShareButtons } from "@/components/ShareButtons";
 import { timeAgo } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
-  title: "Retail Drops & Restock Tracker – Target, Walmart, Best Buy, CVS, Walgreens, Dollar General",
+  title: "Retail Drops & Restock Tracker – Sam's Club, Target, Walmart, Best Buy, Costco, CVS, Walgreens",
   description:
-    "Verified MSRP Pokémon TCG retail restock tracker (scanned continuously throughout the day) across Pokémon Center, Target, Walmart, Best Buy, GameStop, Costco, CVS, Walgreens, Dollar General, and Barnes & Noble.",
+    "Verified MSRP Pokémon TCG retail restock tracker (scanned every 2 hours, 12× daily) across Sam's Club, Pokémon Center, Target, Walmart, Best Buy, GameStop, Costco, CVS, Walgreens, Dollar General, and Barnes & Noble.",
 };
 
-const IN_STORE_RETAILERS = new Set(["cvs", "walgreens", "dollargeneral", "barnesandnoble", "costco"]);
+const IN_STORE_RETAILERS = new Set(["samsclub", "cvs", "walgreens", "dollargeneral", "barnesandnoble", "costco"]);
 
 const RETAILER_META: Record<string, { label: string; badgeCls: string; scheduleHint: string }> = {
+  samsclub: {
+    label: "Sam's Club",
+    badgeCls: "border-emerald-400/50 bg-emerald-500/15 text-emerald-200",
+    scheduleHint: "151 & 30th Celebration 4-Pack Mini Tins ($34.98) · Shipments Nov 16, In-Store Nov 20–21 (94k units / 414 clubs)",
+  },
   pokemon_center: {
     label: "Pokémon Center",
     badgeCls: "border-red-500/40 bg-red-500/10 text-red-200",
@@ -122,12 +128,10 @@ export default async function DropsPage() {
               label: item.retailer,
               badgeCls: "border-line bg-panel-2 text-slate-200",
             };
+            const sharePath = item.url.startsWith("/") ? item.url : "/drops";
             return (
-              <a
+              <div
                 key={item.id}
-                href={item.url}
-                target="_blank"
-                rel="noopener noreferrer"
                 className="group flex flex-col justify-between rounded-xl border border-line bg-panel-2/80 p-3.5 transition hover:border-volt/40"
               >
                 <div>
@@ -150,17 +154,32 @@ export default async function DropsPage() {
                       {item.confidence === "high" ? "High Signal" : "Community Watch"}
                     </span>
                   </div>
-                  <p className="mt-2 text-sm font-bold text-white group-hover:text-volt">{item.title}</p>
+                  <a
+                    href={item.url}
+                    target={item.url.startsWith("/") ? undefined : "_blank"}
+                    rel={item.url.startsWith("/") ? undefined : "noopener noreferrer"}
+                    className="mt-2 block text-sm font-bold text-white group-hover:text-volt"
+                  >
+                    {item.title}
+                  </a>
                   <p className="mt-0.5 text-xs text-slate-400">{item.productName}</p>
                 </div>
 
-                <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-line/60 pt-2 text-xs">
-                  <span className="inline-flex items-center gap-1 font-semibold text-amber-200">
-                    <Flame className="h-3.5 w-3.5 text-volt" /> {item.expectedWindow}
-                  </span>
-                  <span className="text-[11px] text-muted">{timeAgo(new Date(item.spottedAt))}</span>
+                <div className="mt-3 space-y-2 border-t border-line/60 pt-2 text-xs">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="inline-flex items-center gap-1 font-semibold text-amber-200">
+                      <Flame className="h-3.5 w-3.5 text-volt" /> {item.expectedWindow}
+                    </span>
+                    <span className="text-[11px] text-muted">{timeAgo(new Date(item.spottedAt))}</span>
+                  </div>
+                  <ShareButtons
+                    path={sharePath}
+                    title={item.title}
+                    summary={`${item.productName} · ${item.expectedWindow}`}
+                    compact
+                  />
                 </div>
-              </a>
+              </div>
             );
           })}
         </div>

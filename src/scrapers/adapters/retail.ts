@@ -415,6 +415,28 @@ export const CURRENT_POKEMON_RETAIL_CATALOG: CatalogProductSpec[] = [
     ],
   },
   {
+    name: "Sam's Club Exclusive: Pokémon 151 & 30th Celebration 4-Pack Mini Tins",
+    setName: "Scarlet & Violet—151 / 30th Celebration Warehouse Wave",
+    category: "tin",
+    msrp: 34.98,
+    listings: [
+      {
+        retailer: "samsclub",
+        url: "https://www.samsclub.com/s/pokemon%20mini%20tins",
+        inStock: false,
+        price: 34.98,
+        channel: "in_store",
+      },
+      {
+        retailer: "costco",
+        url: "https://www.costco.com/CatalogSearch?keyword=pokemon+mini+tins",
+        inStock: false,
+        price: 37.99,
+        channel: "in_store",
+      },
+    ],
+  },
+  {
     name: "Value Chain Exclusive: Knock Out Collection & Poké Ball Tin (3 Packs)",
     setName: "Dollar General / Family Dollar / Drugstore Wave",
     category: "tin",
@@ -459,6 +481,18 @@ export const CURRENT_POKEMON_RETAIL_CATALOG: CatalogProductSpec[] = [
 
 /** Curated baseline of verified upcoming restock windows & drop signals. */
 export const BASELINE_UPCOMING_INTEL: UpcomingDropIntel[] = [
+  {
+    id: "intel-samsclub-151-30th-mini-tins",
+    source: "discord",
+    sourceLabel: "Warehouse Allocation Alert · 94,000 Units (414/600 Clubs)",
+    title: "Sam's Club — Pokémon 151 Mini Tins & 30th Celebration 4-Pack Mini Tins ($34.98)",
+    retailer: "samsclub",
+    productName: "Sam's Club Exclusive: Pokémon 151 & 30th Celebration 4-Pack Mini Tins ($34.98 · 160 Units/Pallet)",
+    expectedWindow: "Shipments Begin Nov 16 · In-Store Only Release Nov 20–21 (414 of 600 Clubs)",
+    url: "/news/sams-club-pokemon-151-mini-tins-30th-celebration-4-pack-november-drop",
+    spottedAt: new Date(Date.now() - 25 * 60_000).toISOString(),
+    confidence: "high",
+  },
   {
     id: "intel-pc-destined-rivals",
     source: "pokemon_center",
@@ -704,6 +738,7 @@ export function detectStock(html: string, url = "", msrp?: number | null): Stock
 }
 
 const RETAILER_KEYWORDS: Record<string, RegExp> = {
+  samsclub: /\bsam'?s\s*club\b/i,
   target: /\btarget\b/i,
   walmart: /\bwalmart\b/i,
   bestbuy: /\bbest\s*buy\b/i,
@@ -719,7 +754,7 @@ const RETAILER_KEYWORDS: Record<string, RegExp> = {
 
 /**
  * Scrubs Reddit (r/PKMNTCGDeals, r/PokemonTCG), community restock threads, and news feeds
- * during the 4× daily scan:
+ * during the 2-hour (12× daily) scan:
  *  1. Collects upcoming drop rumors & restock intelligence for the `/drops` page.
  *  2. Only marks a listing `inStock: true` if a post in `r/PKMNTCGDeals` was posted within
  *     the LAST 45 MINUTES, explicitly indicates live stock, and is NOT marked OOS/Sold Out/Expired.
@@ -734,13 +769,13 @@ export async function scrubCommunityRetailDeals(
 
   const feeds = [
     {
-      url: "https://www.reddit.com/r/PKMNTCGDeals/new.json?limit=30",
+      url: "https://www.reddit.com/r/PKMNTCGDeals/new.json?limit=35",
       source: "reddit" as const,
       sourceLabel: "r/PKMNTCGDeals",
       isDealSub: true,
     },
     {
-      url: "https://www.reddit.com/r/PokemonTCG/search.json?q=restock+OR+drop+OR+queue+OR+target+OR+costco+OR+%22pokemon+center%22+OR+%22best+buy%22&sort=new&restrict_sr=on&limit=25",
+      url: "https://www.reddit.com/r/PokemonTCG/search.json?q=restock+OR+drop+OR+queue+OR+pallet+OR+%22sam%27s+club%22+OR+costco+OR+target+OR+%22pokemon+center%22+OR+%22best+buy%22&sort=new&restrict_sr=on&limit=30",
       source: "reddit" as const,
       sourceLabel: "r/PokemonTCG",
       isDealSub: false,
@@ -787,6 +822,38 @@ export async function scrubCommunityRetailDeals(
             `${title} ${flair}`,
           );
         const isQuestion = /\?|anyone know|when does|where can i/i.test(title);
+        const primaryRetailer = matchedRetailers[0];
+
+        // Also capture breaking drop / allocation / pallet leaks even if the SKU is brand-new
+        if (
+          ageMinutes <= 72 * 60 &&
+          !isQuestion &&
+          /mini\s*tins|etb|elite\s*trainer|booster\s*bundle|pallet|allocation|units|reprint|blooming\s*waters|151|prismatic|destined\s*rivals|30th\s*celebration/i.test(
+            combined,
+          ) &&
+          discoveredIntel.length < 10
+        ) {
+          const intelId = `reddit-${post.id ?? discoveredIntel.length}`;
+          if (!discoveredIntel.some((x) => x.id === intelId)) {
+            discoveredIntel.push({
+              id: intelId,
+              source: feed.source,
+              sourceLabel: feed.isDealSub ? "Live Restock Signal" : "Drop Radar Watch",
+              title: title.slice(0, 140),
+              retailer: primaryRetailer,
+              productName: "Pokémon TCG Retail Allocation / Restock Watch",
+              expectedWindow:
+                ageMinutes < 60
+                  ? isExpiredOrOos
+                    ? "Restock wave just ended (watch for secondary flicker)"
+                    : "Spotted live within the last hour"
+                  : "Upcoming restock signal — watch next scheduled drop window",
+              url: "/drops",
+              spottedAt: createdMs ? new Date(createdMs).toISOString() : new Date().toISOString(),
+              confidence: feed.isDealSub ? "high" : "medium",
+            });
+          }
+        }
 
         for (const p of allProducts) {
           const keywords = p.name
@@ -796,8 +863,6 @@ export async function scrubCommunityRetailDeals(
             .filter((w) => w.length >= 3 && !["the", "and", "pack", "packs", "box", "pokemon", "tcg"].includes(w));
           const matchCount = keywords.filter((kw) => combined.toLowerCase().includes(kw)).length;
           if (matchCount < 2) continue;
-
-          const primaryRetailer = matchedRetailers[0];
 
           // Record as community drop intelligence if recent (< 72 hours)
           if (ageMinutes <= 72 * 60 && discoveredIntel.length < 10) {
@@ -853,15 +918,19 @@ export async function scrubCommunityRetailDeals(
     }
   }
 
-  // Merge discovered live community intel with baseline upcoming schedule intel
-  const mergedIntel = [...discoveredIntel, ...BASELINE_UPCOMING_INTEL].slice(0, 12);
+  // Keep featured #1 breaking drop (Sam's Club 151 & 30th Celebration Mini Tins) at the top alongside discovered intel
+  const mergedIntel = [
+    BASELINE_UPCOMING_INTEL[0],
+    ...discoveredIntel.filter((d) => d.id !== BASELINE_UPCOMING_INTEL[0].id),
+    ...BASELINE_UPCOMING_INTEL.slice(1),
+  ].slice(0, 12);
   await db
     .insert(settings)
     .values({
       key: "retailUpcomingIntel",
       value: {
         lastScanAt: new Date().toISOString(),
-        scanCadence: "4x_daily_6h",
+        scanCadence: "12x_daily_2h",
         items: mergedIntel,
       },
     })
@@ -870,7 +939,7 @@ export async function scrubCommunityRetailDeals(
       set: {
         value: {
           lastScanAt: new Date().toISOString(),
-          scanCadence: "4x_daily_6h",
+          scanCadence: "12x_daily_2h",
           items: mergedIntel,
         },
         updatedAt: new Date(),
@@ -882,9 +951,9 @@ export async function scrubCommunityRetailDeals(
 
 export const retailStock: Adapter = {
   name: "retail-stock",
-  label: "4× Daily Retail Stock Verifier & Upcoming Drop Scrubber",
+  label: "2-Hour Retail Stock Verifier & Breaking Drop Scrubber (12× Daily)",
   description:
-    "Scans 4× daily (every 6 hours) to strictly verify MSRP stock across Pokémon Center, Target, Walmart, Best Buy, GameStop, Costco, Amazon, CVS, Walgreens & Dollar General, and scrubs Reddit/Discord/Facebook for upcoming drop intel.",
+    "Scans every 2 hours (12× daily) to strictly verify MSRP stock across Sam's Club, Pokémon Center, Target, Walmart, Best Buy, GameStop, Costco, Amazon, CVS, Walgreens & Dollar General, and scrubs Reddit/Discord/PokéBeach for breaking drop intel.",
   daily: true,
   async run({ db, log }) {
     const seeded = await ensureRetailCatalog(db);

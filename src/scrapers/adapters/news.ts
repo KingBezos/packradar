@@ -15,9 +15,11 @@ import { notifyNews } from "@/lib/notify/dispatch";
 import type { Adapter } from "../types";
 
 export const NEWS_SOURCES: { name: string; url: string; pokemonOnly: boolean }[] = [
+  { name: "PokéBeach", url: "https://www.pokebeach.com/feed", pokemonOnly: true },
   { name: "Dexerto", url: "https://www.dexerto.com/pokemon/feed/", pokemonOnly: true },
   { name: "Polygon", url: "https://www.polygon.com/rss/pokemon/index.xml", pokemonOnly: true },
   { name: "PokémonBlog", url: "https://pokemonblog.com/feed/", pokemonOnly: true },
+  { name: "r/PKMNTCGDeals", url: "https://www.reddit.com/r/PKMNTCGDeals/new/.rss", pokemonOnly: true },
   { name: "Nintendo Life", url: "https://www.nintendolife.com/feeds/news", pokemonOnly: false },
 ];
 
@@ -111,6 +113,31 @@ export const BASELINE_NEWS_ARTICLES: {
   imageUrl: string;
   pinned?: boolean;
 }[] = [
+  {
+    slug: "sams-club-pokemon-151-mini-tins-30th-celebration-4-pack-november-drop",
+    title: "Sam's Club — Pokémon 151 Mini Tins & 30th Celebration 4-Pack Mini Tins ($34.98) Returning Nov 16–21",
+    summary:
+      "Pokémon 151 Mini Tins are returning to Sam's Club alongside new 30th Celebration 4-Pack Mini Tins at $34.98. ~94,000 units are shipping Nov 16 to 414 of 600 clubs (160 units/pallet) for an in-store-only release Nov 20–21.",
+    imageUrl: "https://images.pokemontcg.io/sv3pt5/199_hires.png",
+    category: "drop-report",
+    sourceName: "PackRadar Retail Drop Radar",
+    author: "PackRadar Editorial Bot",
+    pinned: true,
+    body: `**Breaking Warehouse Drop Alert** — **Pokémon 151 Mini Tins** are officially returning to **Sam's Club**, arriving alongside brand-new **30th Celebration 4-Pack Mini Tins** priced at **$34.98**.
+
+## Confirmed Allocation & Shipment Timeline
+- **Price Point**: **$34.98** per 4-Pack Mini Tin bundle (MSRP warehouse pricing).
+- **Shipment Window**: Distribution center shipments are scheduled to begin **November 16th**, with floor pallets arriving at local clubs around **November 20th–21st**.
+- **National Unit Allocation**: Approximately **94,000 total units** are being distributed across **414 of 600 US Sam's Club locations**.
+- **Pallet Density**: Clubs receiving allocation will get **160 units per pallet**.
+- **Release Format**: This wave is confirmed as an **in-store-only release**—be on the lookout at your local Sam's Club starting **November 20th**.
+
+## Collector Math & Hunting Strategy
+With **8 booster packs per 4-Pack Mini Tin bundle** at **$34.98** (~**$4.37 per pack**), this is one of the lowest per-pack prices available for **Scarlet & Violet—151** and **30th Celebration** packs outside automated grocery vending kiosks:
+1. **Check Plus-Member Early Hours**: Many Sam's Club locations open at **8:00 AM local time** for Plus members before the standard **10:00 AM** general opening.
+2. **Where Pallets Are Staged**: Look along the main seasonal center-court raceway or near the electronics/gift card endcaps.
+3. **Pair With Local Vending Runs**: While checking your Sam's Club corridor, check the [PackRadar Live Map](/) for nearby Kroger, Fred Meyer, Safeway, and Walmart/grocery vending kiosks dropping on calibrated hourly timers, or set a local alert on the [Alerts Page](/alerts).`,
+  },
   {
     slug: "prismatic-evolutions-reprint-vending-machine-restock-guide-2026",
     title: "Prismatic Evolutions Reprint Wave Lands Across US Vending Kiosks & Big-Box Retailers",

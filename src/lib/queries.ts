@@ -431,8 +431,19 @@ export async function latestActivity(limit = 20, sinceMs?: number) {
   });
 }
 
+let baselineNewsChecked = false;
+
 export async function latestNews(limit = 12, category?: string, offset = 0) {
   const db = await getDb();
+  if (!baselineNewsChecked) {
+    baselineNewsChecked = true;
+    try {
+      const { ensureBaselineNews } = await import("@/scrapers/adapters/news");
+      await ensureBaselineNews(db);
+    } catch {
+      // ignore
+    }
+  }
   return db
     .select()
     .from(newsPosts)
@@ -444,7 +455,16 @@ export async function latestNews(limit = 12, category?: string, offset = 0) {
 
 export async function getNewsPost(slug: string) {
   const db = await getDb();
-  const [p] = await db.select().from(newsPosts).where(eq(newsPosts.slug, slug));
+  let [p] = await db.select().from(newsPosts).where(eq(newsPosts.slug, slug));
+  if (!p) {
+    try {
+      const { ensureBaselineNews } = await import("@/scrapers/adapters/news");
+      await ensureBaselineNews(db);
+      [p] = await db.select().from(newsPosts).where(eq(newsPosts.slug, slug));
+    } catch {
+      // ignore
+    }
+  }
   if (!p) return null;
   const cmts = await db
     .select({ c: comments, name: user.name, image: user.image, reputation: user.reputation })
@@ -474,7 +494,8 @@ export async function getProductsWithListings() {
   const hasUnverifiedInStock = listings.some(
     (l) => l.inStock && l.checkError !== "verified_msrp" && l.checkError !== "verified_msrp_reddit_live",
   );
-  if (listings.length === 0 || prods.length < 10 || hasUnverifiedInStock) {
+  const hasSamsClub = prods.some((p) => p.name.toLowerCase().includes("sam's club"));
+  if (listings.length === 0 || prods.length < 10 || hasUnverifiedInStock || !hasSamsClub) {
     const { ensureRetailCatalog } = await import("@/scrapers/adapters/retail");
     await ensureRetailCatalog(db);
     prods = await db.select().from(products).orderBy(desc(products.createdAt));
@@ -493,18 +514,22 @@ export async function getRetailDropIntel() {
     items?: UpcomingDropIntel[];
   } | null;
 
-  const SIX_HOURS_MS = 6 * 3600_000;
+  const TWO_HOURS_MS = 2 * 3600_000;
   const lastMs = val?.lastScanAt ? new Date(val.lastScanAt).getTime() : 0;
   const ageMs = Date.now() - lastMs;
 
-  // Trigger a non-blocking 4× daily scan if older than 6 hours
-  if (!lastMs || ageMs >= SIX_HOURS_MS) {
+  // Trigger a non-blocking 12× daily (every 2 hours) scan if older than 2 hours
+  if (!lastMs || ageMs >= TWO_HOURS_MS) {
     void import("@/scrapers/runner").then(({ runAdapter }) => runAdapter("retail-stock").catch(() => {}));
   }
 
   const lastScanAt = val?.lastScanAt ?? new Date().toISOString();
-  const nextScanAt = new Date(new Date(lastScanAt).getTime() + SIX_HOURS_MS).toISOString();
-  const rawItems = val?.items && val.items.length > 0 ? val.items : BASELINE_UPCOMING_INTEL;
+  const nextScanAt = new Date(new Date(lastScanAt).getTime() + TWO_HOURS_MS).toISOString();
+  const storedItems = val?.items && val.items.length > 0 ? val.items : BASELINE_UPCOMING_INTEL;
+  const hasFeaturedSams = storedItems.some((it) => it.id === "intel-samsclub-151-30th-mini-tins");
+  const rawItems = hasFeaturedSams
+    ? storedItems
+    : [BASELINE_UPCOMING_INTEL[0], ...storedItems.filter((it) => it.id !== "intel-samsclub-151-30th-mini-tins")];
   const items = rawItems.map((it) => ({
     ...it,
     sourceLabel: /reddit|discord|facebook|r\/|collector group/i.test(it.sourceLabel)
