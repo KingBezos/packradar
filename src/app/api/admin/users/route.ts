@@ -15,7 +15,7 @@ import {
   stockReports,
   user,
 } from "@/db/schema";
-import { getUserAnalyticsHistory } from "@/lib/analytics";
+import { getUserAnalyticsHistory, loadAnalyticsStore } from "@/lib/analytics";
 import { recomputeMachine } from "@/lib/drops/engine";
 
 export const dynamic = "force-dynamic";
@@ -117,26 +117,47 @@ export const GET = route(async (req) => {
   }
 
   // Standard all-users table list + global Live Reputation & Fair-Play Ledger (admin-only)
-  const [users, accounts, subs, recentLedgerRows] = await Promise.all([
-    db.select().from(user).orderBy(desc(user.createdAt)),
-    db.select({ userId: account.userId, providerId: account.providerId }).from(account),
-    db
-      .select({ userId: alertSubscriptions.userId, active: alertSubscriptions.active })
-      .from(alertSubscriptions),
-    db
-      .select({
-        id: reputationEvents.id,
-        userId: reputationEvents.userId,
-        delta: reputationEvents.delta,
-        reason: reputationEvents.reason,
-        createdAt: reputationEvents.createdAt,
-        userName: user.name,
-      })
-      .from(reputationEvents)
-      .innerJoin(user, eq(user.id, reputationEvents.userId))
-      .orderBy(desc(reputationEvents.createdAt))
-      .limit(30),
-  ]);
+  const [users, accounts, subs, sessions, obsAll, stockAll, commentsAll, allRepEvents, analyticsStore, recentLedgerRows] =
+    await Promise.all([
+      db.select().from(user).orderBy(desc(user.createdAt)),
+      db.select({ userId: account.userId, providerId: account.providerId }).from(account),
+      db
+        .select({
+          userId: alertSubscriptions.userId,
+          active: alertSubscriptions.active,
+          createdAt: alertSubscriptions.createdAt,
+        })
+        .from(alertSubscriptions),
+      db
+        .select({
+          userId: session.userId,
+          createdAt: session.createdAt,
+          updatedAt: session.updatedAt,
+        })
+        .from(session),
+      db
+        .select({ userId: dropObservations.userId, createdAt: dropObservations.createdAt })
+        .from(dropObservations),
+      db.select({ userId: stockReports.userId, createdAt: stockReports.createdAt }).from(stockReports),
+      db.select({ userId: comments.userId, createdAt: comments.createdAt }).from(comments),
+      db
+        .select({ userId: reputationEvents.userId, createdAt: reputationEvents.createdAt })
+        .from(reputationEvents),
+      loadAnalyticsStore(db),
+      db
+        .select({
+          id: reputationEvents.id,
+          userId: reputationEvents.userId,
+          delta: reputationEvents.delta,
+          reason: reputationEvents.reason,
+          createdAt: reputationEvents.createdAt,
+          userName: user.name,
+        })
+        .from(reputationEvents)
+        .innerJoin(user, eq(user.id, reputationEvents.userId))
+        .orderBy(desc(reputationEvents.createdAt))
+        .limit(30),
+    ]);
 
   const providersByUser = new Map<string, string[]>();
   for (const a of accounts) {
@@ -146,24 +167,73 @@ export const GET = route(async (req) => {
   }
 
   const alertsByUser = new Map<string, number>();
+  const latestActivityByUser = new Map<string, number>();
+
+  const bumpUserActivity = (userId: string | null | undefined, ts: Date | string | null | undefined) => {
+    if (!userId || !ts) return;
+    const ms = typeof ts === "string" ? new Date(ts).getTime() : ts.getTime();
+    if (Number.isNaN(ms) || ms <= 0) return;
+    const prev = latestActivityByUser.get(userId) ?? 0;
+    if (ms > prev) latestActivityByUser.set(userId, ms);
+  };
+
   for (const s of subs) {
     if (s.active) alertsByUser.set(s.userId, (alertsByUser.get(s.userId) ?? 0) + 1);
+    bumpUserActivity(s.userId, s.createdAt);
+  }
+  for (const sess of sessions) {
+    bumpUserActivity(sess.userId, sess.updatedAt);
+    bumpUserActivity(sess.userId, sess.createdAt);
+  }
+  for (const o of obsAll) bumpUserActivity(o.userId, o.createdAt);
+  for (const st of stockAll) bumpUserActivity(st.userId, st.createdAt);
+  for (const c of commentsAll) bumpUserActivity(c.userId, c.createdAt);
+  for (const r of allRepEvents) bumpUserActivity(r.userId, r.createdAt);
+
+  // Also check analyticsStore.userLastActiveMap, recentHumanVisits, and recentZipSearches
+  for (const [uid, iso] of Object.entries(analyticsStore.userLastActiveMap ?? {})) {
+    bumpUserActivity(uid, iso);
+  }
+  const userIdByNameLower = new Map(users.map((u) => [u.name.toLowerCase(), u.id]));
+  const ownerUser = users.find((u) => u.email.toLowerCase() === "james@jpegtown.com");
+  if (ownerUser) {
+    userIdByNameLower.set("lugiascout892", ownerUser.id);
+  }
+  for (const v of analyticsStore.recentHumanVisits ?? []) {
+    if (v.userId) bumpUserActivity(v.userId, v.at);
+    else if (v.userName) {
+      const matchedId = userIdByNameLower.get(v.userName.toLowerCase());
+      if (matchedId) bumpUserActivity(matchedId, v.at);
+    }
+  }
+  for (const zs of analyticsStore.recentZipSearches ?? []) {
+    if (zs.userId) bumpUserActivity(zs.userId, zs.at);
+    else if (zs.userName) {
+      const matchedId = userIdByNameLower.get(zs.userName.toLowerCase());
+      if (matchedId) bumpUserActivity(matchedId, zs.at);
+    }
   }
 
   return {
-    users: users.map((u) => ({
-      id: u.id,
-      name: u.name,
-      email: u.email,
-      emailVerified: u.emailVerified,
-      role: u.role,
-      reputation: u.reputation,
-      plan: u.plan,
-      homeZip: u.homeZip,
-      createdAt: u.createdAt,
-      providers: providersByUser.get(u.id) ?? ["credential"],
-      activeAlerts: alertsByUser.get(u.id) ?? 0,
-    })),
+    users: users.map((u) => {
+      bumpUserActivity(u.id, u.updatedAt);
+      bumpUserActivity(u.id, u.createdAt);
+      const lastMs = latestActivityByUser.get(u.id) ?? new Date(u.createdAt).getTime();
+      return {
+        id: u.id,
+        name: u.name,
+        email: u.email,
+        emailVerified: u.emailVerified,
+        role: u.role,
+        reputation: u.reputation,
+        plan: u.plan,
+        homeZip: u.homeZip,
+        createdAt: u.createdAt,
+        lastActiveAt: new Date(lastMs).toISOString(),
+        providers: providersByUser.get(u.id) ?? ["credential"],
+        activeAlerts: alertsByUser.get(u.id) ?? 0,
+      };
+    }),
     reputationLedger: recentLedgerRows,
   };
 });

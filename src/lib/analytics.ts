@@ -85,6 +85,7 @@ export type AnalyticsStore = {
   searchQueries?: Record<string, SearchQueryStatRow>;
   recentZipSearches?: ZipSearchEvent[];
   zipStats?: Record<string, ZipStatRow>;
+  userLastActiveMap?: Record<string, string>; // userId -> ISO timestamp of last login / active request
   updatedAt: string;
 };
 
@@ -233,6 +234,7 @@ function defaultStore(): AnalyticsStore {
     searchQueries: {},
     recentZipSearches: [],
     zipStats: {},
+    userLastActiveMap: {},
     updatedAt: new Date().toISOString(),
   };
 }
@@ -544,9 +546,14 @@ export async function recordAnalyticsHit(
   }
 
   // Add to recent live human stream
+  const visitNowIso = new Date().toISOString();
+  if (input.userId) {
+    store.userLastActiveMap ??= {};
+    store.userLastActiveMap[input.userId] = visitNowIso;
+  }
   store.recentHumanVisits.unshift({
     id: `v-${nowMs}-${Math.random().toString(36).slice(2, 6)}`,
-    at: new Date().toISOString(),
+    at: visitNowIso,
     path: cleanPath,
     referrer: input.referrer || "",
     sourceLabel,
@@ -855,6 +862,22 @@ export async function getAdminAnalyticsSummary(db: DB) {
     },
     updatedAt: store.updatedAt,
   };
+}
+
+const lastTouchByUser = new Map<string, number>();
+
+export async function touchUserLastActive(db: DB, userId: string): Promise<void> {
+  if (!userId) return;
+  const nowMs = Date.now();
+  const prev = lastTouchByUser.get(userId) ?? 0;
+  if (nowMs - prev < 60_000) return; // throttle to once per minute per user
+  lastTouchByUser.set(userId, nowMs);
+  try {
+    const store = await loadAnalyticsStore(db);
+    store.userLastActiveMap ??= {};
+    store.userLastActiveMap[userId] = new Date(nowMs).toISOString();
+    await saveAnalyticsStore(db, store);
+  } catch {}
 }
 
 export async function getUserAnalyticsHistory(

@@ -118,6 +118,7 @@ type ManagedUser = {
   plan: "free" | "premium";
   homeZip: string | null;
   createdAt: string;
+  lastActiveAt?: string;
   providers: string[];
   activeAlerts: number;
 };
@@ -2947,6 +2948,7 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                   <th className="px-4 py-3">Plan</th>
                   <th className="px-4 py-3">Reputation</th>
                   <th className="px-4 py-3">ZIP / Alerts</th>
+                  <th className="px-4 py-3">Last Logged In / Active</th>
                   <th className="px-4 py-3">Joined</th>
                   {isAdmin && <th className="px-4 py-3 text-right">Actions</th>}
                 </tr>
@@ -3135,6 +3137,54 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                       <td className="px-4 py-3 text-slate-300">
                         <div>ZIP: {u.homeZip || "—"}</div>
                         <div className="text-[10px] text-muted">{u.activeAlerts} active alerts</div>
+                      </td>
+                      <td className="px-4 py-3">
+                        {(() => {
+                          const lastIso = u.lastActiveAt || u.createdAt;
+                          const ageMs = Date.now() - new Date(lastIso).getTime();
+                          const isOnlineNow = ageMs <= 15 * 60_000;
+                          const isActiveToday = ageMs <= 24 * 3600_000;
+                          const isActiveWeek = ageMs <= 7 * 24 * 3600_000;
+                          return (
+                            <div className="space-y-0.5">
+                              <div className="flex items-center gap-1.5">
+                                <span
+                                  className={`inline-block h-2 w-2 rounded-full ${
+                                    isOnlineNow
+                                      ? "bg-green-400 animate-pulse"
+                                      : isActiveToday
+                                        ? "bg-emerald-400"
+                                        : isActiveWeek
+                                          ? "bg-amber-400"
+                                          : "bg-slate-500"
+                                  }`}
+                                />
+                                <span
+                                  className={`font-bold ${
+                                    isOnlineNow || isActiveToday
+                                      ? "text-green-400"
+                                      : isActiveWeek
+                                        ? "text-amber-300"
+                                        : "text-slate-300"
+                                  }`}
+                                >
+                                  {timeAgo(lastIso)}
+                                </span>
+                              </div>
+                              <div className="text-[10px] text-muted">
+                                {new Date(lastIso).toLocaleDateString("en-US", {
+                                  month: "short",
+                                  day: "numeric",
+                                })}{" "}
+                                ·{" "}
+                                {new Date(lastIso).toLocaleTimeString("en-US", {
+                                  hour: "numeric",
+                                  minute: "2-digit",
+                                })}
+                              </div>
+                            </div>
+                          );
+                        })()}
                       </td>
                       <td className="px-4 py-3 text-muted">{timeAgo(u.createdAt)}</td>
                       {isAdmin && (

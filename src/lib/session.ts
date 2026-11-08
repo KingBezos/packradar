@@ -4,6 +4,7 @@ import { and, eq, gt } from "drizzle-orm";
 import { auth, generateSpotterHandle } from "@/lib/auth";
 import { getDb } from "@/db";
 import { session as sessionTable, user as userTable, type User } from "@/db/schema";
+import { touchUserLastActive } from "@/lib/analytics";
 
 const IDENTITY_COOKIE = "packradar.identity";
 const OWNER_DEFAULT_HANDLES: Record<string, string> = {
@@ -110,6 +111,7 @@ async function sanitizeUserPrivacy(
 
   const nameChanged = desiredName !== u.name;
   const hasImage = Boolean(u.image);
+  void touchUserLastActive(db, u.id);
 
   if (!hasImage && !nameChanged && !shouldBeAdmin) return u;
 

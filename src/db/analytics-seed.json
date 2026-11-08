@@ -1,5 +1,5 @@
 {
-  "totalHumanPageviews": 364,
+  "totalHumanPageviews": 368,
   "allTimeUniqueVisitorHashes": [
     "9a3d1f0b2c8e4511",
     "4c7b82e10f9d32a6",
@@ -84,28 +84,29 @@
     "efb3a6a6a3ab4beb",
     "201ee8b88561ec46",
     "1937dd37ae8e83f1",
-    "4875412332412785"
+    "4875412332412785",
+    "bdb59f0ae60df0ba"
   ],
-  "totalBotHitsExcluded": 2862,
+  "totalBotHitsExcluded": 2917,
   "botBreakdown": {
-    "Internal QA & Health Checks": 2601,
+    "Internal QA & Health Checks": 2653,
     "Discord Link Preview (Discordbot)": 4,
     "Search Engine Crawler (Google/Bing/DuckDuckGo)": 1,
-    "Headless Browser / Automation (Puppeteer/Playwright/Curl/Node)": 21,
-    "Empty or Synthetic User-Agent": 24,
+    "Headless Browser / Automation (Puppeteer/Playwright/Curl/Node)": 22,
+    "Empty or Synthetic User-Agent": 26,
     "Social Preview Bot (Twitter/FB/Slack/Telegram/Reddit)": 155,
     "Non-Browser HTTP Client": 54,
     "Headless Webdriver Flag (navigator.webdriver)": 2
   },
   "deviceBreakdown": {
-    "mobile": 303,
+    "mobile": 307,
     "desktop": 61,
     "tablet": 0
   },
   "pages": {
     "/": {
       "path": "/",
-      "views": 96,
+      "views": 98,
       "uniqueVisitorHashes": [
         "9a3d1f0b2c8e4511",
         "4c7b82e10f9d32a6",
@@ -168,9 +169,10 @@
         "efb3a6a6a3ab4beb",
         "201ee8b88561ec46",
         "1937dd37ae8e83f1",
-        "4875412332412785"
+        "4875412332412785",
+        "bdb59f0ae60df0ba"
       ],
-      "lastVisitedAt": "2026-11-08T17:47:07.679Z"
+      "lastVisitedAt": "2026-11-08T19:08:18.956Z"
     },
     "/map": {
       "path": "/map",
@@ -234,7 +236,7 @@
     },
     "/search": {
       "path": "/search",
-      "views": 72,
+      "views": 74,
       "uniqueVisitorHashes": [
         "5bb365893501aca0",
         "692f65999f08d194",
@@ -277,9 +279,10 @@
         "666106fc5c728a69",
         "d2fd25bdfe27fcd1",
         "efb3a6a6a3ab4beb",
-        "1937dd37ae8e83f1"
+        "1937dd37ae8e83f1",
+        "bdb59f0ae60df0ba"
       ],
-      "lastVisitedAt": "2026-11-08T17:37:07.078Z"
+      "lastVisitedAt": "2026-11-08T19:08:36.776Z"
     },
     "/machines/Q02071": {
       "path": "/machines/Q02071",
@@ -655,7 +658,7 @@
     },
     "Facebook": {
       "source": "Facebook",
-      "visits": 93,
+      "visits": 94,
       "uniqueVisitorHashes": [
         "5bb365893501aca0",
         "a58a2d94d082288b",
@@ -700,9 +703,10 @@
         "666106fc5c728a69",
         "efb3a6a6a3ab4beb",
         "201ee8b88561ec46",
-        "4875412332412785"
+        "4875412332412785",
+        "bdb59f0ae60df0ba"
       ],
-      "lastSeenAt": "2026-11-08T17:47:07.679Z"
+      "lastSeenAt": "2026-11-08T19:07:35.760Z"
     },
     "Direct / Shared Link (Discord/SMS/App)": {
       "source": "Direct / Shared Link (Discord/SMS/App)",
@@ -747,6 +751,14 @@
         "1937dd37ae8e83f1"
       ],
       "lastSeenAt": "2026-11-08T17:37:07.087Z"
+    },
+    "Organic Search (Google/Bing)": {
+      "source": "Organic Search (Google/Bing)",
+      "visits": 3,
+      "uniqueVisitorHashes": [
+        "bdb59f0ae60df0ba"
+      ],
+      "lastSeenAt": "2026-11-08T19:08:36.784Z"
     }
   },
   "daily": {
@@ -880,7 +892,7 @@
     },
     "2026-11-08": {
       "date": "2026-11-08",
-      "humanViews": 23,
+      "humanViews": 27,
       "uniqueVisitorHashes": [
         "666106fc5c728a69",
         "4c61408b0d9751e3",
@@ -890,13 +902,59 @@
         "201ee8b88561ec46",
         "1937dd37ae8e83f1",
         "4875412332412785",
-        "0d1dd19288169b75"
+        "0d1dd19288169b75",
+        "bdb59f0ae60df0ba"
       ],
-      "botHitsBlocked": 435,
-      "signUps": 0
+      "botHitsBlocked": 490,
+      "signUps": 0,
+      "searches": 2
     }
   },
   "recentHumanVisits": [
+    {
+      "id": "v-1794164916784-0ho7",
+      "at": "2026-11-08T19:08:36.784Z",
+      "path": "/search",
+      "referrer": "https://accounts.google.com/",
+      "sourceLabel": "Organic Search (Google/Bing)",
+      "device": "mobile",
+      "visitorHash": "bdb59f0a",
+      "userId": "lF8bZgXnLUeGrFrlg6NRadCMnFJkg4DL",
+      "userName": "GardevoirScout326"
+    },
+    {
+      "id": "v-1794164914105-ls7r",
+      "at": "2026-11-08T19:08:34.105Z",
+      "path": "/search",
+      "referrer": "https://accounts.google.com/",
+      "sourceLabel": "Organic Search (Google/Bing)",
+      "device": "mobile",
+      "visitorHash": "bdb59f0a",
+      "userId": "lF8bZgXnLUeGrFrlg6NRadCMnFJkg4DL",
+      "userName": "GardevoirScout326"
+    },
+    {
+      "id": "v-1794164898956-0wmg",
+      "at": "2026-11-08T19:08:18.956Z",
+      "path": "/",
+      "referrer": "https://accounts.google.com/",
+      "sourceLabel": "Organic Search (Google/Bing)",
+      "device": "mobile",
+      "visitorHash": "bdb59f0a",
+      "userId": "lF8bZgXnLUeGrFrlg6NRadCMnFJkg4DL",
+      "userName": "GardevoirScout326"
+    },
+    {
+      "id": "v-1794164855760-k11v",
+      "at": "2026-11-08T19:07:35.760Z",
+      "path": "/",
+      "referrer": "https://lm.facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "bdb59f0a",
+      "userId": null,
+      "userName": null
+    },
     {
       "id": "v-1794162388507-j213",
       "at": "2026-11-08T18:26:28.507Z",
@@ -1558,10 +1616,8 @@
       "userName": null
     }
   ],
-  "activeVisitorsMap": {
-    "0d1dd19288169b75": 1794162388507
-  },
-  "totalSearches": 72,
+  "activeVisitorsMap": {},
+  "totalSearches": 74,
   "searchQueries": {
     "19382": {
       "query": "19382",
@@ -1866,9 +1922,37 @@
         "1937dd37ae8e83f1"
       ],
       "lastSearchedAt": "2026-11-08T17:36:52.530Z"
+    },
+    "phoenix": {
+      "query": "Phoenix",
+      "searches": 2,
+      "uniqueVisitorHashes": [
+        "bdb59f0ae60df0ba"
+      ],
+      "lastSearchedAt": "2026-11-08T19:08:36.776Z"
     }
   },
   "recentZipSearches": [
+    {
+      "id": "zs-1794164916784-4keg",
+      "zip": "85004",
+      "query": "Phoenix",
+      "locationLabel": "Phoenix, AZ",
+      "at": "2026-11-08T19:08:36.784Z",
+      "visitorHash": "bdb59f0a",
+      "userId": "lF8bZgXnLUeGrFrlg6NRadCMnFJkg4DL",
+      "userName": "GardevoirScout326"
+    },
+    {
+      "id": "zs-1794164914105-wk16",
+      "zip": "85004",
+      "query": "Phoenix",
+      "locationLabel": "Phoenix, AZ",
+      "at": "2026-11-08T19:08:34.105Z",
+      "visitorHash": "bdb59f0a",
+      "userId": "lF8bZgXnLUeGrFrlg6NRadCMnFJkg4DL",
+      "userName": "GardevoirScout326"
+    },
     {
       "id": "zs-1794159427087-8jeq",
       "zip": "53190",
@@ -2329,6 +2413,15 @@
       ],
       "lastSearchedAt": "2026-11-08T17:09:38.503Z"
     },
+    "85004": {
+      "zip": "85004",
+      "locationLabel": "Phoenix, AZ",
+      "searches": 2,
+      "uniqueVisitorHashes": [
+        "bdb59f0ae60df0ba"
+      ],
+      "lastSearchedAt": "2026-11-08T19:08:36.784Z"
+    },
     "85013": {
       "zip": "85013",
       "locationLabel": "Phoenix, AZ",
@@ -2458,5 +2551,5 @@
       "lastSearchedAt": "2026-11-04T00:24:43.766Z"
     }
   },
-  "updatedAt": "2026-11-08T18:29:44.012Z"
+  "updatedAt": "2026-11-08T19:08:36.784Z"
 }
