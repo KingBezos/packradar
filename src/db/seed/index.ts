@@ -313,6 +313,8 @@ export async function seedIfEmpty(db: DB) {
         plan: "premium",
         reputation: 90,
         homeZip: "97027",
+        createdAt: new Date("2026-10-25T18:00:00.000Z"),
+        updatedAt: new Date("2026-10-25T18:00:00.000Z"),
       },
       {
         id: "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
@@ -323,6 +325,8 @@ export async function seedIfEmpty(db: DB) {
         plan: "free",
         reputation: 2,
         homeZip: null,
+        createdAt: new Date("2026-11-02T16:30:00.000Z"),
+        updatedAt: new Date("2026-11-02T16:30:00.000Z"),
       },
       {
         id: "QF3xShpkjC27Z88xXSt7aP8ww2slmt3D",
@@ -333,6 +337,8 @@ export async function seedIfEmpty(db: DB) {
         plan: "free",
         reputation: 0,
         homeZip: null,
+        createdAt: new Date("2026-11-04T21:15:00.000Z"),
+        updatedAt: new Date("2026-11-04T21:15:00.000Z"),
       },
       {
         id: "u-packradar-worker-bot",
@@ -343,6 +349,8 @@ export async function seedIfEmpty(db: DB) {
         plan: "premium",
         reputation: 9,
         homeZip: "98107",
+        createdAt: new Date("2026-10-28T12:00:00.000Z"),
+        updatedAt: new Date("2026-10-28T12:00:00.000Z"),
       },
     ])
     .onConflictDoNothing();

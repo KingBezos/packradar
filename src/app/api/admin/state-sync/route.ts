@@ -62,6 +62,7 @@ export function mergeAnalyticsStores(
     searchQueries: { ...(incoming.searchQueries ?? {}), ...(current.searchQueries ?? {}) },
     recentZipSearches: [...(current.recentZipSearches ?? []), ...(incoming.recentZipSearches ?? [])].slice(0, 30),
     zipStats: { ...(incoming.zipStats ?? {}), ...(current.zipStats ?? {}) },
+    userLastActiveMap: { ...(incoming.userLastActiveMap ?? {}), ...(current.userLastActiveMap ?? {}) },
     updatedAt: new Date().toISOString(),
   };
 
@@ -262,6 +263,7 @@ export const POST = route(async (req) => {
               homeLat: u.homeLat ?? existingByEmail.homeLat,
               homeLng: u.homeLng ?? existingByEmail.homeLng,
               discordWebhookUrl: u.discordWebhookUrl ?? existingByEmail.discordWebhookUrl,
+              ...(u.createdAt ? { createdAt: new Date(u.createdAt) } : {}),
             })
             .where(eq(user.id, existingByEmail.id));
         }

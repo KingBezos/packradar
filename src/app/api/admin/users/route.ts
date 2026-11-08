@@ -123,6 +123,7 @@ export const GET = route(async (req) => {
       db.select({ userId: account.userId, providerId: account.providerId }).from(account),
       db
         .select({
+          id: alertSubscriptions.id,
           userId: alertSubscriptions.userId,
           active: alertSubscriptions.active,
           createdAt: alertSubscriptions.createdAt,
@@ -141,7 +142,11 @@ export const GET = route(async (req) => {
       db.select({ userId: stockReports.userId, createdAt: stockReports.createdAt }).from(stockReports),
       db.select({ userId: comments.userId, createdAt: comments.createdAt }).from(comments),
       db
-        .select({ userId: reputationEvents.userId, createdAt: reputationEvents.createdAt })
+        .select({
+          id: reputationEvents.id,
+          userId: reputationEvents.userId,
+          createdAt: reputationEvents.createdAt,
+        })
         .from(reputationEvents),
       loadAnalyticsStore(db),
       db
@@ -179,7 +184,9 @@ export const GET = route(async (req) => {
 
   for (const s of subs) {
     if (s.active) alertsByUser.set(s.userId, (alertsByUser.get(s.userId) ?? 0) + 1);
-    bumpUserActivity(s.userId, s.createdAt);
+    if (!s.id.startsWith("alert-owner-") && !s.id.startsWith("alert-rayquaza-")) {
+      bumpUserActivity(s.userId, s.createdAt);
+    }
   }
   for (const sess of sessions) {
     bumpUserActivity(sess.userId, sess.updatedAt);
@@ -188,7 +195,11 @@ export const GET = route(async (req) => {
   for (const o of obsAll) bumpUserActivity(o.userId, o.createdAt);
   for (const st of stockAll) bumpUserActivity(st.userId, st.createdAt);
   for (const c of commentsAll) bumpUserActivity(c.userId, c.createdAt);
-  for (const r of allRepEvents) bumpUserActivity(r.userId, r.createdAt);
+  for (const r of allRepEvents) {
+    if (!r.id.startsWith("rep-owner-seed") && !r.id.startsWith("rep-user-seed")) {
+      bumpUserActivity(r.userId, r.createdAt);
+    }
+  }
 
   // Also check analyticsStore.userLastActiveMap, recentHumanVisits, and recentZipSearches
   for (const [uid, iso] of Object.entries(analyticsStore.userLastActiveMap ?? {})) {
@@ -216,7 +227,6 @@ export const GET = route(async (req) => {
 
   return {
     users: users.map((u) => {
-      bumpUserActivity(u.id, u.updatedAt);
       bumpUserActivity(u.id, u.createdAt);
       const lastMs = latestActivityByUser.get(u.id) ?? new Date(u.createdAt).getTime();
       return {

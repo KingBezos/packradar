@@ -87,12 +87,12 @@
     "4875412332412785",
     "bdb59f0ae60df0ba"
   ],
-  "totalBotHitsExcluded": 2917,
+  "totalBotHitsExcluded": 2931,
   "botBreakdown": {
-    "Internal QA & Health Checks": 2653,
+    "Internal QA & Health Checks": 2666,
     "Discord Link Preview (Discordbot)": 4,
     "Search Engine Crawler (Google/Bing/DuckDuckGo)": 1,
-    "Headless Browser / Automation (Puppeteer/Playwright/Curl/Node)": 22,
+    "Headless Browser / Automation (Puppeteer/Playwright/Curl/Node)": 23,
     "Empty or Synthetic User-Agent": 26,
     "Social Preview Bot (Twitter/FB/Slack/Telegram/Reddit)": 155,
     "Non-Browser HTTP Client": 54,
@@ -905,9 +905,8 @@
         "0d1dd19288169b75",
         "bdb59f0ae60df0ba"
       ],
-      "botHitsBlocked": 490,
-      "signUps": 0,
-      "searches": 2
+      "botHitsBlocked": 504,
+      "signUps": 0
     }
   },
   "recentHumanVisits": [
@@ -1570,50 +1569,6 @@
       "visitorHash": "59cdb654",
       "userId": null,
       "userName": null
-    },
-    {
-      "id": "v-1794005599769-bpnw",
-      "at": "2026-11-06T22:53:19.769Z",
-      "path": "/machines/Q00982",
-      "referrer": "",
-      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
-      "device": "mobile",
-      "visitorHash": "5596d605",
-      "userId": null,
-      "userName": null
-    },
-    {
-      "id": "v-1794003767277-dr47",
-      "at": "2026-11-06T22:22:47.277Z",
-      "path": "/machines/Q00982",
-      "referrer": "",
-      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
-      "device": "mobile",
-      "visitorHash": "5596d605",
-      "userId": null,
-      "userName": null
-    },
-    {
-      "id": "v-1794003745286-pvq1",
-      "at": "2026-11-06T22:22:25.286Z",
-      "path": "/machines/Q00982",
-      "referrer": "",
-      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
-      "device": "mobile",
-      "visitorHash": "5596d605",
-      "userId": null,
-      "userName": null
-    },
-    {
-      "id": "v-1794003742394-ivlh",
-      "at": "2026-11-06T22:22:22.394Z",
-      "path": "/search",
-      "referrer": "",
-      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
-      "device": "mobile",
-      "visitorHash": "5596d605",
-      "userId": null,
-      "userName": null
     }
   ],
   "activeVisitorsMap": {},
@@ -2232,26 +2187,6 @@
       "visitorHash": "5596d605",
       "userId": null,
       "userName": null
-    },
-    {
-      "id": "zs-1793978012506-agh1",
-      "zip": "20603",
-      "query": "20603",
-      "locationLabel": "US",
-      "at": "2026-11-06T15:13:32.506Z",
-      "visitorHash": "92f90d65",
-      "userId": null,
-      "userName": null
-    },
-    {
-      "id": "zs-1793977945710-ksue",
-      "zip": "75407",
-      "query": "75407",
-      "locationLabel": "US",
-      "at": "2026-11-06T15:12:25.710Z",
-      "visitorHash": "a86d4e0d",
-      "userId": null,
-      "userName": null
     }
   ],
   "zipStats": {
@@ -2551,5 +2486,8 @@
       "lastSearchedAt": "2026-11-04T00:24:43.766Z"
     }
   },
-  "updatedAt": "2026-11-08T19:08:36.784Z"
+  "userLastActiveMap": {
+    "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go": "2026-11-08T21:01:34.798Z"
+  },
+  "updatedAt": "2026-11-08T21:01:34.798Z"
 }
