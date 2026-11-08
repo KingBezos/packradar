@@ -6,6 +6,7 @@ import { RetailScanBar } from "@/components/RetailScanBar";
 import { AlertAdminButton } from "@/components/AlertAdminButton";
 import { ShareButtons } from "@/components/ShareButtons";
 import { TopicAlertButton } from "@/components/TopicAlertButton";
+import { ReleaseNewsAlertBanner } from "@/components/ReleaseNewsAlertBanner";
 import { timeAgo } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
@@ -110,6 +111,9 @@ export default async function DropsPage() {
 
       {/* Live Scan Bar */}
       <RetailScanBar lastScanAt={intel.lastScanAt} nextScanAt={intel.nextScanAt} />
+
+      {/* Generic All Release News & Online Lotteries Email Alert Banner */}
+      <ReleaseNewsAlertBanner currentPath="/drops" />
 
       {/* Upcoming Drops & Restock Signals */}
       <div className="card border-volt/25 p-5">

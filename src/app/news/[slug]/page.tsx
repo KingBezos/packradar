@@ -9,6 +9,7 @@ import { CommentForm, CommentFlagButton } from "@/components/MachineActions";
 import { SponsorSlot } from "@/components/SponsorSlot";
 import { ShareButtons } from "@/components/ShareButtons";
 import { TopicAlertButton } from "@/components/TopicAlertButton";
+import { ReleaseNewsAlertBanner } from "@/components/ReleaseNewsAlertBanner";
 
 export const dynamic = "force-dynamic";
 
@@ -57,6 +58,7 @@ export default async function NewsPostPage({ params }: { params: Promise<{ slug:
           kind="news"
           buttonLabel="Get Alerts for This Drop"
         />
+        <ReleaseNewsAlertBanner currentPath={`/news/${post.slug}`} compact />
         <ShareButtons path={`/news/${post.slug}`} title={post.title} summary={post.summary ?? undefined} />
       </div>
       {post.imageUrl && (

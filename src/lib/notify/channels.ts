@@ -17,9 +17,25 @@ function absolute(url?: string | null) {
 
 /* ───────── Email ───────── */
 
-function getResendConfig(): { apiKey: string | null; from: string } {
-  let apiKey = process.env.RESEND_API_KEY || null;
-  let from = process.env.EMAIL_FROM || "PackRadar <onboarding@resend.dev>";
+const gEmail = globalThis as unknown as {
+  __packradarEmailConfig?: { apiKey: string | null; from: string };
+};
+
+export function setRuntimeEmailConfig(apiKey: string | null, from?: string | null) {
+  if (apiKey) process.env.RESEND_API_KEY = apiKey.trim();
+  if (from) process.env.EMAIL_FROM = from.trim();
+  gEmail.__packradarEmailConfig = {
+    apiKey: apiKey ? apiKey.trim() : process.env.RESEND_API_KEY || null,
+    from: (from && from.trim()) || process.env.EMAIL_FROM || "PackRadar Alerts <onboarding@resend.dev>",
+  };
+}
+
+export function getResendConfig(): { apiKey: string | null; from: string } {
+  let apiKey = process.env.RESEND_API_KEY || gEmail.__packradarEmailConfig?.apiKey || null;
+  let from =
+    process.env.EMAIL_FROM ||
+    gEmail.__packradarEmailConfig?.from ||
+    "PackRadar Alerts <onboarding@resend.dev>";
   if (!apiKey) {
     for (const cfgPath of [
       path.join(process.cwd(), "data", "oauth-config.json"),
@@ -41,19 +57,49 @@ function getResendConfig(): { apiKey: string | null; from: string } {
   return { apiKey, from };
 }
 
+export async function getResendConfigWithDbFallback(): Promise<{ apiKey: string | null; from: string }> {
+  const syncCfg = getResendConfig();
+  if (syncCfg.apiKey) return syncCfg;
+  try {
+    const { getDb } = await import("@/db");
+    const { settings } = await import("@/db/schema");
+    const { eq } = await import("drizzle-orm");
+    const db = await getDb();
+    const [row] = await db.select().from(settings).where(eq(settings.key, "emailProviderConfigV1"));
+    const val = (row?.value ?? null) as { resendApiKey?: string; emailFrom?: string } | null;
+    if (val?.resendApiKey) {
+      setRuntimeEmailConfig(val.resendApiKey, val.emailFrom);
+      return {
+        apiKey: val.resendApiKey.trim(),
+        from: val.emailFrom?.trim() || syncCfg.from,
+      };
+    }
+  } catch {}
+  return syncCfg;
+}
+
 export function isEmailProviderConfigured(): boolean {
   return Boolean(getResendConfig().apiKey);
 }
 
 export async function sendEmail(to: string, msg: Message): Promise<"sent" | "logged"> {
-  const { apiKey: key, from } = getResendConfig();
+  const { apiKey: key, from } = await getResendConfigWithDbFallback();
+  const targetUrl = absolute(msg.url);
   const html = `
-  <div style="font-family:system-ui,Segoe UI,Arial;max-width:520px;margin:auto;padding:24px;border-radius:16px;background:#0f172a;color:#e2e8f0">
-    <div style="font-weight:800;font-size:18px;color:#facc15">⚡ PackRadar</div>
-    <h2 style="margin:12px 0 8px;color:#fff">${escapeHtml(msg.title)}</h2>
-    <p style="line-height:1.5">${escapeHtml(msg.body)}</p>
-    <a href="${absolute(msg.url)}" style="display:inline-block;margin-top:12px;background:#facc15;color:#0f172a;padding:10px 16px;border-radius:10px;font-weight:700;text-decoration:none">Open PackRadar</a>
-    <p style="font-size:11px;color:#94a3b8;margin-top:24px">You're receiving this from PackRadar. Manage alerts: ${SITE_URL()}/alerts<br/>Drop times are community estimates. Not affiliated with Nintendo or The Pokémon Company.</p>
+  <div style="font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;max-width:560px;margin:auto;padding:28px;border-radius:16px;background:#0f172a;color:#e2e8f0;border:1px solid #1e293b">
+    <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #1e293b;padding-bottom:14px;margin-bottom:18px">
+      <span style="font-weight:900;font-size:19px;color:#facc15;letter-spacing:-0.02em">⚡ PackRadar Release &amp; Lottery Alert</span>
+      <span style="font-size:11px;background:#1e293b;color:#fde047;padding:4px 10px;border-radius:999px;font-weight:700">LIVE INTEL</span>
+    </div>
+    <h2 style="margin:0 0 10px;color:#ffffff;font-size:20px;line-height:1.35">${escapeHtml(msg.title)}</h2>
+    <p style="line-height:1.6;color:#cbd5e1;font-size:14px;margin:0 0 18px;white-space:pre-line">${escapeHtml(msg.body)}</p>
+    <div style="margin:20px 0">
+      <a href="${targetUrl}" style="display:inline-block;background:#facc15;color:#0f172a;padding:12px 20px;border-radius:10px;font-weight:800;font-size:14px;text-decoration:none">View Drop &amp; Lottery Details on PackRadar →</a>
+    </div>
+    <p style="font-size:11px;color:#64748b;margin-top:26px;border-top:1px solid #1e293b;padding-top:14px">
+      You are subscribed to PackRadar Release, Online Lottery &amp; Restock Email Alerts.<br/>
+      Manage or pause your alerts anytime at <a href="${SITE_URL()}/alerts" style="color:#facc15;text-decoration:underline">${SITE_URL()}/alerts</a>
+    </p>
   </div>`;
   if (key) {
     try {
@@ -71,7 +117,7 @@ export async function sendEmail(to: string, msg: Message): Promise<"sent" | "log
     fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(
       path.join(dir, `${Date.now()}-${to.replace(/[^a-z0-9]/gi, "_")}.json`),
-      JSON.stringify({ to, from, ...msg, url: absolute(msg.url) }, null, 2),
+      JSON.stringify({ to, from, ...msg, url: targetUrl }, null, 2),
     );
   } catch {}
   console.log(`[email:dev-outbox] → ${to}: ${msg.title}`);

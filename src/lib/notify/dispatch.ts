@@ -194,23 +194,72 @@ async function subsOfKind(db: DB, kind: string) {
     .where(and(eq(alertSubscriptions.active, true), eq(alertSubscriptions.kind, kind)));
 }
 
-export async function notifyNews(db: DB, n: { title: string; slug: string; category: string }) {
-  const haystack = `${n.title} ${n.category}`.toLowerCase();
-  for (const { s, u } of await subsOfKind(db, "news")) {
-    if (s.keyword) {
-      const kwLower = s.keyword.toLowerCase();
-      const tokens = kwLower
-        .replace(/[^a-z0-9\s]/g, " ")
-        .split(/\s+/)
-        .filter((w) => w.length >= 3 && !["the", "and", "for", "with", "new", "pack", "packs", "pokemon", "tcg"].includes(w));
-      const matched = haystack.includes(kwLower) || tokens.some((tk) => haystack.includes(tk));
-      if (!matched) continue;
+export async function notifyNews(
+  db: DB,
+  n: { title: string; slug: string; category: string; summary?: string },
+) {
+  const haystack = `${n.title} ${n.category} ${n.summary ?? ""}`.toLowerCase();
+  const isLotteryOrRelease =
+    /lottery|raffle|\beql\b|invite|queue|waiting room|walmart|target|amazon|pok[eé]mon center|sam'?s club|costco|best buy|gamestop|preorder|pre-order|release|allocation|pallet|drop|restock/i.test(
+      haystack,
+    ) || ["releases", "drop-report", "tcg"].includes(n.category);
+
+  const newsSubs = await subsOfKind(db, "news");
+  const releaseSubs = isLotteryOrRelease ? await subsOfKind(db, "release") : [];
+  const allSubs = [...newsSubs, ...releaseSubs];
+  const notifiedUsers = new Set<string>();
+
+  for (const { s, u } of allSubs) {
+    if (notifiedUsers.has(u.id)) continue;
+
+    if (s.kind === "news" && s.keyword) {
+      const kwUpper = s.keyword.trim().toUpperCase();
+      if (kwUpper === "ALL_RELEASE_NEWS" || kwUpper === "ALL_NEWS") {
+        // Generic all-release-news & lottery alert subscription matches all release/drop/news stories
+      } else if (kwUpper === "ONLINE_LOTTERIES") {
+        if (
+          !/lottery|raffle|\beql\b|invite|queue|waiting room|walmart|target|amazon|pok[eé]mon center|preorder|pre-order|draw|allocation/i.test(
+            haystack,
+          )
+        ) {
+          continue;
+        }
+      } else {
+        const kwLower = s.keyword.toLowerCase();
+        const tokens = kwLower
+          .replace(/[^a-z0-9\s]/g, " ")
+          .split(/\s+/)
+          .filter(
+            (w) =>
+              w.length >= 3 &&
+              !["the", "and", "for", "with", "new", "pack", "packs", "pokemon", "tcg"].includes(w),
+          );
+        const matched = haystack.includes(kwLower) || tokens.some((tk) => haystack.includes(tk));
+        if (!matched) continue;
+      }
     }
-    await deliver(db, u, { title: `📰 ${n.title}`, body: "New on PackRadar News", url: `/news/${n.slug}` }, {
-      dedupeKey: `news:${n.slug}:${s.id}`,
-      channels: s.channels,
-      subscriptionId: s.id,
-    });
+
+    notifiedUsers.add(u.id);
+    const isLottery = /lottery|raffle|\beql\b|invite|queue|waiting room/i.test(haystack);
+    const prefix = isLottery ? "🎟️ Lottery & Queue Alert:" : "📰 Release & Drop Alert:";
+    const bodyText =
+      n.summary?.trim() ||
+      "New Pokémon TCG release, online lottery, or retail restock intelligence published on PackRadar.";
+
+    await deliver(
+      db,
+      u,
+      {
+        title: `${prefix} ${n.title}`,
+        body: bodyText,
+        url: n.slug.startsWith("/") ? n.slug : `/news/${n.slug}`,
+      },
+      {
+        dedupeKey: `news:${n.slug}:${u.id}`,
+        channels: s.channels,
+        subscriptionId: s.id,
+      },
+    );
   }
 }
 

@@ -29,6 +29,9 @@ const POKEMON_RE =
 export function classifyNews(title: string, text: string): string {
   const t = `${title} ${text}`.toLowerCase();
   if (/vending|kiosk/.test(t)) return "vending";
+  if (/lottery|raffle|\beql\b|request invite|invite-only|virtual queue|waiting room|pallet|allocation|sam'?s club|costco/.test(t)) {
+    return "drop-report";
+  }
   if (/\btcg\b|trading card|booster|elite trainer|etb|expansion|card set|pre-?order|pok[eé]mon center|restock/.test(t)) return "tcg";
   if (/release date|launch|coming (?:to|on)|announced|reveal/.test(t) && /set|product|collection/.test(t)) return "releases";
   if (/anime|episode|horizons|movie|series/.test(t)) return "anime";
@@ -113,6 +116,36 @@ export const BASELINE_NEWS_ARTICLES: {
   imageUrl: string;
   pinned?: boolean;
 }[] = [
+  {
+    slug: "walmart-target-amazon-pokemon-tcg-online-lottery-queue-invite-guide",
+    title: "Walmart+, Target & Amazon 'Request Invite' Pokémon TCG Online Lotteries: How to Enter & Catch MSRP Drops",
+    summary:
+      "Major retailers are increasingly shifting high-demand Pokémon TCG releases (30th Celebration UPC, Prismatic Evolutions & 151) to online lotteries, EQL draws, Amazon Request Invite waves, and virtual queues. Here is how to enter every draw at strict MSRP.",
+    imageUrl: "https://images.pokemontcg.io/sv8pt5/161_hires.png",
+    category: "drop-report",
+    sourceName: "PackRadar Lottery & Queue Radar",
+    author: "PackRadar Editorial Bot",
+    pinned: true,
+    body: `**Online Collector Lottery & Queue Briefing** — To combat automated checkout bots, **Walmart**, **Target**, **Amazon**, **Pokémon Center**, and specialty retailers are increasingly using **online lotteries, EQL draws, Invite-Only queues, and member-gated waiting rooms** for high-demand Pokémon TCG releases.
+
+## 1. Walmart+ Early Access & Online Collector Lotteries
+- **How It Works**: High-demand boxes—including the **30th Anniversary Ultra-Premium Collection (UPC)**, **Prismatic Evolutions ETBs**, and holiday collector bundles—use timed online queue drops (typically **Wednesdays & Thursdays at 12:00 PM ET**) or EQL-style lottery registrations.
+- **Critical MSRP Check Before Entering**: Always verify that the listing reads **"Sold and shipped by Walmart.com"** before entering a draw or queue. Third-party marketplace sellers frequently list on the same product page at 2× MSRP—never confirm a lottery entry above official MSRP (**$49.99** for standard ETBs, **$26.94** for 6-pack Booster Bundles, **$119.99** for UPCs).
+
+## 2. Target Circle / RedCard Preorder Draws & Morning Queues
+- **Drop Windows**: Target's online restock and preorder system fires between **5:00 AM and 6:30 AM PT (7:00–8:30 AM CT)** on **Thursdays and Fridays**, enforcing a strict **1- to 2-unit limit per account**.
+- **Account Prep**: Keep a verified payment method and Target Circle / RedCard saved in your account so checkout completes before the 3-minute cart hold expires.
+
+## 3. Amazon "Request Invite" MSRP Lottery System
+- **Zero-Bot MSRP Raffles**: On first-party Amazon listings (*Sold by Amazon.com*), look for the yellow **"Request Invite"** button on **Scarlet & Violet—151 Booster Bundles ($26.94)** and **Prismatic Evolutions ETBs ($49.99)**.
+- **Selection Waves**: Amazon sends out winning invitation emails in rolling 72-hour waves, giving selected collectors a private 24-hour checkout link at exact MSRP.
+
+## 4. Pokémon Center Virtual Queue & Special Delivery Lotteries
+- **Virtual Waiting Room**: When Pokémon Center Exclusive ETBs ($59.99) drop (**Tue–Thu 9:00 AM–11:30 AM PT**), an automated virtual waiting room activates. Do not refresh the browser tab once placed in line.
+
+## Get Instant Email Alerts When Lotteries Open
+Click **"Email Me All Release News & Lotteries"** above (or on the [Alerts Page](/alerts)) so PackRadar emails you the moment a new Walmart, Target, Amazon, or Pokémon Center lottery registration link goes live.`,
+  },
   {
     slug: "sams-club-pokemon-151-mini-tins-30th-celebration-4-pack-november-drop",
     title: "Sam's Club — Pokémon 151 Mini Tins & 30th Celebration 4-Pack Mini Tins ($34.98) Returning Nov 16–21",
@@ -422,7 +455,7 @@ export const newsFeeds: Adapter = {
         .returning({ id: newsPosts.id });
       if (inserted.length) {
         created++;
-        await notifyNews(db, { title: it.title, slug, category }).catch(() => {});
+        await notifyNews(db, { title: it.title, slug, category, summary }).catch(() => {});
       }
     }
     return { found: items.length + baselineCreated + dispatchCreated, created, updated: 0 };

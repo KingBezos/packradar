@@ -36,8 +36,12 @@ export default async function AlertsPage() {
       ? `${m.retailer} – ${m.street}, ${m.city}`
       : s.kind === "area_drop"
         ? `Within ${s.radiusMiles} mi of ${s.keyword ?? (u.homeZip ? `ZIP ${u.homeZip}` : "your location")}`
-        : p?.name ?? s.keyword ?? s.kind,
-    href: m ? `/machines/${m.id}` : undefined,
+        : s.keyword === "ALL_RELEASE_NEWS"
+          ? "🎟️ All Release News, Online Lotteries & Retail Drops (Walmart, Target, Amazon, Pokémon Center)"
+          : s.keyword === "ONLINE_LOTTERIES"
+            ? "🎯 Online Lotteries, Virtual Queues & Invite Drops Only"
+            : p?.name ?? s.keyword ?? s.kind,
+    href: m ? `/machines/${m.id}` : s.kind === "news" ? "/news" : undefined,
     lead: s.leadMinutes,
     channels: s.channels,
     active: s.active,

@@ -18,7 +18,7 @@ import type { DB } from "@/db";
 import { products, retailListings, settings } from "@/db/schema";
 import { scrapeFetch } from "../http";
 import { logActivity } from "@/lib/activity";
-import { notifyProductRestock } from "@/lib/notify/dispatch";
+import { notifyNews, notifyProductRestock } from "@/lib/notify/dispatch";
 import type { Adapter } from "../types";
 
 export type StockResult = {
@@ -494,6 +494,30 @@ export const BASELINE_UPCOMING_INTEL: UpcomingDropIntel[] = [
     confidence: "high",
   },
   {
+    id: "intel-walmart-target-online-lottery",
+    source: "reddit",
+    sourceLabel: "🎟️ Online Lottery & Queue Watch · Walmart+ / Target / EQL",
+    title: "Walmart+ & Target Online Collector Lotteries / EQL Draws (30th Celebration UPC & Prismatic Evolutions)",
+    retailer: "walmart",
+    productName: "30th Celebration UPC & Prismatic Evolutions ETB Online Lottery / Queue Registration",
+    expectedWindow: "Wed/Thu 12:00 PM ET (Walmart+ Queue) & Thu/Fri 5:00 AM PT (Target Circle / RedCard)",
+    url: "/news/walmart-target-amazon-pokemon-tcg-online-lottery-queue-invite-guide",
+    spottedAt: new Date(Date.now() - 35 * 60_000).toISOString(),
+    confidence: "high",
+  },
+  {
+    id: "intel-amazon-invite-lottery",
+    source: "reddit",
+    sourceLabel: "🎟️ Zero-Bot MSRP Lottery · Amazon Request Invite",
+    title: "Amazon 'Request Invite' MSRP Lottery System — 151 & Prismatic Evolutions Booster Bundles ($26.94)",
+    retailer: "amazon",
+    productName: "Prismatic Evolutions & Pokémon 151 Booster Bundles (Sold by Amazon.com MSRP Only)",
+    expectedWindow: "Rolling 72-Hour Invite Selection Waves (Check 'Request Invite' on Amazon)",
+    url: "/news/walmart-target-amazon-pokemon-tcg-online-lottery-queue-invite-guide",
+    spottedAt: new Date(Date.now() - 50 * 60_000).toISOString(),
+    confidence: "high",
+  },
+  {
     id: "intel-pc-destined-rivals",
     source: "pokemon_center",
     sourceLabel: "Pokémon Center Queue Watch",
@@ -775,7 +799,7 @@ export async function scrubCommunityRetailDeals(
       isDealSub: true,
     },
     {
-      url: "https://www.reddit.com/r/PokemonTCG/search.json?q=restock+OR+drop+OR+queue+OR+pallet+OR+%22sam%27s+club%22+OR+costco+OR+target+OR+%22pokemon+center%22+OR+%22best+buy%22&sort=new&restrict_sr=on&limit=30",
+      url: "https://www.reddit.com/r/PokemonTCG/search.json?q=lottery+OR+raffle+OR+EQL+OR+%22request+invite%22+OR+restock+OR+drop+OR+queue+OR+pallet+OR+%22sam%27s+club%22+OR+costco+OR+target+OR+walmart+OR+%22pokemon+center%22&sort=new&restrict_sr=on&limit=35",
       source: "reddit" as const,
       sourceLabel: "r/PokemonTCG",
       isDealSub: false,
@@ -824,13 +848,17 @@ export async function scrubCommunityRetailDeals(
         const isQuestion = /\?|anyone know|when does|where can i/i.test(title);
         const primaryRetailer = matchedRetailers[0];
 
-        // Also capture breaking drop / allocation / pallet leaks even if the SKU is brand-new
+        // Also capture breaking online lotteries, EQL draws, virtual queues, invite waves & pallet leaks
+        const isLotterySignal = /lottery|raffle|\beql\b|request\s*invite|invite\s*only|virtual\s*queue|waiting\s*room|walmart\+/i.test(
+          combined,
+        );
         if (
           ageMinutes <= 72 * 60 &&
           !isQuestion &&
-          /mini\s*tins|etb|elite\s*trainer|booster\s*bundle|pallet|allocation|units|reprint|blooming\s*waters|151|prismatic|destined\s*rivals|30th\s*celebration/i.test(
-            combined,
-          ) &&
+          (isLotterySignal ||
+            /mini\s*tins|etb|elite\s*trainer|booster\s*bundle|pallet|allocation|units|reprint|blooming\s*waters|151|prismatic|destined\s*rivals|30th\s*celebration/i.test(
+              combined,
+            )) &&
           discoveredIntel.length < 10
         ) {
           const intelId = `reddit-${post.id ?? discoveredIntel.length}`;
@@ -838,19 +866,28 @@ export async function scrubCommunityRetailDeals(
             discoveredIntel.push({
               id: intelId,
               source: feed.source,
-              sourceLabel: feed.isDealSub ? "Live Restock Signal" : "Drop Radar Watch",
+              sourceLabel: isLotterySignal
+                ? "🎟️ Online Lottery & Queue Radar"
+                : feed.isDealSub
+                  ? "Live Restock Signal"
+                  : "Drop Radar Watch",
               title: title.slice(0, 140),
               retailer: primaryRetailer,
-              productName: "Pokémon TCG Retail Allocation / Restock Watch",
-              expectedWindow:
-                ageMinutes < 60
+              productName: isLotterySignal
+                ? "Online Collector Lottery / Virtual Queue Registration"
+                : "Pokémon TCG Retail Allocation / Restock Watch",
+              expectedWindow: isLotterySignal
+                ? "Online Lottery / Queue Signal — Check registration & MSRP seller status"
+                : ageMinutes < 60
                   ? isExpiredOrOos
                     ? "Restock wave just ended (watch for secondary flicker)"
                     : "Spotted live within the last hour"
                   : "Upcoming restock signal — watch next scheduled drop window",
-              url: "/drops",
+              url: isLotterySignal
+                ? "/news/walmart-target-amazon-pokemon-tcg-online-lottery-queue-invite-guide"
+                : "/drops",
               spottedAt: createdMs ? new Date(createdMs).toISOString() : new Date().toISOString(),
-              confidence: feed.isDealSub ? "high" : "medium",
+              confidence: isLotterySignal || feed.isDealSub ? "high" : "medium",
             });
           }
         }
@@ -918,12 +955,29 @@ export async function scrubCommunityRetailDeals(
     }
   }
 
-  // Keep featured #1 breaking drop (Sam's Club 151 & 30th Celebration Mini Tins) at the top alongside discovered intel
+  // Keep featured breaking drops & online lottery trackers at the top alongside discovered intel
+  const priorityIds = new Set([
+    "intel-samsclub-151-30th-mini-tins",
+    "intel-walmart-target-online-lottery",
+    "intel-amazon-invite-lottery",
+  ]);
   const mergedIntel = [
-    BASELINE_UPCOMING_INTEL[0],
-    ...discoveredIntel.filter((d) => d.id !== BASELINE_UPCOMING_INTEL[0].id),
-    ...BASELINE_UPCOMING_INTEL.slice(1),
+    ...BASELINE_UPCOMING_INTEL.filter((b) => priorityIds.has(b.id)),
+    ...discoveredIntel.filter((d) => !priorityIds.has(d.id)),
+    ...BASELINE_UPCOMING_INTEL.filter((b) => !priorityIds.has(b.id)),
   ].slice(0, 12);
+
+  // Notify subscribers on the All Release News & Online Lotteries list for any newly discovered high-signal lottery/drop
+  for (const item of discoveredIntel) {
+    if (item.confidence === "high") {
+      await notifyNews(db, {
+        title: item.title,
+        slug: item.url.startsWith("/") ? item.url : "/drops",
+        category: "drop-report",
+        summary: `${item.productName} (${item.retailer.toUpperCase()}) · ${item.expectedWindow}`,
+      }).catch(() => {});
+    }
+  }
   await db
     .insert(settings)
     .values({

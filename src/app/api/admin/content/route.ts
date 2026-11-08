@@ -5,6 +5,7 @@ import { requireRole } from "@/lib/session";
 import { getDb } from "@/db";
 import { comments, dropCandidates, machines, newsPosts, products, retailListings, sponsors, user } from "@/db/schema";
 import { slugify } from "@/lib/geo";
+import { notifyNews } from "@/lib/notify/dispatch";
 import { loadCommentFlags } from "@/app/api/comments/flag/route";
 
 export const dynamic = "force-dynamic";
@@ -240,6 +241,14 @@ export const POST = route(async (req) => {
       publishedAt: new Date(),
     })
     .returning();
+  if (created) {
+    await notifyNews(db, {
+      title: created.title,
+      slug: created.slug,
+      category: created.category,
+      summary: created.summary ?? undefined,
+    }).catch(() => {});
+  }
   return { ok: true, post: created };
 });
 

@@ -59,14 +59,46 @@ export function AlertsManager({ subs, plan, maxAlerts, maxLead, homeZip }: { sub
             </div>
           </div>
           <div className="flex flex-col gap-2 rounded-xl bg-panel-2 p-3">
-            <p className="text-sm font-semibold text-white">Site-wide</p>
+            <p className="text-sm font-semibold text-white">Site-wide &amp; Email Release Alerts</p>
             <div className="flex flex-wrap gap-2">
-              <button className="btn-ghost" onClick={() => act(() => call("/api/alerts", "POST", { kind: "release" }), "Release alert added")}>🗓️ New set releases</button>
-              <button className="btn-ghost" onClick={() => act(() => call("/api/alerts", "POST", { kind: "news", keyword: "vending" }), "News alert added")}>📰 Vending news</button>
-              <button className="btn-ghost" onClick={() => act(() => call("/api/alerts", "POST", { kind: "product_restock" }), "Restock alert added")}>🛒 Any restock</button>
+              <button
+                className="btn-primary text-xs"
+                onClick={() =>
+                  act(
+                    () =>
+                      call("/api/alerts", "POST", {
+                        kind: "news",
+                        keyword: "ALL_RELEASE_NEWS",
+                        channels: ["email", "push"],
+                      }),
+                    "Subscribed to All Release News, Online Lotteries & Retail Drops (Email + Push)!",
+                  )
+                }
+              >
+                🎟️ All Release News &amp; Online Lotteries (Email)
+              </button>
+              <button
+                className="btn-ghost text-xs"
+                onClick={() =>
+                  act(
+                    () =>
+                      call("/api/alerts", "POST", {
+                        kind: "news",
+                        keyword: "ONLINE_LOTTERIES",
+                        channels: ["email", "push"],
+                      }),
+                    "Subscribed to Online Lotteries & Queue Drops (Walmart, Target, Amazon, Pokémon Center)!",
+                  )
+                }
+              >
+                🎯 Online Lotteries &amp; Queues Only
+              </button>
+              <button className="btn-ghost text-xs" onClick={() => act(() => call("/api/alerts", "POST", { kind: "release" }), "Release alert added")}>🗓️ New set releases</button>
+              <button className="btn-ghost text-xs" onClick={() => act(() => call("/api/alerts", "POST", { kind: "news", keyword: "vending" }), "News alert added")}>📰 Vending news</button>
+              <button className="btn-ghost text-xs" onClick={() => act(() => call("/api/alerts", "POST", { kind: "product_restock" }), "Restock alert added")}>🛒 Any restock</button>
             </div>
             <button
-              className="btn-ghost w-fit"
+              className="btn-ghost w-fit text-xs"
               onClick={async () => {
                 const r = await enablePush();
                 setMsg(r === "ok" ? "Push notifications enabled on this device" : r);

@@ -526,10 +526,16 @@ export async function getRetailDropIntel() {
   const lastScanAt = val?.lastScanAt ?? new Date().toISOString();
   const nextScanAt = new Date(new Date(lastScanAt).getTime() + TWO_HOURS_MS).toISOString();
   const storedItems = val?.items && val.items.length > 0 ? val.items : BASELINE_UPCOMING_INTEL;
-  const hasFeaturedSams = storedItems.some((it) => it.id === "intel-samsclub-151-30th-mini-tins");
-  const rawItems = hasFeaturedSams
-    ? storedItems
-    : [BASELINE_UPCOMING_INTEL[0], ...storedItems.filter((it) => it.id !== "intel-samsclub-151-30th-mini-tins")];
+  const requiredTopIds = [
+    "intel-samsclub-151-30th-mini-tins",
+    "intel-walmart-target-online-lottery",
+    "intel-amazon-invite-lottery",
+  ];
+  const topPinned = BASELINE_UPCOMING_INTEL.filter((b) => requiredTopIds.includes(b.id));
+  const rawItems = [
+    ...topPinned,
+    ...storedItems.filter((it) => !requiredTopIds.includes(it.id)),
+  ].slice(0, 12);
   const items = rawItems.map((it) => ({
     ...it,
     sourceLabel: /reddit|discord|facebook|r\/|collector group/i.test(it.sourceLabel)

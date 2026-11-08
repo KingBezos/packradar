@@ -384,6 +384,21 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
   const [scrapers, setScrapers] = useState<{ adapters: Adapter[]; runs: Run[] } | null>(null);
   const [openLog, setOpenLog] = useState<string | null>(null);
 
+  // 5. Email Alerts & Lottery Broadcast Setup
+  const [emailStatus, setEmailStatus] = useState<{
+    configured: boolean;
+    apiKeyPreview: string | null;
+    emailFrom: string;
+    stats?: {
+      totalEmailSubscriptions: number;
+      releaseAndLotterySubscriptions: number;
+      uniqueSubscribedUsers: number;
+    };
+  } | null>(null);
+  const [resendKeyInput, setResendKeyInput] = useState("");
+  const [emailFromInput, setEmailFromInput] = useState("PackRadar Alerts <onboarding@resend.dev>");
+  const [emailActionBusy, setEmailActionBusy] = useState(false);
+
   const loadInbox = () =>
     call("/api/contact", "GET")
       .then((r) => setInbox(r.items ?? []))
@@ -412,6 +427,14 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
     call("/api/admin/scrape", "GET")
       .then(setScrapers)
       .catch((e) => setMsg(e.message));
+
+  const loadEmailSetup = () =>
+    call("/api/admin/email-setup", "GET")
+      .then((r) => {
+        setEmailStatus(r);
+        if (r.emailFrom) setEmailFromInput(r.emailFrom);
+      })
+      .catch(() => {});
 
   const loadAnalytics = () =>
     call("/api/analytics/track", "GET")
@@ -453,6 +476,7 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
     loadUsers();
     loadContent();
     loadScrapers();
+    loadEmailSetup();
     const t = setInterval(() => {
       loadScrapers();
       loadAnalytics();
@@ -2548,6 +2572,120 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
               </button>
             </div>
           </div>
+
+          {/* Email Alerts & Online Lottery Broadcast Card */}
+          {isAdmin && (
+            <div className="card border-volt/40 bg-gradient-to-r from-volt/10 via-panel to-panel-2 p-5 space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="rounded-full bg-volt px-2.5 py-0.5 text-[11px] font-black uppercase text-slate-950">
+                      📧 Release &amp; Online Lottery Email Alerts
+                    </span>
+                    <span
+                      className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold ${
+                        emailStatus?.configured
+                          ? "bg-green-500/20 text-green-300 border border-green-500/40"
+                          : "bg-amber-500/20 text-amber-300 border border-amber-500/40"
+                      }`}
+                    >
+                      {emailStatus?.configured
+                        ? `🟢 Live Resend Active (${emailStatus.apiKeyPreview})`
+                        : "🟡 Awaiting Resend API Key (re_...)"}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs text-slate-300">
+                    Active Email Alert Subscriptions:{" "}
+                    <b className="text-white">{emailStatus?.stats?.totalEmailSubscriptions ?? 0}</b> across{" "}
+                    <b className="text-volt">{emailStatus?.stats?.uniqueSubscribedUsers ?? 0} collectors</b> (
+                    {emailStatus?.stats?.releaseAndLotterySubscriptions ?? 0} Release/Lottery/Drop alerts).
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    disabled={emailActionBusy}
+                    onClick={async () => {
+                      setEmailActionBusy(true);
+                      try {
+                        const r = await call("/api/admin/email-setup", "POST", { action: "test_email" });
+                        setMsg(r.message);
+                      } catch (e) {
+                        setMsg((e as Error).message);
+                      } finally {
+                        setEmailActionBusy(false);
+                      }
+                    }}
+                    className="btn-ghost py-1.5 text-xs"
+                  >
+                    Send Test Lottery Email to Me
+                  </button>
+                  <button
+                    type="button"
+                    disabled={emailActionBusy}
+                    onClick={async () => {
+                      setEmailActionBusy(true);
+                      try {
+                        const r = await call("/api/admin/email-setup", "POST", { action: "broadcast_alert" });
+                        setMsg(r.message);
+                      } catch (e) {
+                        setMsg((e as Error).message);
+                      } finally {
+                        setEmailActionBusy(false);
+                      }
+                    }}
+                    className="btn-primary py-1.5 text-xs"
+                  >
+                    Broadcast Lottery &amp; Drop Email Alert Now
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid gap-2 sm:grid-cols-3 pt-1">
+                <input
+                  type="password"
+                  className="input text-xs"
+                  placeholder={
+                    emailStatus?.configured
+                      ? `Update Resend API Key (${emailStatus.apiKeyPreview})`
+                      : "Paste Resend API Key (re_...) from resend.com"
+                  }
+                  value={resendKeyInput}
+                  onChange={(e) => setResendKeyInput(e.target.value)}
+                />
+                <input
+                  className="input text-xs"
+                  placeholder="From Address (e.g. PackRadar Alerts <onboarding@resend.dev>)"
+                  value={emailFromInput}
+                  onChange={(e) => setEmailFromInput(e.target.value)}
+                />
+                <button
+                  type="button"
+                  disabled={emailActionBusy}
+                  onClick={async () => {
+                    setEmailActionBusy(true);
+                    try {
+                      const r = await call("/api/admin/email-setup", "POST", {
+                        action: "save_config",
+                        resendApiKey: resendKeyInput || undefined,
+                        emailFrom: emailFromInput || undefined,
+                      });
+                      setMsg(r.message);
+                      setResendKeyInput("");
+                      loadEmailSetup();
+                    } catch (e) {
+                      setMsg((e as Error).message);
+                    } finally {
+                      setEmailActionBusy(false);
+                    }
+                  }}
+                  className="btn-ghost text-xs font-bold text-volt border-volt/40"
+                >
+                  Save Email Provider Settings
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Create New Article Card */}
           {creatingNews && (
