@@ -28,7 +28,7 @@ export const GET = route(async (req) => {
   const [row] = await db.select().from(settings).where(eq(settings.key, "redditOpportunitiesV1"));
   const cached = Array.isArray(row?.value) ? (row.value as RedditOpportunity[]) : [];
   const ageMs = row?.updatedAt ? Date.now() - new Date(row.updatedAt).getTime() : Infinity;
-  const isStaleTtl = ageMs > 2 * 60_000;
+  const isStaleTtl = ageMs > 30 * 60_000;
 
   const retiredSet = new Set(INITIAL_COMMENTED_THREAD_IDS.map((x) => x.toLowerCase()));
   const hasLegacyOrCommentedCache =
@@ -36,7 +36,9 @@ export const GET = route(async (req) => {
     isStaleTtl ||
     cached.some(
       (item) =>
-        (!item.permalink?.includes("/comments/") && !item.permalink?.includes("/search/")) ||
+        !item.permalink?.includes("/comments/") ||
+        item.topComments === undefined ||
+        item.helpfulReplyDraft?.includes('"Get Alerts"') ||
         !item.category ||
         (item.status !== "open" && item.status !== "clicked") ||
         retiredSet.has(item.id.toLowerCase()),

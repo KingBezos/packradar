@@ -1677,35 +1677,31 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
             )}
           </div>
 
-          {/* Live Scanned Reddit Threads (Unclicked first, Clicked moved to bottom for 2h before auto-removal) */}
+          {/* Live Scanned Reddit Threads (Unclicked first, Clicked moved to bottom when clicking View on Reddit) */}
           <div className="space-y-4">
             {(() => {
               const nowMs = Date.now();
               const twoHoursMs = 2 * 60 * 60 * 1000;
-              const visibleOpps = redditOpps
-                .filter((opp) => {
-                  if (opp.status !== "open" && opp.status !== "clicked") return false;
-                  if (
-                    opp.status === "clicked" &&
-                    opp.clickedAt &&
-                    nowMs - new Date(opp.clickedAt).getTime() >= twoHoursMs
-                  ) {
-                    return false;
-                  }
-                  return redditCategoryFilter === "all" || opp.category === redditCategoryFilter;
-                })
-                .sort((a, b) => {
-                  if (a.status === "clicked" && b.status !== "clicked") return 1;
-                  if (a.status !== "clicked" && b.status === "clicked") return -1;
-                  return 0;
-                });
+              const visibleOpps = redditOpps.filter((opp) => {
+                if (opp.status !== "open" && opp.status !== "clicked") return false;
+                if (
+                  opp.status === "clicked" &&
+                  opp.clickedAt &&
+                  nowMs - new Date(opp.clickedAt).getTime() >= twoHoursMs
+                ) {
+                  return false;
+                }
+                return redditCategoryFilter === "all" || opp.category === redditCategoryFilter;
+              });
 
-              let shownClickedHeader = false;
+              // Find the index where the bottom "clicked" block begins so we can show the divider header
+              const firstBottomClickedIdx = visibleOpps.findIndex(
+                (o, idx) => o.status === "clicked" && visibleOpps.slice(idx).every((rest) => rest.status === "clicked"),
+              );
 
-              return visibleOpps.map((opp) => {
+              return visibleOpps.map((opp, idx) => {
                 const isClicked = opp.status === "clicked";
-                const showDividerBefore = isClicked && !shownClickedHeader;
-                if (isClicked) shownClickedHeader = true;
+                const showDividerBefore = idx === firstBottomClickedIdx && firstBottomClickedIdx > 0;
 
                 const elapsedMs =
                   isClicked && opp.clickedAt ? Math.max(0, nowMs - new Date(opp.clickedAt).getTime()) : 0;
@@ -1719,32 +1715,39 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                     id: opp.id,
                     permalink: opp.permalink,
                     status,
-                  }).then((r) => {
-                    if (Array.isArray(r.opportunities)) {
-                      setRedditOpps(r.opportunities);
-                    }
                   });
                 };
 
-                const flagClickedAndMoveToBottom = (draftToCopy?: string) => {
-                  const textToCopy = draftToCopy ?? opp.helpfulReplyDraft;
-                  navigator.clipboard.writeText(textToCopy);
+                /**
+                 * Flags the thread as clicked.
+                 * - When `moveToBottom` is false (e.g. "Copy Reply & Open" or "Copy Short & Open"),
+                 *   the card stays in its exact screen position so clicking multiple buttons on the same card
+                 *   ALWAYS opens the exact same Reddit thread (`opp.permalink`).
+                 * - When `moveToBottom` is true (e.g. clicking "View on Reddit"), it flags it as clicked
+                 *   AND moves it to the bottom of the list for 2 hours before auto-removal.
+                 */
+                const handleOpenThread = (draftToCopy: string, moveToBottom: boolean) => {
+                  navigator.clipboard.writeText(draftToCopy);
                   setCopiedReplyId(opp.id);
                   const clickedAtIso = opp.clickedAt || new Date().toISOString();
                   setMsg(
-                    "Reply copied & thread flagged as CLICKED! Moved to the bottom for 2 hours (then auto-removed so you don't double post).",
+                    moveToBottom
+                      ? `Opened "${opp.title.slice(0, 45)}…" on Reddit! Flagged as CLICKED and moved to the bottom for 2 hours.`
+                      : `Copied reply & opened "${opp.title.slice(0, 45)}…" on Reddit! Card flagged as CLICKED in-place.`,
                   );
                   window.open(opp.permalink, "_blank", "noopener,noreferrer");
 
                   setRedditOpps((prev) => {
-                    const updated = prev.map((item) =>
-                      item.id === opp.id
-                        ? { ...item, status: "clicked" as const, clickedAt: clickedAtIso }
-                        : item,
-                    );
-                    const openItems = updated.filter((i) => i.status === "open");
-                    const clickedItems = updated.filter((i) => i.status === "clicked");
-                    return [...openItems, ...clickedItems];
+                    const updatedItem = {
+                      ...opp,
+                      status: "clicked" as const,
+                      clickedAt: clickedAtIso,
+                    };
+                    if (!moveToBottom) {
+                      return prev.map((item) => (item.id === opp.id ? updatedItem : item));
+                    }
+                    const others = prev.filter((item) => item.id !== opp.id);
+                    return [...others, updatedItem];
                   });
 
                   void call("/api/admin/reddit-radar", "POST", {
@@ -1752,10 +1755,6 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                     id: opp.id,
                     permalink: opp.permalink,
                     status: "clicked",
-                  }).then((r) => {
-                    if (Array.isArray(r.opportunities)) {
-                      setRedditOpps(r.opportunities);
-                    }
                   });
                 };
 
@@ -1786,12 +1785,12 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                     <div
                       className={`card p-5 space-y-3 transition ${
                         isClicked
-                          ? "border-amber-400/40 bg-panel-2/40 opacity-80"
+                          ? "border-amber-400/40 bg-panel-2/40 opacity-85"
                           : "border-line"
                       }`}
                     >
                       <div className="flex flex-wrap items-start justify-between gap-3">
-                        <div className="space-y-1">
+                        <div className="space-y-1.5 flex-1 min-w-[260px]">
                           <div className="flex flex-wrap items-center gap-2 text-xs">
                             {isClicked && (
                               <span className="rounded-full border border-amber-400/60 bg-amber-500/25 px-2.5 py-0.5 font-extrabold text-amber-200">
@@ -1823,7 +1822,7 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                               rel="noopener noreferrer"
                               onClick={(e) => {
                                 e.preventDefault();
-                                flagClickedAndMoveToBottom();
+                                handleOpenThread(opp.helpfulReplyDraft, true);
                               }}
                               className="hover:text-volt hover:underline"
                             >
@@ -1831,7 +1830,21 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                             </a>
                           </h3>
                           {opp.excerpt && opp.excerpt !== opp.title && (
-                            <p className="text-xs text-slate-300">{opp.excerpt}</p>
+                            <p className="text-xs text-slate-300 leading-relaxed">
+                              <b className="text-slate-400">OP Post:</b> {opp.excerpt}
+                            </p>
+                          )}
+                          {opp.topComments && opp.topComments.length > 0 && (
+                            <div className="rounded-lg border border-line/70 bg-slate-950/60 p-2.5 text-[11px] space-y-1">
+                              <div className="font-bold text-slate-400">
+                                💬 Current Replies in Thread ({opp.topComments.length}):
+                              </div>
+                              {opp.topComments.map((c, ci) => (
+                                <div key={ci} className="text-slate-300 truncate">
+                                  <span className="font-mono text-volt">{c.author}:</span> &ldquo;{c.body}&rdquo;
+                                </div>
+                              ))}
+                            </div>
                           )}
                           <p className="font-mono text-[11px] text-slate-400 break-all">
                             Thread: {opp.permalink}
@@ -1841,15 +1854,15 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                         <div className="flex flex-wrap items-center gap-2">
                           <button
                             type="button"
-                            onClick={() => flagClickedAndMoveToBottom()}
+                            onClick={() => handleOpenThread(opp.helpfulReplyDraft, false)}
                             className="btn-primary py-1.5 text-xs font-bold"
                           >
                             <Copy className="h-3.5 w-3.5" />
-                            {isClicked ? "Clicked · Copy & Open Again ↗" : "Copy Reply & Open Thread ↗"}
+                            Copy Reply &amp; Open Thread ↗
                           </button>
                           <button
                             type="button"
-                            onClick={() => flagClickedAndMoveToBottom(opp.shortReplyDraft)}
+                            onClick={() => handleOpenThread(opp.shortReplyDraft, false)}
                             className="btn-ghost py-1.5 text-xs"
                           >
                             Copy Short &amp; Open ↗
@@ -1872,7 +1885,7 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                       <div className="rounded-xl border border-line bg-panel-2/70 p-3.5 text-xs space-y-2">
                         <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-bold uppercase tracking-wider text-muted">
                           <div className="flex flex-wrap items-center gap-1.5">
-                            <span>Switch Reply Link Target:</span>
+                            <span>Switch Conversational Angle:</span>
                             {opp.newsDraft && (
                               <button
                                 type="button"
@@ -1887,7 +1900,7 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                                 }
                                 className="rounded border border-amber-400/40 bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold normal-case text-amber-300 hover:border-amber-400 hover:bg-amber-500/20"
                               >
-                                📰 News Article (/news)
+                                📰 News / Mini Tins Angle (/news)
                               </button>
                             )}
                             {opp.dropsDraft && (
@@ -1904,7 +1917,7 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                                 }
                                 className="rounded border border-sky-400/40 bg-sky-500/10 px-2 py-0.5 text-[10px] font-semibold normal-case text-sky-300 hover:border-sky-400 hover:bg-sky-500/20"
                               >
-                                🛒 Retail Drops (/drops)
+                                🛒 Retail Drops Angle (/drops)
                               </button>
                             )}
                             {opp.vendingDraft && (
@@ -1921,7 +1934,7 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                                 }
                                 className="rounded border border-emerald-400/40 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold normal-case text-emerald-300 hover:border-emerald-400 hover:bg-emerald-500/20"
                               >
-                                🎰 Vending Map
+                                🎰 Vending Kiosk Angle
                               </button>
                             )}
                             <button
@@ -1944,14 +1957,14 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                             rel="noopener noreferrer"
                             onClick={(e) => {
                               e.preventDefault();
-                              flagClickedAndMoveToBottom();
+                              handleOpenThread(opp.helpfulReplyDraft, true);
                             }}
                             className={`font-bold hover:underline ${
                               isClicked ? "text-amber-300" : "text-volt"
                             }`}
                           >
                             {isClicked
-                              ? `✓ Clicked (Moved to Bottom · Auto-Removes in ${remainingMins}m) — Open on Reddit ↗`
+                              ? `✓ Clicked (Auto-Removes in ${remainingMins}m) — Move to Bottom & Open on Reddit ↗`
                               : "View on Reddit (Flags Clicked & Moves to Bottom for 2h) ↗"}
                           </a>
                         </div>
