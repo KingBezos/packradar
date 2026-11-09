@@ -390,6 +390,8 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
     configured: boolean;
     apiKeyPreview: string | null;
     emailFrom: string;
+    emailReplyTo?: string;
+    usingSandboxSender?: boolean;
     stats?: {
       totalEmailSubscriptions: number;
       releaseAndLotterySubscriptions: number;
@@ -397,7 +399,8 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
     };
   } | null>(null);
   const [resendKeyInput, setResendKeyInput] = useState("");
-  const [emailFromInput, setEmailFromInput] = useState("PackRadar Alerts <onboarding@resend.dev>");
+  const [emailFromInput, setEmailFromInput] = useState("PackRadar <onboarding@resend.dev>");
+  const [emailReplyToInput, setEmailReplyToInput] = useState("james@jpegtown.com");
   const [emailActionBusy, setEmailActionBusy] = useState(false);
 
   const loadInbox = () =>
@@ -434,6 +437,7 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
       .then((r) => {
         setEmailStatus(r);
         if (r.emailFrom) setEmailFromInput(r.emailFrom);
+        if (r.emailReplyTo) setEmailReplyToInput(r.emailReplyTo);
       })
       .catch(() => {});
 
@@ -2642,7 +2646,7 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                 </div>
               </div>
 
-              <div className="grid gap-2 sm:grid-cols-3 pt-1">
+              <div className="grid gap-2 sm:grid-cols-4 pt-1">
                 <input
                   type="password"
                   className="input text-xs"
@@ -2656,9 +2660,15 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                 />
                 <input
                   className="input text-xs"
-                  placeholder="From Address (e.g. PackRadar Alerts <onboarding@resend.dev>)"
+                  placeholder="From (e.g. PackRadar <alerts@jpegtown.com>)"
                   value={emailFromInput}
                   onChange={(e) => setEmailFromInput(e.target.value)}
+                />
+                <input
+                  className="input text-xs"
+                  placeholder="Reply-To (e.g. james@jpegtown.com)"
+                  value={emailReplyToInput}
+                  onChange={(e) => setEmailReplyToInput(e.target.value)}
                 />
                 <button
                   type="button"
@@ -2670,6 +2680,7 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                         action: "save_config",
                         resendApiKey: resendKeyInput || undefined,
                         emailFrom: emailFromInput || undefined,
+                        emailReplyTo: emailReplyToInput || undefined,
                       });
                       setMsg(r.message);
                       setResendKeyInput("");
@@ -2685,6 +2696,11 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                   Save Email Provider Settings
                 </button>
               </div>
+              {emailStatus?.usingSandboxSender && (
+                <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-[11px] text-amber-200">
+                  <b>Why did test emails land in Spam?</b> <code className="text-white">onboarding@resend.dev</code> is Resend&apos;s shared sandbox domain used by thousands of test apps, and Resend restricts it to only send to your own email (<code className="text-white">james@jpegtown.com</code>). Add <code className="text-white">jpegtown.com</code> at <a href="https://resend.com/domains" target="_blank" rel="noopener noreferrer" className="underline text-volt">resend.com/domains</a> and change From to <code className="text-white">PackRadar &lt;alerts@jpegtown.com&gt;</code> for Primary Inbox delivery to all users.
+                </p>
+              )}
             </div>
           )}
 

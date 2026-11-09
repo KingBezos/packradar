@@ -1,5 +1,5 @@
 {
-  "totalHumanPageviews": 368,
+  "totalHumanPageviews": 386,
   "allTimeUniqueVisitorHashes": [
     "9a3d1f0b2c8e4511",
     "4c7b82e10f9d32a6",
@@ -85,28 +85,31 @@
     "201ee8b88561ec46",
     "1937dd37ae8e83f1",
     "4875412332412785",
-    "bdb59f0ae60df0ba"
+    "bdb59f0ae60df0ba",
+    "01438f0f7b91cf65",
+    "e7ef0b075905e892",
+    "1ede25e9a607d280"
   ],
-  "totalBotHitsExcluded": 2931,
+  "totalBotHitsExcluded": 3070,
   "botBreakdown": {
-    "Internal QA & Health Checks": 2666,
+    "Internal QA & Health Checks": 2796,
     "Discord Link Preview (Discordbot)": 4,
     "Search Engine Crawler (Google/Bing/DuckDuckGo)": 1,
-    "Headless Browser / Automation (Puppeteer/Playwright/Curl/Node)": 23,
+    "Headless Browser / Automation (Puppeteer/Playwright/Curl/Node)": 24,
     "Empty or Synthetic User-Agent": 26,
-    "Social Preview Bot (Twitter/FB/Slack/Telegram/Reddit)": 155,
+    "Social Preview Bot (Twitter/FB/Slack/Telegram/Reddit)": 163,
     "Non-Browser HTTP Client": 54,
     "Headless Webdriver Flag (navigator.webdriver)": 2
   },
   "deviceBreakdown": {
-    "mobile": 307,
-    "desktop": 61,
+    "mobile": 319,
+    "desktop": 67,
     "tablet": 0
   },
   "pages": {
     "/": {
       "path": "/",
-      "views": 98,
+      "views": 104,
       "uniqueVisitorHashes": [
         "9a3d1f0b2c8e4511",
         "4c7b82e10f9d32a6",
@@ -170,13 +173,16 @@
         "201ee8b88561ec46",
         "1937dd37ae8e83f1",
         "4875412332412785",
-        "bdb59f0ae60df0ba"
+        "bdb59f0ae60df0ba",
+        "01438f0f7b91cf65",
+        "e7ef0b075905e892",
+        "1ede25e9a607d280"
       ],
-      "lastVisitedAt": "2026-11-08T19:08:18.956Z"
+      "lastVisitedAt": "2026-11-09T02:27:12.801Z"
     },
     "/map": {
       "path": "/map",
-      "views": 36,
+      "views": 39,
       "uniqueVisitorHashes": [
         "9a3d1f0b2c8e4511",
         "4c7b82e10f9d32a6",
@@ -189,9 +195,11 @@
         "0cd77ac637d61abd",
         "31aa7685cac146af",
         "7c908ffe3b9fb8b8",
-        "0d1dd19288169b75"
+        "0d1dd19288169b75",
+        "01438f0f7b91cf65",
+        "1ede25e9a607d280"
       ],
-      "lastVisitedAt": "2026-11-06T03:23:15.139Z"
+      "lastVisitedAt": "2026-11-09T02:29:00.826Z"
     },
     "/machines/Q01168": {
       "path": "/machines/Q01168",
@@ -223,20 +231,21 @@
     },
     "/drops": {
       "path": "/drops",
-      "views": 17,
+      "views": 18,
       "uniqueVisitorHashes": [
         "0d1dd19288169b75",
         "5bb365893501aca0",
         "481f815e11b27427",
         "0cd77ac637d61abd",
         "7c908ffe3b9fb8b8",
-        "a86d4e0d7af46983"
+        "a86d4e0d7af46983",
+        "01438f0f7b91cf65"
       ],
-      "lastVisitedAt": "2026-11-07T00:47:12.151Z"
+      "lastVisitedAt": "2026-11-09T02:20:02.664Z"
     },
     "/search": {
       "path": "/search",
-      "views": 74,
+      "views": 77,
       "uniqueVisitorHashes": [
         "5bb365893501aca0",
         "692f65999f08d194",
@@ -280,9 +289,10 @@
         "d2fd25bdfe27fcd1",
         "efb3a6a6a3ab4beb",
         "1937dd37ae8e83f1",
-        "bdb59f0ae60df0ba"
+        "bdb59f0ae60df0ba",
+        "1ede25e9a607d280"
       ],
-      "lastVisitedAt": "2026-11-08T19:08:36.776Z"
+      "lastVisitedAt": "2026-11-09T02:26:54.678Z"
     },
     "/machines/Q02071": {
       "path": "/machines/Q02071",
@@ -314,13 +324,14 @@
     },
     "/sign-up": {
       "path": "/sign-up",
-      "views": 3,
+      "views": 4,
       "uniqueVisitorHashes": [
         "2a0c6057a5d0139a",
         "d98eb34ebf31de58",
-        "a86d4e0d7af46983"
+        "a86d4e0d7af46983",
+        "01438f0f7b91cf65"
       ],
-      "lastVisitedAt": "2026-11-06T15:14:10.157Z"
+      "lastVisitedAt": "2026-11-09T02:20:10.171Z"
     },
     "/news/welcome-to-packradar": {
       "path": "/news/welcome-to-packradar",
@@ -342,13 +353,14 @@
     },
     "/releases": {
       "path": "/releases",
-      "views": 9,
+      "views": 10,
       "uniqueVisitorHashes": [
         "2a0c6057a5d0139a",
         "481f815e11b27427",
-        "0d1dd19288169b75"
+        "0d1dd19288169b75",
+        "01438f0f7b91cf65"
       ],
-      "lastVisitedAt": "2026-11-07T00:47:18.309Z"
+      "lastVisitedAt": "2026-11-09T02:19:47.034Z"
     },
     "/alerts": {
       "path": "/alerts",
@@ -644,6 +656,30 @@
         "666106fc5c728a69"
       ],
       "lastVisitedAt": "2026-11-08T01:13:49.055Z"
+    },
+    "/machines/Q02155": {
+      "path": "/machines/Q02155",
+      "views": 1,
+      "uniqueVisitorHashes": [
+        "1ede25e9a607d280"
+      ],
+      "lastVisitedAt": "2026-11-09T02:28:07.628Z"
+    },
+    "/machines/Q01450": {
+      "path": "/machines/Q01450",
+      "views": 1,
+      "uniqueVisitorHashes": [
+        "1ede25e9a607d280"
+      ],
+      "lastVisitedAt": "2026-11-09T02:29:10.972Z"
+    },
+    "/machines/Q01480": {
+      "path": "/machines/Q01480",
+      "views": 1,
+      "uniqueVisitorHashes": [
+        "1ede25e9a607d280"
+      ],
+      "lastVisitedAt": "2026-11-09T02:29:23.824Z"
     }
   },
   "sources": {
@@ -658,7 +694,7 @@
     },
     "Facebook": {
       "source": "Facebook",
-      "visits": 94,
+      "visits": 102,
       "uniqueVisitorHashes": [
         "5bb365893501aca0",
         "a58a2d94d082288b",
@@ -704,13 +740,15 @@
         "efb3a6a6a3ab4beb",
         "201ee8b88561ec46",
         "4875412332412785",
-        "bdb59f0ae60df0ba"
+        "bdb59f0ae60df0ba",
+        "e7ef0b075905e892",
+        "1ede25e9a607d280"
       ],
-      "lastSeenAt": "2026-11-08T19:07:35.760Z"
+      "lastSeenAt": "2026-11-09T02:29:00.826Z"
     },
     "Direct / Shared Link (Discord/SMS/App)": {
       "source": "Direct / Shared Link (Discord/SMS/App)",
-      "visits": 178,
+      "visits": 185,
       "uniqueVisitorHashes": [
         "692f65999f08d194",
         "4c61408b0d9751e3",
@@ -748,9 +786,10 @@
         "ce72b9033ae3def2",
         "1d73432046b35496",
         "d2fd25bdfe27fcd1",
-        "1937dd37ae8e83f1"
+        "1937dd37ae8e83f1",
+        "01438f0f7b91cf65"
       ],
-      "lastSeenAt": "2026-11-08T17:37:07.087Z"
+      "lastSeenAt": "2026-11-09T02:20:10.171Z"
     },
     "Organic Search (Google/Bing)": {
       "source": "Organic Search (Google/Bing)",
@@ -905,11 +944,222 @@
         "0d1dd19288169b75",
         "bdb59f0ae60df0ba"
       ],
-      "botHitsBlocked": 504,
+      "botHitsBlocked": 571,
       "signUps": 0
+    },
+    "2026-11-09": {
+      "date": "2026-11-09",
+      "humanViews": 18,
+      "uniqueVisitorHashes": [
+        "4c61408b0d9751e3",
+        "01438f0f7b91cf65",
+        "e7ef0b075905e892",
+        "1ede25e9a607d280"
+      ],
+      "botHitsBlocked": 72,
+      "signUps": 0,
+      "searches": 3
     }
   },
   "recentHumanVisits": [
+    {
+      "id": "v-1794191363824-v7r8",
+      "at": "2026-11-09T02:29:23.824Z",
+      "path": "/machines/Q01480",
+      "referrer": "https://packradar.onrender.com/map",
+      "sourceLabel": "Internal Navigation",
+      "device": "mobile",
+      "visitorHash": "1ede25e9",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1794191350972-ngbq",
+      "at": "2026-11-09T02:29:10.972Z",
+      "path": "/machines/Q01450",
+      "referrer": "https://packradar.onrender.com/map",
+      "sourceLabel": "Internal Navigation",
+      "device": "mobile",
+      "visitorHash": "1ede25e9",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1794191340826-xr3n",
+      "at": "2026-11-09T02:29:00.826Z",
+      "path": "/map",
+      "referrer": "https://l.facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "1ede25e9",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1794191287628-nxh8",
+      "at": "2026-11-09T02:28:07.628Z",
+      "path": "/machines/Q02155",
+      "referrer": "https://packradar.onrender.com/map",
+      "sourceLabel": "Internal Navigation",
+      "device": "mobile",
+      "visitorHash": "1ede25e9",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1794191256220-5tal",
+      "at": "2026-11-09T02:27:36.220Z",
+      "path": "/map",
+      "referrer": "https://l.facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "1ede25e9",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1794191232801-e1sx",
+      "at": "2026-11-09T02:27:12.801Z",
+      "path": "/",
+      "referrer": "https://l.facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "1ede25e9",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1794191214686-6ye8",
+      "at": "2026-11-09T02:26:54.686Z",
+      "path": "/search",
+      "referrer": "https://l.facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "1ede25e9",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1794191207565-1uuq",
+      "at": "2026-11-09T02:26:47.565Z",
+      "path": "/search",
+      "referrer": "https://l.facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "1ede25e9",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1794191198939-56le",
+      "at": "2026-11-09T02:26:38.939Z",
+      "path": "/search",
+      "referrer": "https://l.facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "1ede25e9",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1794191163608-8vgp",
+      "at": "2026-11-09T02:26:03.608Z",
+      "path": "/",
+      "referrer": "https://l.facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "1ede25e9",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1794190810171-h9s6",
+      "at": "2026-11-09T02:20:10.171Z",
+      "path": "/sign-up",
+      "referrer": "",
+      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
+      "device": "desktop",
+      "visitorHash": "01438f0f",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1794190802664-h7do",
+      "at": "2026-11-09T02:20:02.664Z",
+      "path": "/drops",
+      "referrer": "",
+      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
+      "device": "desktop",
+      "visitorHash": "01438f0f",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1794190787034-8fpw",
+      "at": "2026-11-09T02:19:47.034Z",
+      "path": "/releases",
+      "referrer": "",
+      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
+      "device": "desktop",
+      "visitorHash": "01438f0f",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1794190785177-o711",
+      "at": "2026-11-09T02:19:45.177Z",
+      "path": "/map",
+      "referrer": "",
+      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
+      "device": "desktop",
+      "visitorHash": "01438f0f",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1794190767650-tdkf",
+      "at": "2026-11-09T02:19:27.650Z",
+      "path": "/",
+      "referrer": "",
+      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
+      "device": "desktop",
+      "visitorHash": "01438f0f",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1794190766302-5u5l",
+      "at": "2026-11-09T02:19:26.302Z",
+      "path": "/",
+      "referrer": "https://facebook.com/",
+      "sourceLabel": "Facebook",
+      "device": "mobile",
+      "visitorHash": "e7ef0b07",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1794190747258-qbhr",
+      "at": "2026-11-09T02:19:07.258Z",
+      "path": "/",
+      "referrer": "",
+      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
+      "device": "desktop",
+      "visitorHash": "01438f0f",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "v-1794190659177-m0dg",
+      "at": "2026-11-09T02:17:39.177Z",
+      "path": "/",
+      "referrer": "",
+      "sourceLabel": "Direct / Shared Link (Discord/SMS/App)",
+      "device": "mobile",
+      "visitorHash": "4c61408b",
+      "userId": "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+      "userName": "King_Bezos"
+    },
     {
       "id": "v-1794164916784-0ho7",
       "at": "2026-11-08T19:08:36.784Z",
@@ -1571,8 +1821,13 @@
       "userName": null
     }
   ],
-  "activeVisitorsMap": {},
-  "totalSearches": 74,
+  "activeVisitorsMap": {
+    "4c61408b0d9751e3": 1794190659177,
+    "01438f0f7b91cf65": 1794190810171,
+    "e7ef0b075905e892": 1794190766302,
+    "1ede25e9a607d280": 1794191363824
+  },
+  "totalSearches": 77,
   "searchQueries": {
     "19382": {
       "query": "19382",
@@ -1885,9 +2140,63 @@
         "bdb59f0ae60df0ba"
       ],
       "lastSearchedAt": "2026-11-08T19:08:36.776Z"
+    },
+    "01801": {
+      "query": "01801",
+      "searches": 1,
+      "uniqueVisitorHashes": [
+        "1ede25e9a607d280"
+      ],
+      "lastSearchedAt": "2026-11-09T02:26:38.933Z"
+    },
+    "nashua": {
+      "query": "Nashua",
+      "searches": 1,
+      "uniqueVisitorHashes": [
+        "1ede25e9a607d280"
+      ],
+      "lastSearchedAt": "2026-11-09T02:26:47.556Z"
+    },
+    "ma": {
+      "query": "Ma",
+      "searches": 1,
+      "uniqueVisitorHashes": [
+        "1ede25e9a607d280"
+      ],
+      "lastSearchedAt": "2026-11-09T02:26:54.678Z"
     }
   },
   "recentZipSearches": [
+    {
+      "id": "zs-1794191214686-sjhh",
+      "zip": "Ma",
+      "query": "Ma",
+      "locationLabel": "US",
+      "at": "2026-11-09T02:26:54.686Z",
+      "visitorHash": "1ede25e9",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "zs-1794191207565-amzz",
+      "zip": "03060",
+      "query": "Nashua",
+      "locationLabel": "Nashua, NH",
+      "at": "2026-11-09T02:26:47.565Z",
+      "visitorHash": "1ede25e9",
+      "userId": null,
+      "userName": null
+    },
+    {
+      "id": "zs-1794191198939-sn9f",
+      "zip": "01801",
+      "query": "01801",
+      "locationLabel": "US",
+      "at": "2026-11-09T02:26:38.939Z",
+      "visitorHash": "1ede25e9",
+      "userId": null,
+      "userName": null
+    },
     {
       "id": "zs-1794164916784-4keg",
       "zip": "85004",
@@ -2484,10 +2793,28 @@
         "0cd77ac637d61abd"
       ],
       "lastSearchedAt": "2026-11-04T00:24:43.766Z"
+    },
+    "01801": {
+      "zip": "01801",
+      "locationLabel": "US",
+      "searches": 1,
+      "uniqueVisitorHashes": [
+        "1ede25e9a607d280"
+      ],
+      "lastSearchedAt": "2026-11-09T02:26:38.939Z"
+    },
+    "03060": {
+      "zip": "03060",
+      "locationLabel": "Nashua, NH",
+      "searches": 1,
+      "uniqueVisitorHashes": [
+        "1ede25e9a607d280"
+      ],
+      "lastSearchedAt": "2026-11-09T02:26:47.565Z"
     }
   },
   "userLastActiveMap": {
-    "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go": "2026-11-08T21:01:34.798Z"
+    "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go": "2026-11-09T02:29:08.820Z"
   },
-  "updatedAt": "2026-11-08T21:01:34.798Z"
+  "updatedAt": "2026-11-09T02:29:23.824Z"
 }

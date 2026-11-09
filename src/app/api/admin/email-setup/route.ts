@@ -31,6 +31,8 @@ export const GET = route(async () => {
     configured: Boolean(cfg.apiKey),
     apiKeyPreview: cfg.apiKey ? `${cfg.apiKey.slice(0, 7)}••••••••` : null,
     emailFrom: cfg.from,
+    emailReplyTo: cfg.replyTo,
+    usingSandboxSender: cfg.from.includes("resend.dev"),
     stats: {
       totalEmailSubscriptions: emailSubCount,
       releaseAndLotterySubscriptions: releaseNewsSubCount,
@@ -43,6 +45,7 @@ const PostBody = z.object({
   action: z.enum(["save_config", "test_email", "broadcast_alert"]).default("save_config"),
   resendApiKey: z.string().optional(),
   emailFrom: z.string().optional(),
+  emailReplyTo: z.string().optional(),
   broadcastTitle: z.string().optional(),
   broadcastSummary: z.string().optional(),
   broadcastUrl: z.string().optional(),
@@ -53,24 +56,25 @@ export const POST = route(async (req) => {
   const b = PostBody.parse(await json(req));
   const db = await getDb();
 
-  if (b.resendApiKey !== undefined || b.emailFrom !== undefined) {
+  if (b.resendApiKey !== undefined || b.emailFrom !== undefined || b.emailReplyTo !== undefined) {
     const existingCfg = await getResendConfigWithDbFallback();
     const nextKey = b.resendApiKey?.trim() || existingCfg.apiKey || "";
-    const nextFrom = b.emailFrom?.trim() || existingCfg.from || "PackRadar Alerts <onboarding@resend.dev>";
+    const nextFrom = b.emailFrom?.trim() || existingCfg.from || "PackRadar <onboarding@resend.dev>";
+    const nextReplyTo = b.emailReplyTo?.trim() || existingCfg.replyTo || "james@jpegtown.com";
 
     if (nextKey) {
-      setRuntimeEmailConfig(nextKey, nextFrom);
+      setRuntimeEmailConfig(nextKey, nextFrom, nextReplyTo);
       await db
         .insert(settings)
         .values({
           key: "emailProviderConfigV1",
-          value: { resendApiKey: nextKey, emailFrom: nextFrom },
+          value: { resendApiKey: nextKey, emailFrom: nextFrom, emailReplyTo: nextReplyTo },
           updatedAt: new Date(),
         })
         .onConflictDoUpdate({
           target: settings.key,
           set: {
-            value: { resendApiKey: nextKey, emailFrom: nextFrom },
+            value: { resendApiKey: nextKey, emailFrom: nextFrom, emailReplyTo: nextReplyTo },
             updatedAt: new Date(),
           },
         });
@@ -86,6 +90,7 @@ export const POST = route(async (req) => {
             : {};
           existing.resendApiKey = nextKey;
           existing.emailFrom = nextFrom;
+          existing.emailReplyTo = nextReplyTo;
           fs.mkdirSync(path.dirname(cfgPath), { recursive: true });
           fs.writeFileSync(cfgPath, JSON.stringify(existing, null, 2), "utf8");
           break;
@@ -98,8 +103,8 @@ export const POST = route(async (req) => {
 
   if (b.action === "test_email") {
     const status = await sendEmail(admin.email, {
-      title: "🎟️ [Test] Walmart+ & Target Pokémon TCG Online Lottery Alert",
-      body: "This is a live test of your PackRadar Release & Online Lottery Email Alert system. Subscribers who click 'Email Me All Release News & Lotteries' receive this email whenever a new lottery, virtual queue, or major retail allocation goes live.",
+      title: "PackRadar Update: Walmart+ & Target Online Queue & Sam's Club 151 Details",
+      body: "Your PackRadar Release & Online Lottery alert system is active.\n\nSubscribers who enable 'Email Me All Release News & Lotteries' receive this update when a new retail draw, online queue, or allocation schedule is posted.",
       url: "/news/walmart-target-amazon-pokemon-tcg-online-lottery-queue-invite-guide",
     });
     return {
@@ -107,10 +112,11 @@ export const POST = route(async (req) => {
       configured: Boolean(cfg.apiKey),
       deliveryStatus: status,
       sentTo: admin.email,
+      replyTo: cfg.replyTo,
       message:
         status === "sent"
-          ? `Live email delivered to ${admin.email} via Resend!`
-          : `Resend API key not set yet — test email logged to server outbox for ${admin.email}. Paste a free Resend API key (re_...) to deliver live emails.`,
+          ? `Live email delivered to ${admin.email} (Reply-To: ${cfg.replyTo}) via Resend!`
+          : `Resend API key not set yet — test email logged to server outbox for ${admin.email}.`,
     };
   }
 
