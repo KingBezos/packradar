@@ -21,37 +21,57 @@ const gEmail = globalThis as unknown as {
   __packradarEmailConfig?: { apiKey: string | null; from: string; replyTo: string };
 };
 
+export const DEFAULT_EMAIL_FROM = "PackRadar <drops@alerts.jpegtown.com>";
+export const DEFAULT_EMAIL_REPLY_TO = "james@jpegtown.com";
+
+export function normalizeFromAddress(raw?: string | null): string {
+  const trimmed = (raw ?? "").trim();
+  if (!trimmed) return DEFAULT_EMAIL_FROM;
+  const lower = trimmed.toLowerCase();
+  if (
+    lower === "alerts.jpegtown.com" ||
+    lower === "alerts@jpegtown.com" ||
+    lower.includes("<alerts@jpegtown.com>") ||
+    lower.includes("<alerts.jpegtown.com>") ||
+    lower.includes("onboarding@resend.dev")
+  ) {
+    return DEFAULT_EMAIL_FROM;
+  }
+  if (!trimmed.includes("@")) {
+    return `PackRadar <drops@${trimmed}>`;
+  }
+  if (!trimmed.includes("<")) {
+    return `PackRadar <${trimmed}>`;
+  }
+  return trimmed;
+}
+
 export function setRuntimeEmailConfig(
   apiKey: string | null,
   from?: string | null,
   replyTo?: string | null,
 ) {
+  const normalizedFrom = normalizeFromAddress(from || process.env.EMAIL_FROM);
+  const normalizedReplyTo = (replyTo && replyTo.trim()) || process.env.EMAIL_REPLY_TO || DEFAULT_EMAIL_REPLY_TO;
   if (apiKey) process.env.RESEND_API_KEY = apiKey.trim();
-  if (from) process.env.EMAIL_FROM = from.trim();
-  if (replyTo) process.env.EMAIL_REPLY_TO = replyTo.trim();
+  process.env.EMAIL_FROM = normalizedFrom;
+  process.env.EMAIL_REPLY_TO = normalizedReplyTo;
   gEmail.__packradarEmailConfig = {
     apiKey: apiKey ? apiKey.trim() : process.env.RESEND_API_KEY || null,
-    from:
-      (from && from.trim()) ||
-      process.env.EMAIL_FROM ||
-      "PackRadar <onboarding@resend.dev>",
-    replyTo:
-      (replyTo && replyTo.trim()) ||
-      process.env.EMAIL_REPLY_TO ||
-      "james@jpegtown.com",
+    from: normalizedFrom,
+    replyTo: normalizedReplyTo,
   };
 }
 
 export function getResendConfig(): { apiKey: string | null; from: string; replyTo: string } {
   let apiKey = process.env.RESEND_API_KEY || gEmail.__packradarEmailConfig?.apiKey || null;
-  let from =
-    process.env.EMAIL_FROM ||
-    gEmail.__packradarEmailConfig?.from ||
-    "PackRadar <onboarding@resend.dev>";
+  let from = normalizeFromAddress(
+    gEmail.__packradarEmailConfig?.from || process.env.EMAIL_FROM || DEFAULT_EMAIL_FROM,
+  );
   let replyTo =
-    process.env.EMAIL_REPLY_TO ||
     gEmail.__packradarEmailConfig?.replyTo ||
-    "james@jpegtown.com";
+    process.env.EMAIL_REPLY_TO ||
+    DEFAULT_EMAIL_REPLY_TO;
   if (!apiKey) {
     for (const cfgPath of [
       path.join(process.cwd(), "data", "oauth-config.json"),
@@ -65,7 +85,7 @@ export function getResendConfig(): { apiKey: string | null; from: string; replyT
             emailReplyTo?: string;
           };
           if (raw.resendApiKey) apiKey = raw.resendApiKey.trim();
-          if (raw.emailFrom) from = raw.emailFrom.trim();
+          if (raw.emailFrom) from = normalizeFromAddress(raw.emailFrom);
           if (raw.emailReplyTo) replyTo = raw.emailReplyTo.trim();
           if (apiKey) break;
         }
@@ -81,7 +101,6 @@ export async function getResendConfigWithDbFallback(): Promise<{
   replyTo: string;
 }> {
   const syncCfg = getResendConfig();
-  if (syncCfg.apiKey) return syncCfg;
   try {
     const { getDb } = await import("@/db");
     const { settings } = await import("@/db/schema");
@@ -93,12 +112,15 @@ export async function getResendConfigWithDbFallback(): Promise<{
       emailFrom?: string;
       emailReplyTo?: string;
     } | null;
-    if (val?.resendApiKey) {
-      setRuntimeEmailConfig(val.resendApiKey, val.emailFrom, val.emailReplyTo);
+    if (val?.resendApiKey || val?.emailFrom || val?.emailReplyTo) {
+      const mergedKey = val.resendApiKey?.trim() || syncCfg.apiKey;
+      const mergedFrom = normalizeFromAddress(val.emailFrom || syncCfg.from);
+      const mergedReplyTo = val.emailReplyTo?.trim() || syncCfg.replyTo;
+      setRuntimeEmailConfig(mergedKey, mergedFrom, mergedReplyTo);
       return {
-        apiKey: val.resendApiKey.trim(),
-        from: val.emailFrom?.trim() || syncCfg.from,
-        replyTo: val.emailReplyTo?.trim() || syncCfg.replyTo,
+        apiKey: mergedKey,
+        from: mergedFrom,
+        replyTo: mergedReplyTo,
       };
     }
   } catch {}

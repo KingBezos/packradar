@@ -6,7 +6,14 @@ import { route, json } from "@/lib/api";
 import { requireRole } from "@/lib/session";
 import { getDb } from "@/db";
 import { alertSubscriptions, settings, user } from "@/db/schema";
-import { getResendConfigWithDbFallback, sendEmail, setRuntimeEmailConfig } from "@/lib/notify/channels";
+import {
+  DEFAULT_EMAIL_FROM,
+  DEFAULT_EMAIL_REPLY_TO,
+  getResendConfigWithDbFallback,
+  normalizeFromAddress,
+  sendEmail,
+  setRuntimeEmailConfig,
+} from "@/lib/notify/channels";
 import { notifyNews } from "@/lib/notify/dispatch";
 
 export const dynamic = "force-dynamic";
@@ -59,8 +66,8 @@ export const POST = route(async (req) => {
   if (b.resendApiKey !== undefined || b.emailFrom !== undefined || b.emailReplyTo !== undefined) {
     const existingCfg = await getResendConfigWithDbFallback();
     const nextKey = b.resendApiKey?.trim() || existingCfg.apiKey || "";
-    const nextFrom = b.emailFrom?.trim() || existingCfg.from || "PackRadar <onboarding@resend.dev>";
-    const nextReplyTo = b.emailReplyTo?.trim() || existingCfg.replyTo || "james@jpegtown.com";
+    const nextFrom = normalizeFromAddress(b.emailFrom?.trim() || existingCfg.from || DEFAULT_EMAIL_FROM);
+    const nextReplyTo = b.emailReplyTo?.trim() || existingCfg.replyTo || DEFAULT_EMAIL_REPLY_TO;
 
     if (nextKey) {
       setRuntimeEmailConfig(nextKey, nextFrom, nextReplyTo);
