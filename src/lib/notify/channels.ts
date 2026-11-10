@@ -22,7 +22,7 @@ const gEmail = globalThis as unknown as {
 };
 
 export const DEFAULT_EMAIL_FROM = "PackRadar <drops@alerts.jpegtown.com>";
-export const DEFAULT_EMAIL_REPLY_TO = "james@jpegtown.com";
+export const DEFAULT_EMAIL_REPLY_TO = "drops@alerts.jpegtown.com";
 
 export function normalizeFromAddress(raw?: string | null): string {
   const trimmed = (raw ?? "").trim();

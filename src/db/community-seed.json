@@ -1,0 +1,3506 @@
+{
+  "users": [
+    {
+      "id": "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+      "name": "King_Bezos",
+      "email": "james@jpegtown.com",
+      "emailVerified": 1,
+      "image": null,
+      "createdAt": "2026-10-25T18:00:00.000Z",
+      "updatedAt": "2026-10-25T18:00:00.000Z",
+      "role": "admin",
+      "reputation": 90,
+      "plan": "premium",
+      "planExpiresAt": null,
+      "stripeCustomerId": null,
+      "homeZip": "97027",
+      "homeLat": null,
+      "homeLng": null,
+      "discordWebhookUrl": null,
+      "phone": null,
+      "quietHoursStart": null,
+      "quietHoursEnd": null
+    },
+    {
+      "id": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+      "name": "RayquazaRipper249",
+      "email": "bernalrose33@gmail.com",
+      "emailVerified": 1,
+      "image": null,
+      "createdAt": "2026-11-02T16:30:00.000Z",
+      "updatedAt": "2026-11-02T16:30:00.000Z",
+      "role": "user",
+      "reputation": 2,
+      "plan": "free",
+      "planExpiresAt": null,
+      "stripeCustomerId": null,
+      "homeZip": null,
+      "homeLat": null,
+      "homeLng": null,
+      "discordWebhookUrl": null,
+      "phone": null,
+      "quietHoursStart": null,
+      "quietHoursEnd": null
+    },
+    {
+      "id": "QF3xShpkjC27Z88xXSt7aP8ww2slmt3D",
+      "name": "GardevoirSpotter194",
+      "email": "egarvey1989@gmail.com",
+      "emailVerified": 0,
+      "image": null,
+      "createdAt": "2026-11-04T21:15:00.000Z",
+      "updatedAt": "2026-11-04T21:15:00.000Z",
+      "role": "user",
+      "reputation": 0,
+      "plan": "free",
+      "planExpiresAt": null,
+      "stripeCustomerId": null,
+      "homeZip": null,
+      "homeLat": null,
+      "homeLng": null,
+      "discordWebhookUrl": null,
+      "phone": null,
+      "quietHoursStart": null,
+      "quietHoursEnd": null
+    },
+    {
+      "id": "u-packradar-worker-bot",
+      "name": "PikachuElite",
+      "email": "bot@packradar.com",
+      "emailVerified": 1,
+      "image": null,
+      "createdAt": "2026-10-28T12:00:00.000Z",
+      "updatedAt": "2026-11-09T18:00:19.418Z",
+      "role": "user",
+      "reputation": 81,
+      "plan": "premium",
+      "planExpiresAt": null,
+      "stripeCustomerId": null,
+      "homeZip": "98107",
+      "homeLat": null,
+      "homeLng": null,
+      "discordWebhookUrl": null,
+      "phone": null,
+      "quietHoursStart": null,
+      "quietHoursEnd": null
+    },
+    {
+      "id": "STfePUA23D37zriLP9tZXCUVY7msP9zU",
+      "name": "DarkraiChaser207",
+      "email": "mckenzeemariee@gmail.com",
+      "emailVerified": 1,
+      "image": null,
+      "createdAt": "2026-11-06T15:14:22.540Z",
+      "updatedAt": "2026-11-09T02:42:15.281Z",
+      "role": "user",
+      "reputation": 0,
+      "plan": "free",
+      "planExpiresAt": null,
+      "stripeCustomerId": null,
+      "homeZip": null,
+      "homeLat": null,
+      "homeLng": null,
+      "discordWebhookUrl": null,
+      "phone": null,
+      "quietHoursStart": null,
+      "quietHoursEnd": null
+    },
+    {
+      "id": "lF8bZgXnLUeGrFrlg6NRadCMnFJkg4DL",
+      "name": "GardevoirScout326",
+      "email": "j09541627@gmail.com",
+      "emailVerified": 1,
+      "image": null,
+      "createdAt": "2026-11-08T19:08:17.069Z",
+      "updatedAt": "2026-11-09T02:42:15.282Z",
+      "role": "user",
+      "reputation": 0,
+      "plan": "free",
+      "planExpiresAt": null,
+      "stripeCustomerId": null,
+      "homeZip": null,
+      "homeLat": null,
+      "homeLng": null,
+      "discordWebhookUrl": null,
+      "phone": null,
+      "quietHoursStart": null,
+      "quietHoursEnd": null
+    },
+    {
+      "id": "cxr93C94t2VMtGoiA5F3OCQjleiTTN6d",
+      "name": "VoltSpotter388",
+      "email": "ltgnsergei@gmail.com",
+      "emailVerified": 1,
+      "image": null,
+      "createdAt": "2026-11-09T02:36:03.811Z",
+      "updatedAt": "2026-11-09T02:42:15.283Z",
+      "role": "user",
+      "reputation": 0,
+      "plan": "free",
+      "planExpiresAt": null,
+      "stripeCustomerId": null,
+      "homeZip": null,
+      "homeLat": null,
+      "homeLng": null,
+      "discordWebhookUrl": null,
+      "phone": null,
+      "quietHoursStart": null,
+      "quietHoursEnd": null
+    },
+    {
+      "id": "0Ih30V4CH7zYbs3YW7QDXcRZs6I0bTVp",
+      "name": "MewtwoRipper435",
+      "email": "hhinson@ymail.com",
+      "emailVerified": 1,
+      "image": null,
+      "createdAt": "2026-11-09T02:55:13.196Z",
+      "updatedAt": "2026-11-09T02:55:13.250Z",
+      "role": "user",
+      "reputation": 0,
+      "plan": "free",
+      "planExpiresAt": null,
+      "stripeCustomerId": null,
+      "homeZip": null,
+      "homeLat": null,
+      "homeLng": null,
+      "discordWebhookUrl": null,
+      "phone": null,
+      "quietHoursStart": null,
+      "quietHoursEnd": null
+    },
+    {
+      "id": "uAs02vhou3iDpjtisMT9qJBjVf7p32CT",
+      "name": "PikachuAce167",
+      "email": "ellanoelle0610@att.net",
+      "emailVerified": 1,
+      "image": null,
+      "createdAt": "2026-11-09T03:00:16.953Z",
+      "updatedAt": "2026-11-09T03:00:16.959Z",
+      "role": "user",
+      "reputation": 0,
+      "plan": "free",
+      "planExpiresAt": null,
+      "stripeCustomerId": null,
+      "homeZip": null,
+      "homeLat": null,
+      "homeLng": null,
+      "discordWebhookUrl": null,
+      "phone": null,
+      "quietHoursStart": null,
+      "quietHoursEnd": null
+    },
+    {
+      "id": "fbZdIZbtHFxOMTJn8XaqgS8bcv03TSaD",
+      "name": "SuicuneTrainer166",
+      "email": "masterofthegame.714@gmail.com",
+      "emailVerified": 1,
+      "image": null,
+      "createdAt": "2026-11-09T03:04:45.556Z",
+      "updatedAt": "2026-11-09T03:36:52.447Z",
+      "role": "user",
+      "reputation": 0,
+      "plan": "free",
+      "planExpiresAt": null,
+      "stripeCustomerId": null,
+      "homeZip": "97405",
+      "homeLat": 43.9536,
+      "homeLng": -123.1559,
+      "discordWebhookUrl": null,
+      "phone": null,
+      "quietHoursStart": null,
+      "quietHoursEnd": null
+    },
+    {
+      "id": "3jBkWN9Ps1zFWaDkV13xRLTwtHvfVBBT",
+      "name": "Vouvoune",
+      "email": "vmunsch@hotmail.com",
+      "emailVerified": 1,
+      "image": null,
+      "createdAt": "2026-11-09T03:13:18.234Z",
+      "updatedAt": "2026-11-09T03:13:18.244Z",
+      "role": "user",
+      "reputation": 0,
+      "plan": "free",
+      "planExpiresAt": null,
+      "stripeCustomerId": null,
+      "homeZip": null,
+      "homeLat": null,
+      "homeLng": null,
+      "discordWebhookUrl": null,
+      "phone": null,
+      "quietHoursStart": null,
+      "quietHoursEnd": null
+    },
+    {
+      "id": "bi6ptmOeWWNjM2i55ZAWrip80SxSHz8D",
+      "name": "CharizardTrainer512",
+      "email": "taylor.cheeseman7@gmail.com",
+      "emailVerified": 1,
+      "image": null,
+      "createdAt": "2026-11-09T03:28:35.239Z",
+      "updatedAt": "2026-11-09T03:28:35.242Z",
+      "role": "user",
+      "reputation": 0,
+      "plan": "free",
+      "planExpiresAt": null,
+      "stripeCustomerId": null,
+      "homeZip": null,
+      "homeLat": null,
+      "homeLng": null,
+      "discordWebhookUrl": null,
+      "phone": null,
+      "quietHoursStart": null,
+      "quietHoursEnd": null
+    },
+    {
+      "id": "WBaekDzazuWQtVBK1gkBN15tgnv5ODdW",
+      "name": "Fine.china",
+      "email": "brenda.c.chao@gmail.com",
+      "emailVerified": 1,
+      "image": null,
+      "createdAt": "2026-11-09T03:44:45.762Z",
+      "updatedAt": "2026-11-09T03:44:45.767Z",
+      "role": "user",
+      "reputation": 0,
+      "plan": "free",
+      "planExpiresAt": null,
+      "stripeCustomerId": null,
+      "homeZip": null,
+      "homeLat": null,
+      "homeLng": null,
+      "discordWebhookUrl": null,
+      "phone": null,
+      "quietHoursStart": null,
+      "quietHoursEnd": null
+    },
+    {
+      "id": "tgLkOLDvqP6YLBNx4arfAGvnU8p0odGV",
+      "name": "TyranitarRipper944",
+      "email": "bmg9008@gmail.com",
+      "emailVerified": 1,
+      "image": null,
+      "createdAt": "2026-11-09T06:44:31.761Z",
+      "updatedAt": "2026-11-09T06:44:31.763Z",
+      "role": "user",
+      "reputation": 0,
+      "plan": "free",
+      "planExpiresAt": null,
+      "stripeCustomerId": null,
+      "homeZip": null,
+      "homeLat": null,
+      "homeLng": null,
+      "discordWebhookUrl": null,
+      "phone": null,
+      "quietHoursStart": null,
+      "quietHoursEnd": null
+    },
+    {
+      "id": "GUKsf2NLKBtOTDw8gVvfIwvq8UgR8nVh",
+      "name": "DragoniteRipper546",
+      "email": "bbruce480@gmail.com",
+      "emailVerified": 1,
+      "image": null,
+      "createdAt": "2026-11-09T10:14:29.739Z",
+      "updatedAt": "2026-11-09T10:14:29.741Z",
+      "role": "user",
+      "reputation": 0,
+      "plan": "free",
+      "planExpiresAt": null,
+      "stripeCustomerId": null,
+      "homeZip": null,
+      "homeLat": null,
+      "homeLng": null,
+      "discordWebhookUrl": null,
+      "phone": null,
+      "quietHoursStart": null,
+      "quietHoursEnd": null
+    },
+    {
+      "id": "Qwy3J9j7YwyyJ6DYVcNj90CkHPZCgHeR",
+      "name": "EeveeTracker288",
+      "email": "hollowcorps@hotmail.com",
+      "emailVerified": 1,
+      "image": null,
+      "createdAt": "2026-11-09T13:38:13.136Z",
+      "updatedAt": "2026-11-09T13:38:13.146Z",
+      "role": "user",
+      "reputation": 0,
+      "plan": "free",
+      "planExpiresAt": null,
+      "stripeCustomerId": null,
+      "homeZip": null,
+      "homeLat": null,
+      "homeLng": null,
+      "discordWebhookUrl": null,
+      "phone": null,
+      "quietHoursStart": null,
+      "quietHoursEnd": null
+    },
+    {
+      "id": "r47fkuEdnUGH1O74MUySr1YkaKSbqccZ",
+      "name": "MewtwoRipper507",
+      "email": "swartselm@gmail.com",
+      "emailVerified": 1,
+      "image": null,
+      "createdAt": "2026-11-09T22:51:58.608Z",
+      "updatedAt": "2026-11-09T22:51:58.612Z",
+      "role": "user",
+      "reputation": 0,
+      "plan": "free",
+      "planExpiresAt": null,
+      "stripeCustomerId": null,
+      "homeZip": null,
+      "homeLat": null,
+      "homeLng": null,
+      "discordWebhookUrl": null,
+      "phone": null,
+      "quietHoursStart": null,
+      "quietHoursEnd": null
+    }
+  ],
+  "alertSubscriptions": [
+    {
+      "id": "alert-owner-zip-97027",
+      "userId": "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+      "kind": "area_drop",
+      "machineId": null,
+      "productId": null,
+      "retailer": null,
+      "lat": 45.381,
+      "lng": -122.593,
+      "radiusMiles": 15,
+      "keyword": "ZIP 97027",
+      "leadMinutes": 10,
+      "channels": [
+        "email",
+        "push",
+        "discord"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": "2026-11-09T04:10:00.031Z",
+      "createdAt": "2026-11-09T02:48:26.548Z"
+    },
+    {
+      "id": "alert-owner-q01010",
+      "userId": "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+      "kind": "machine_drop",
+      "machineId": "Q01010",
+      "productId": null,
+      "retailer": null,
+      "lat": null,
+      "lng": null,
+      "radiusMiles": null,
+      "keyword": null,
+      "leadMinutes": 10,
+      "channels": [
+        "email",
+        "push",
+        "discord"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": null,
+      "createdAt": "2026-11-09T02:48:26.548Z"
+    },
+    {
+      "id": "alert-owner-q00120",
+      "userId": "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+      "kind": "machine_drop",
+      "machineId": "Q00120",
+      "productId": null,
+      "retailer": null,
+      "lat": null,
+      "lng": null,
+      "radiusMiles": null,
+      "keyword": null,
+      "leadMinutes": 10,
+      "channels": [
+        "email",
+        "push"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": null,
+      "createdAt": "2026-11-09T02:48:26.548Z"
+    },
+    {
+      "id": "alert-owner-q00955",
+      "userId": "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+      "kind": "machine_drop",
+      "machineId": "Q00955",
+      "productId": null,
+      "retailer": null,
+      "lat": null,
+      "lng": null,
+      "radiusMiles": null,
+      "keyword": null,
+      "leadMinutes": 10,
+      "channels": [
+        "email",
+        "push"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": "2026-11-09T18:10:00.036Z",
+      "createdAt": "2026-11-09T02:48:26.548Z"
+    },
+    {
+      "id": "alert-owner-q00226",
+      "userId": "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+      "kind": "machine_drop",
+      "machineId": "Q00226",
+      "productId": null,
+      "retailer": null,
+      "lat": null,
+      "lng": null,
+      "radiusMiles": null,
+      "keyword": null,
+      "leadMinutes": 10,
+      "channels": [
+        "email",
+        "push"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": null,
+      "createdAt": "2026-11-09T02:48:26.548Z"
+    },
+    {
+      "id": "alert-owner-restock",
+      "userId": "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+      "kind": "product_restock",
+      "machineId": null,
+      "productId": null,
+      "retailer": null,
+      "lat": null,
+      "lng": null,
+      "radiusMiles": null,
+      "keyword": null,
+      "leadMinutes": 5,
+      "channels": [
+        "email",
+        "push",
+        "discord"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": null,
+      "createdAt": "2026-11-09T02:48:26.548Z"
+    },
+    {
+      "id": "alert-owner-release",
+      "userId": "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+      "kind": "release",
+      "machineId": null,
+      "productId": null,
+      "retailer": null,
+      "lat": null,
+      "lng": null,
+      "radiusMiles": null,
+      "keyword": null,
+      "leadMinutes": 5,
+      "channels": [
+        "email",
+        "push"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": "2026-11-10T00:00:16.943Z",
+      "createdAt": "2026-11-09T02:48:26.548Z"
+    },
+    {
+      "id": "alert-rayquaza-1-zip85013",
+      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+      "kind": "area_drop",
+      "machineId": null,
+      "productId": null,
+      "retailer": null,
+      "lat": 33.4885,
+      "lng": -112.0813,
+      "radiusMiles": 10,
+      "keyword": "ZIP 85013",
+      "leadMinutes": 10,
+      "channels": [
+        "email",
+        "push"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": "2026-11-09T03:45:00.050Z",
+      "createdAt": "2026-11-09T02:48:26.548Z"
+    },
+    {
+      "id": "alert-rayquaza-2-q01328",
+      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+      "kind": "machine_drop",
+      "machineId": "Q01328",
+      "productId": null,
+      "retailer": null,
+      "lat": null,
+      "lng": null,
+      "radiusMiles": null,
+      "keyword": null,
+      "leadMinutes": 10,
+      "channels": [
+        "email",
+        "push"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": "2026-11-09T18:40:00.022Z",
+      "createdAt": "2026-11-09T02:48:26.548Z"
+    },
+    {
+      "id": "alert-rayquaza-3-q00364",
+      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+      "kind": "machine_drop",
+      "machineId": "Q00364",
+      "productId": null,
+      "retailer": null,
+      "lat": null,
+      "lng": null,
+      "radiusMiles": null,
+      "keyword": null,
+      "leadMinutes": 10,
+      "channels": [
+        "email",
+        "push"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": "2026-11-09T15:45:00.049Z",
+      "createdAt": "2026-11-09T02:48:26.548Z"
+    },
+    {
+      "id": "alert-rayquaza-4-q00337",
+      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+      "kind": "machine_drop",
+      "machineId": "Q00337",
+      "productId": null,
+      "retailer": null,
+      "lat": null,
+      "lng": null,
+      "radiusMiles": null,
+      "keyword": null,
+      "leadMinutes": 10,
+      "channels": [
+        "email",
+        "push"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": null,
+      "createdAt": "2026-11-09T02:48:26.548Z"
+    },
+    {
+      "id": "alert-rayquaza-5-q00361",
+      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+      "kind": "machine_drop",
+      "machineId": "Q00361",
+      "productId": null,
+      "retailer": null,
+      "lat": null,
+      "lng": null,
+      "radiusMiles": null,
+      "keyword": null,
+      "leadMinutes": 10,
+      "channels": [
+        "email",
+        "push"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": "2026-11-09T18:25:00.056Z",
+      "createdAt": "2026-11-09T02:48:26.548Z"
+    },
+    {
+      "id": "alert-rayquaza-6-q00377",
+      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+      "kind": "machine_drop",
+      "machineId": "Q00377",
+      "productId": null,
+      "retailer": null,
+      "lat": null,
+      "lng": null,
+      "radiusMiles": null,
+      "keyword": null,
+      "leadMinutes": 10,
+      "channels": [
+        "email",
+        "push"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": null,
+      "createdAt": "2026-11-09T02:48:26.548Z"
+    },
+    {
+      "id": "alert-rayquaza-7-q00365",
+      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+      "kind": "machine_drop",
+      "machineId": "Q00365",
+      "productId": null,
+      "retailer": null,
+      "lat": null,
+      "lng": null,
+      "radiusMiles": null,
+      "keyword": null,
+      "leadMinutes": 10,
+      "channels": [
+        "email",
+        "push"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": "2026-11-09T17:55:00.034Z",
+      "createdAt": "2026-11-09T02:48:26.548Z"
+    },
+    {
+      "id": "alert-rayquaza-8-q00369",
+      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+      "kind": "machine_drop",
+      "machineId": "Q00369",
+      "productId": null,
+      "retailer": null,
+      "lat": null,
+      "lng": null,
+      "radiusMiles": null,
+      "keyword": null,
+      "leadMinutes": 10,
+      "channels": [
+        "email",
+        "push"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": null,
+      "createdAt": "2026-11-09T02:48:26.548Z"
+    },
+    {
+      "id": "alert-rayquaza-9-q01301",
+      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+      "kind": "machine_drop",
+      "machineId": "Q01301",
+      "productId": null,
+      "retailer": null,
+      "lat": null,
+      "lng": null,
+      "radiusMiles": null,
+      "keyword": null,
+      "leadMinutes": 10,
+      "channels": [
+        "email",
+        "push"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": null,
+      "createdAt": "2026-11-09T02:48:26.548Z"
+    },
+    {
+      "id": "alert-rayquaza-10-restock",
+      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+      "kind": "product_restock",
+      "machineId": null,
+      "productId": null,
+      "retailer": null,
+      "lat": null,
+      "lng": null,
+      "radiusMiles": null,
+      "keyword": null,
+      "leadMinutes": 5,
+      "channels": [
+        "email",
+        "push"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": null,
+      "createdAt": "2026-11-09T02:48:26.548Z"
+    },
+    {
+      "id": "b3ce77e3-7ceb-4d7a-9a8f-b1409270fa40",
+      "userId": "STfePUA23D37zriLP9tZXCUVY7msP9zU",
+      "kind": "product_restock",
+      "machineId": null,
+      "productId": null,
+      "retailer": null,
+      "lat": null,
+      "lng": null,
+      "radiusMiles": null,
+      "keyword": null,
+      "leadMinutes": 5,
+      "channels": [
+        "email",
+        "push"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": null,
+      "createdAt": "2026-11-06T15:15:01.765Z"
+    },
+    {
+      "id": "65b87d74-b31b-4528-8b91-003334a31d7c",
+      "userId": "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+      "kind": "news",
+      "machineId": null,
+      "productId": null,
+      "retailer": null,
+      "lat": null,
+      "lng": null,
+      "radiusMiles": null,
+      "keyword": "Sam's Club — Pokémon 151 Mini Tins & 30th Celebration 4-Pack",
+      "leadMinutes": 10,
+      "channels": [
+        "email",
+        "push"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": "2026-11-09T02:37:48.672Z",
+      "createdAt": "2026-11-08T18:26:25.790Z"
+    },
+    {
+      "id": "914c7204-074a-4a27-9309-026af77629c3",
+      "userId": "0Ih30V4CH7zYbs3YW7QDXcRZs6I0bTVp",
+      "kind": "machine_drop",
+      "machineId": "Q01699",
+      "productId": null,
+      "retailer": null,
+      "lat": null,
+      "lng": null,
+      "radiusMiles": null,
+      "keyword": null,
+      "leadMinutes": 10,
+      "channels": [
+        "email",
+        "push"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": null,
+      "createdAt": "2026-11-09T02:57:11.265Z"
+    },
+    {
+      "id": "e3b85653-f379-4578-a1e0-090c35aaa32e",
+      "userId": "bi6ptmOeWWNjM2i55ZAWrip80SxSHz8D",
+      "kind": "machine_drop",
+      "machineId": "Q02106",
+      "productId": null,
+      "retailer": null,
+      "lat": null,
+      "lng": null,
+      "radiusMiles": null,
+      "keyword": null,
+      "leadMinutes": 10,
+      "channels": [
+        "email",
+        "push"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": null,
+      "createdAt": "2026-11-09T03:29:12.038Z"
+    },
+    {
+      "id": "24b0b179-79d4-4798-9f73-8e2f7edcd849",
+      "userId": "bi6ptmOeWWNjM2i55ZAWrip80SxSHz8D",
+      "kind": "machine_drop",
+      "machineId": "Q01891",
+      "productId": null,
+      "retailer": null,
+      "lat": null,
+      "lng": null,
+      "radiusMiles": null,
+      "keyword": null,
+      "leadMinutes": 10,
+      "channels": [
+        "email",
+        "push"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": null,
+      "createdAt": "2026-11-09T03:29:16.138Z"
+    },
+    {
+      "id": "4ae9de28-03b9-451e-acc6-816fcf722625",
+      "userId": "bi6ptmOeWWNjM2i55ZAWrip80SxSHz8D",
+      "kind": "machine_drop",
+      "machineId": "Q01833",
+      "productId": null,
+      "retailer": null,
+      "lat": null,
+      "lng": null,
+      "radiusMiles": null,
+      "keyword": null,
+      "leadMinutes": 10,
+      "channels": [
+        "email",
+        "push"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": null,
+      "createdAt": "2026-11-09T03:29:17.750Z"
+    },
+    {
+      "id": "758e9564-d64c-4d22-bdac-c0f7bf33726d",
+      "userId": "bi6ptmOeWWNjM2i55ZAWrip80SxSHz8D",
+      "kind": "machine_drop",
+      "machineId": "Q01837",
+      "productId": null,
+      "retailer": null,
+      "lat": null,
+      "lng": null,
+      "radiusMiles": null,
+      "keyword": null,
+      "leadMinutes": 10,
+      "channels": [
+        "email",
+        "push"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": null,
+      "createdAt": "2026-11-09T03:29:23.052Z"
+    },
+    {
+      "id": "b0b7f9ee-d861-402b-8279-a98b7fdd4f0a",
+      "userId": "bi6ptmOeWWNjM2i55ZAWrip80SxSHz8D",
+      "kind": "machine_drop",
+      "machineId": "Q02497",
+      "productId": null,
+      "retailer": null,
+      "lat": null,
+      "lng": null,
+      "radiusMiles": null,
+      "keyword": null,
+      "leadMinutes": 10,
+      "channels": [
+        "email",
+        "push"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": null,
+      "createdAt": "2026-11-09T03:29:23.476Z"
+    },
+    {
+      "id": "6978c7a0-dc7d-4e94-b1aa-1cb22a7be3e4",
+      "userId": "bi6ptmOeWWNjM2i55ZAWrip80SxSHz8D",
+      "kind": "machine_drop",
+      "machineId": "Q01875",
+      "productId": null,
+      "retailer": null,
+      "lat": null,
+      "lng": null,
+      "radiusMiles": null,
+      "keyword": null,
+      "leadMinutes": 10,
+      "channels": [
+        "email",
+        "push"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": null,
+      "createdAt": "2026-11-09T03:29:34.551Z"
+    },
+    {
+      "id": "87231d6b-ac43-4e9b-bc57-d8781f32af7f",
+      "userId": "fbZdIZbtHFxOMTJn8XaqgS8bcv03TSaD",
+      "kind": "area_drop",
+      "machineId": null,
+      "productId": null,
+      "retailer": null,
+      "lat": 43.9536,
+      "lng": -123.1559,
+      "radiusMiles": 50,
+      "keyword": "ZIP 97405",
+      "leadMinutes": 60,
+      "channels": [
+        "email",
+        "push"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": null,
+      "createdAt": "2026-11-09T03:36:52.453Z"
+    },
+    {
+      "id": "5a4e73c4-6c7f-4509-bc2c-91b373997516",
+      "userId": "fbZdIZbtHFxOMTJn8XaqgS8bcv03TSaD",
+      "kind": "news",
+      "machineId": null,
+      "productId": null,
+      "retailer": null,
+      "lat": null,
+      "lng": null,
+      "radiusMiles": null,
+      "keyword": "ONLINE_LOTTERIES",
+      "leadMinutes": 5,
+      "channels": [
+        "email",
+        "push"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": "2026-11-10T00:00:16.941Z",
+      "createdAt": "2026-11-09T03:37:00.459Z"
+    },
+    {
+      "id": "24a65ab5-d302-4136-a5ae-9d646da28ef1",
+      "userId": "fbZdIZbtHFxOMTJn8XaqgS8bcv03TSaD",
+      "kind": "release",
+      "machineId": null,
+      "productId": null,
+      "retailer": null,
+      "lat": null,
+      "lng": null,
+      "radiusMiles": null,
+      "keyword": null,
+      "leadMinutes": 5,
+      "channels": [
+        "email",
+        "push"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": null,
+      "createdAt": "2026-11-09T03:37:02.934Z"
+    },
+    {
+      "id": "4d0d468e-8c6b-41ce-a642-d1c5a09a2a2c",
+      "userId": "fbZdIZbtHFxOMTJn8XaqgS8bcv03TSaD",
+      "kind": "news",
+      "machineId": null,
+      "productId": null,
+      "retailer": null,
+      "lat": null,
+      "lng": null,
+      "radiusMiles": null,
+      "keyword": "vending",
+      "leadMinutes": 5,
+      "channels": [
+        "email",
+        "push"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": null,
+      "createdAt": "2026-11-09T03:37:03.502Z"
+    },
+    {
+      "id": "c026a912-168f-4ea1-8d43-36680d5482b2",
+      "userId": "fbZdIZbtHFxOMTJn8XaqgS8bcv03TSaD",
+      "kind": "product_restock",
+      "machineId": null,
+      "productId": null,
+      "retailer": null,
+      "lat": null,
+      "lng": null,
+      "radiusMiles": null,
+      "keyword": null,
+      "leadMinutes": 5,
+      "channels": [
+        "email",
+        "push"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": null,
+      "createdAt": "2026-11-09T03:37:04.185Z"
+    },
+    {
+      "id": "92d96bef-e2b3-434a-b74e-01b4db0eb72e",
+      "userId": "fbZdIZbtHFxOMTJn8XaqgS8bcv03TSaD",
+      "kind": "news",
+      "machineId": null,
+      "productId": null,
+      "retailer": null,
+      "lat": null,
+      "lng": null,
+      "radiusMiles": null,
+      "keyword": "Walmart+, Target & Amazon 'Request Invite' Pokémon TCG Onlin",
+      "leadMinutes": 10,
+      "channels": [
+        "email",
+        "push"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": "2026-11-10T00:00:16.947Z",
+      "createdAt": "2026-11-09T03:39:57.050Z"
+    },
+    {
+      "id": "ba7aa21d-e1fb-43f9-b3c6-dee2d0efdad7",
+      "userId": "fbZdIZbtHFxOMTJn8XaqgS8bcv03TSaD",
+      "kind": "product_restock",
+      "machineId": null,
+      "productId": null,
+      "retailer": "costco",
+      "lat": null,
+      "lng": null,
+      "radiusMiles": null,
+      "keyword": "Blooming Waters 151 Premium Collection Regional Warehouse Pa",
+      "leadMinutes": 10,
+      "channels": [
+        "email",
+        "push"
+      ],
+      "maxPerDay": 6,
+      "windowStartMinute": null,
+      "windowEndMinute": null,
+      "active": 1,
+      "lastNotifiedAt": null,
+      "createdAt": "2026-11-09T03:40:13.757Z"
+    }
+  ],
+  "reputationEvents": [
+    {
+      "id": "rep-owner-seed-100",
+      "userId": "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
+      "delta": 90,
+      "reason": "Verified vending drop & product spotter",
+      "createdAt": "2026-11-09T02:48:26.546Z"
+    },
+    {
+      "id": "rep-user-seed-rayquaza-2",
+      "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
+      "delta": 2,
+      "reason": "Community drop confirmation",
+      "createdAt": "2026-11-09T02:48:26.546Z"
+    },
+    {
+      "id": "rep-pikachuelite-drop-q00810",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q00810",
+      "createdAt": "2026-11-09T02:48:26.546Z"
+    },
+    {
+      "id": "rep-pikachuelite-stock-q00810",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q00810",
+      "createdAt": "2026-11-09T02:48:26.546Z"
+    },
+    {
+      "id": "rep-pikachuelite-drop-q01328",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q01328",
+      "createdAt": "2026-11-09T02:48:26.546Z"
+    },
+    {
+      "id": "rep-pikachuelite-stock-q01328",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q01328",
+      "createdAt": "2026-11-09T02:48:26.546Z"
+    },
+    {
+      "id": "rep-pikachuelite-drop-q00901",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q00901",
+      "createdAt": "2026-11-09T02:48:26.546Z"
+    },
+    {
+      "id": "rep-pikachuelite-stock-q00901",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q00901",
+      "createdAt": "2026-11-09T02:48:26.546Z"
+    },
+    {
+      "id": "b88ad14f-c9e7-473c-82af-4298b9d3545f",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q01328",
+      "createdAt": "2026-11-06T12:00:16.766Z"
+    },
+    {
+      "id": "d44ad2e2-db25-4fd3-aa78-ac830f87e711",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q01328",
+      "createdAt": "2026-11-06T12:00:16.766Z"
+    },
+    {
+      "id": "3c30a3fd-c640-47fe-92a1-34e5c6a8c774",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q00901",
+      "createdAt": "2026-11-06T11:48:16.831Z"
+    },
+    {
+      "id": "98bdb2c8-3f79-4a5f-8d23-dfe87384d8c8",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q00901",
+      "createdAt": "2026-11-06T11:48:16.831Z"
+    },
+    {
+      "id": "83e79cd3-9e7c-4fd9-b8f4-9e260f9a3703",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q00955",
+      "createdAt": "2026-11-06T11:36:16.833Z"
+    },
+    {
+      "id": "d0d4c97f-f22b-484e-a0f4-750dff49d474",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q00955",
+      "createdAt": "2026-11-06T11:36:16.833Z"
+    },
+    {
+      "id": "1b06c669-811d-4b93-b194-3b170f452449",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q01328",
+      "createdAt": "2026-11-06T18:00:17.347Z"
+    },
+    {
+      "id": "7aa54779-9f76-41fb-969c-bf464b4a117c",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q01328",
+      "createdAt": "2026-11-06T18:00:17.347Z"
+    },
+    {
+      "id": "02decf5f-19ce-432c-afdf-47e8b7182e50",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q00901",
+      "createdAt": "2026-11-06T17:48:17.351Z"
+    },
+    {
+      "id": "d5e2803c-93bd-4e12-bf5d-032e3b6d5038",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q00901",
+      "createdAt": "2026-11-06T17:48:17.351Z"
+    },
+    {
+      "id": "10f939c7-e904-4561-af1e-cd92dbd4256d",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q00955",
+      "createdAt": "2026-11-06T17:36:17.354Z"
+    },
+    {
+      "id": "865dd068-d48d-4f84-b0f1-9e4f46a8eec4",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q00955",
+      "createdAt": "2026-11-06T17:36:17.355Z"
+    },
+    {
+      "id": "b256d959-202b-41cc-b37c-f53cbda33fb4",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q01328",
+      "createdAt": "2026-11-07T02:00:18.044Z"
+    },
+    {
+      "id": "c55bf3b2-3ee7-49a1-93ae-fad51817ef63",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q01328",
+      "createdAt": "2026-11-07T02:00:18.044Z"
+    },
+    {
+      "id": "4a8bf1c1-40f6-4366-976d-b186a8267a96",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q00901",
+      "createdAt": "2026-11-07T01:48:18.047Z"
+    },
+    {
+      "id": "08e7d7ab-26da-48ad-b276-baa31b36b09e",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q00901",
+      "createdAt": "2026-11-07T01:48:18.047Z"
+    },
+    {
+      "id": "48b32304-9a62-489b-a63c-6ec38f25916e",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q00955",
+      "createdAt": "2026-11-07T01:36:18.050Z"
+    },
+    {
+      "id": "39387343-8186-431a-9128-7c0c9db18b83",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q00955",
+      "createdAt": "2026-11-07T01:36:18.050Z"
+    },
+    {
+      "id": "a450d05e-c9f5-489f-b894-6a4776340d9b",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q01328",
+      "createdAt": "2026-11-07T10:00:16.742Z"
+    },
+    {
+      "id": "baa6910e-d40d-4ad7-b0a9-977ee9603454",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q01328",
+      "createdAt": "2026-11-07T10:00:16.742Z"
+    },
+    {
+      "id": "55e94722-8325-46b2-90e9-c8fa5928c4bd",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q00901",
+      "createdAt": "2026-11-07T09:48:16.745Z"
+    },
+    {
+      "id": "fc51f4cd-4da2-4374-8349-1bb3f8d5b014",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q00901",
+      "createdAt": "2026-11-07T09:48:16.745Z"
+    },
+    {
+      "id": "7782b3a7-b0ae-4687-8799-e39b805f663f",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q00955",
+      "createdAt": "2026-11-07T09:36:16.748Z"
+    },
+    {
+      "id": "f8bb78f9-79c4-41d7-bc37-08b2b59436e2",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q00955",
+      "createdAt": "2026-11-07T09:36:16.748Z"
+    },
+    {
+      "id": "50972844-88e2-4684-9d60-b8269c85cced",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q01328",
+      "createdAt": "2026-11-07T16:00:17.353Z"
+    },
+    {
+      "id": "c80fdc44-adc6-4074-ac43-2753a988122c",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q01328",
+      "createdAt": "2026-11-07T16:00:17.353Z"
+    },
+    {
+      "id": "2a1c5187-e199-47d9-8495-62c56292a5a9",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q00901",
+      "createdAt": "2026-11-07T15:48:17.431Z"
+    },
+    {
+      "id": "a0173fe6-35fa-48da-b2b7-9bc0ff964ada",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q00901",
+      "createdAt": "2026-11-07T15:48:17.431Z"
+    },
+    {
+      "id": "27c1ebaa-809d-419c-b380-4687b9cfcbbc",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q00955",
+      "createdAt": "2026-11-07T15:36:17.434Z"
+    },
+    {
+      "id": "65ee4ed1-37be-455a-9985-a71db01fba66",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q00955",
+      "createdAt": "2026-11-07T15:36:17.434Z"
+    },
+    {
+      "id": "360cec90-a01c-4f98-b33a-fc1556b66955",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q01328",
+      "createdAt": "2026-11-08T00:00:23.557Z"
+    },
+    {
+      "id": "f5f703b7-bb7b-4108-91b5-c052ca4fbc34",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q01328",
+      "createdAt": "2026-11-08T00:00:23.558Z"
+    },
+    {
+      "id": "20d7029e-473f-45eb-9238-926fdd79c909",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q00901",
+      "createdAt": "2026-11-07T23:48:23.560Z"
+    },
+    {
+      "id": "f59bb45c-9442-467f-a1d6-9dcf4afb639b",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q00901",
+      "createdAt": "2026-11-07T23:48:23.560Z"
+    },
+    {
+      "id": "2aa4b9f3-ede8-456a-88ac-31d768b1bbeb",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q00955",
+      "createdAt": "2026-11-07T23:36:23.562Z"
+    },
+    {
+      "id": "f8546e98-3e46-4f7b-9029-cd3074b00f27",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q00955",
+      "createdAt": "2026-11-07T23:36:23.562Z"
+    },
+    {
+      "id": "5e32435b-1f39-467a-b934-1bc1e345db4e",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q01328",
+      "createdAt": "2026-11-08T06:00:25.641Z"
+    },
+    {
+      "id": "c964c0b6-60b7-4460-9ddb-09152a080c2e",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q01328",
+      "createdAt": "2026-11-08T06:00:25.641Z"
+    },
+    {
+      "id": "efe9b9e0-3571-4fe3-a7c3-f7da9dbedda7",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q00901",
+      "createdAt": "2026-11-08T05:48:25.645Z"
+    },
+    {
+      "id": "b1eddd43-baa9-4e48-b507-03c2d54be393",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q00901",
+      "createdAt": "2026-11-08T05:48:25.645Z"
+    },
+    {
+      "id": "2adcf269-8812-480f-9652-c829ab8d6eef",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q00955",
+      "createdAt": "2026-11-08T05:36:25.648Z"
+    },
+    {
+      "id": "a22f85a4-941b-419e-a0d8-d613b9e0990d",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q00955",
+      "createdAt": "2026-11-08T05:36:25.648Z"
+    },
+    {
+      "id": "da995450-5e28-4d8d-a6ca-5bcbca9e6094",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q01328",
+      "createdAt": "2026-11-08T14:00:24.364Z"
+    },
+    {
+      "id": "9eb661b0-b9c5-4132-878c-93c95a0db9b8",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q01328",
+      "createdAt": "2026-11-08T14:00:24.364Z"
+    },
+    {
+      "id": "2a42cff3-2c11-4dba-8eac-7190959ac4cb",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q00901",
+      "createdAt": "2026-11-08T13:48:24.430Z"
+    },
+    {
+      "id": "aa0aa25c-d8f2-4477-aa90-65262d145095",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q00901",
+      "createdAt": "2026-11-08T13:48:24.430Z"
+    },
+    {
+      "id": "4d00dc65-9f78-42a3-9eab-dafabdb1d7ed",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q00955",
+      "createdAt": "2026-11-08T13:36:24.432Z"
+    },
+    {
+      "id": "89fd5bc6-61cb-4cd9-b574-f4241f861808",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q00955",
+      "createdAt": "2026-11-08T13:36:24.432Z"
+    },
+    {
+      "id": "998d6519-f3d4-4e69-a0ae-728131e92d97",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q01328",
+      "createdAt": "2026-11-09T02:48:29.712Z"
+    },
+    {
+      "id": "ec3fdfba-8d42-4229-bb04-796cdfd9095e",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q01328",
+      "createdAt": "2026-11-09T02:48:29.712Z"
+    },
+    {
+      "id": "46135422-a6c3-4a38-a6e7-ad663e53bb2d",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q00901",
+      "createdAt": "2026-11-09T02:36:29.719Z"
+    },
+    {
+      "id": "0c5347a0-c2b4-4053-a1da-56b310433589",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q00901",
+      "createdAt": "2026-11-09T02:36:29.719Z"
+    },
+    {
+      "id": "ff96ca94-5154-4549-82c6-747deb070766",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q00955",
+      "createdAt": "2026-11-09T02:24:29.724Z"
+    },
+    {
+      "id": "3d4bb2d4-554e-434a-820e-d1de2cd89972",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q00955",
+      "createdAt": "2026-11-09T02:24:29.724Z"
+    },
+    {
+      "id": "7f38ee52-3bb7-4b19-8e12-2d9449321fd4",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q01328",
+      "createdAt": "2026-11-09T10:00:18.642Z"
+    },
+    {
+      "id": "6f5f17fe-e679-4f6f-bfb6-fbab3fdc34e0",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q01328",
+      "createdAt": "2026-11-09T10:00:18.642Z"
+    },
+    {
+      "id": "c6e5505a-c1e7-4766-9561-13ef71d3a8d0",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q00901",
+      "createdAt": "2026-11-09T09:48:18.645Z"
+    },
+    {
+      "id": "bd78ef9d-191f-4264-800b-ce0acb74bb60",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q00901",
+      "createdAt": "2026-11-09T09:48:18.645Z"
+    },
+    {
+      "id": "a840ccca-008f-4bf5-9fb8-0abe7ca866ca",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q00506",
+      "createdAt": "2026-11-09T09:36:18.649Z"
+    },
+    {
+      "id": "86fa2c80-d766-4ee1-9213-b8a7a28bfa91",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q00506",
+      "createdAt": "2026-11-09T09:36:18.649Z"
+    },
+    {
+      "id": "98504194-4202-4b68-ad39-3fa1d066359e",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q01328",
+      "createdAt": "2026-11-09T18:00:19.262Z"
+    },
+    {
+      "id": "4cf4b01c-6134-47ad-9261-cf698f996943",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q01328",
+      "createdAt": "2026-11-09T18:00:19.262Z"
+    },
+    {
+      "id": "fcec6f53-1618-4490-a94a-88553a52565c",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q00901",
+      "createdAt": "2026-11-09T17:48:19.408Z"
+    },
+    {
+      "id": "b9240607-c66a-43e2-908f-dce13c3b07cb",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q00901",
+      "createdAt": "2026-11-09T17:48:19.409Z"
+    },
+    {
+      "id": "ca86110d-41a8-4db8-b32e-ea3affbd329b",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q00506",
+      "createdAt": "2026-11-09T17:36:19.417Z"
+    },
+    {
+      "id": "72c0f9c6-80de-4eb0-b32a-7f8d4399e59b",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q00506",
+      "createdAt": "2026-11-09T17:36:19.417Z"
+    }
+  ],
+  "dropObservations": [
+    {
+      "id": "443db05b-02c6-4ff1-88ee-75750013f02b",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-09T01:50:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "37bd51f3-7070-427e-bdb8-bfbeb7813395",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :50 drop window",
+      "createdAt": "2026-11-09T02:32:16.302Z"
+    },
+    {
+      "id": "72bb98c4-a55b-4b99-bcf3-ed06148b1738",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-09T01:29:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "0fa26ba5-953a-4940-a444-fca590a0a19e",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :29 drop window",
+      "createdAt": "2026-11-09T02:20:16.398Z"
+    },
+    {
+      "id": "7fb08530-faa4-4ef9-b425-4f0f946aba3d",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-09T01:20:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "656b6d40-68d9-4803-a4d1-524e9e1c7a2a",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :20 drop window",
+      "createdAt": "2026-11-09T02:08:16.402Z"
+    },
+    {
+      "id": "c29a04ef-d5f9-4ed7-bb6c-1bb697775d04",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-08T20:50:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "9f9a5f4e-c864-4bfc-b533-160fdb9f0a8a",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :50 drop window",
+      "createdAt": "2026-11-08T21:03:36.038Z"
+    },
+    {
+      "id": "05ce5de8-5de7-4534-8884-bfc51ca1f0d4",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-08T19:59:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "006ca06b-bcb2-487d-96e8-08337eb2b88a",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :29 drop window",
+      "createdAt": "2026-11-08T20:51:36.129Z"
+    },
+    {
+      "id": "e9f66866-a799-455c-a9f8-e8ce685a1620",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-08T19:20:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "26c7e33c-02e6-4b94-88e1-e0af33ad56d2",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :20 drop window",
+      "createdAt": "2026-11-08T20:39:36.132Z"
+    },
+    {
+      "id": "c6de32d6-2a9a-4bc8-99c6-7e69fe46898f",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-08T20:50:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "e31a4b5a-b55e-4238-87ef-42573f88a92f",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :50 drop window",
+      "createdAt": "2026-11-08T20:57:09.439Z"
+    },
+    {
+      "id": "dc654c61-8363-47f1-bf9a-58115cb0bd7e",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-08T19:59:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "8d5e1401-7a05-4337-a3a7-3dc269a95588",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :29 drop window",
+      "createdAt": "2026-11-08T20:45:09.526Z"
+    },
+    {
+      "id": "ca775028-68f7-473b-8b62-25c6a796806f",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-08T19:20:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "31ed0e8f-a276-4703-a077-34a5c2c8210c",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :20 drop window",
+      "createdAt": "2026-11-08T20:33:09.529Z"
+    },
+    {
+      "id": "9e78d543-4cf9-4ae8-9f3e-5a5b2f695f5b",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-08T17:50:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "5046503e-d30a-4a92-ada8-f8be7788b186",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :50 drop window",
+      "createdAt": "2026-11-08T18:43:24.644Z"
+    },
+    {
+      "id": "147bbef8-3386-4fd5-8c64-c8185d0e2f82",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-08T17:59:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "271b5211-346c-41ad-bd63-4cea845d165c",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :29 drop window",
+      "createdAt": "2026-11-08T18:31:24.735Z"
+    },
+    {
+      "id": "e2376d18-b10f-42f6-ae38-ec8723ebbd84",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-08T17:20:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "0dd054ce-0f07-4f78-b48d-7893f172a7b2",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :20 drop window",
+      "createdAt": "2026-11-08T18:19:24.739Z"
+    },
+    {
+      "id": "42a0a793-92f8-4549-975e-94487b2850bd",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-08T17:50:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "071d08d0-3e0e-4651-b04e-f0fdd7908e44",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :50 drop window",
+      "createdAt": "2026-11-08T18:28:45.604Z"
+    },
+    {
+      "id": "64d0802d-4fa1-4f50-8160-a22d5f2fc5a5",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-08T17:29:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "32d083be-d190-4a53-b2e5-b34af55be585",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :29 drop window",
+      "createdAt": "2026-11-08T18:16:45.637Z"
+    },
+    {
+      "id": "e11713d0-3647-4c94-9946-277a05ec0111",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-08T16:20:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "e4118062-2d3b-4b2f-950b-4c82daa1ae4d",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :20 drop window",
+      "createdAt": "2026-11-08T18:04:45.689Z"
+    },
+    {
+      "id": "bbcbc16e-55c2-4708-8eea-1bbc8d3c7e52",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-08T17:50:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "b5d82a2a-8ee1-4396-a2d4-8119d17a0e97",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :50 drop window",
+      "createdAt": "2026-11-08T18:17:33.476Z"
+    },
+    {
+      "id": "ba706410-e742-40cf-ab76-f9919b26cba6",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-08T17:29:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "f23a6226-915f-4601-887c-4459f4335760",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :29 drop window",
+      "createdAt": "2026-11-08T18:05:33.563Z"
+    },
+    {
+      "id": "77a2f421-88a1-4509-9006-5f7ff3acbaa4",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-08T16:20:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "c5d5287f-43ba-4bf0-887b-912feaa849e3",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :20 drop window",
+      "createdAt": "2026-11-08T17:53:33.566Z"
+    },
+    {
+      "id": "c46c2560-b785-4034-8992-f45ff897ddc7",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T03:50:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "2dc19ccd-cbf0-4961-bf52-8246e68a85ae",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :50 drop window",
+      "createdAt": "2026-11-06T04:48:46.140Z"
+    },
+    {
+      "id": "9bbdf0c0-2558-4f23-a15d-2b5e4c1f9767",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T03:59:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "f8258aa7-b7fb-4adc-9788-127871cc9b7e",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :29 drop window",
+      "createdAt": "2026-11-06T04:36:46.233Z"
+    },
+    {
+      "id": "711a1eec-0336-4071-9f1e-867d56e54723",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T03:20:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "ca383193-c076-405b-8442-9e03559842d3",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :20 drop window",
+      "createdAt": "2026-11-06T04:24:46.236Z"
+    },
+    {
+      "id": "8df25df1-0e45-4a12-ba4d-1ae26bda4d1a",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T03:50:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "5bb7562b-cf4f-4373-a5d0-51f7df593bad",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :50 drop window",
+      "createdAt": "2026-11-06T04:41:11.493Z"
+    },
+    {
+      "id": "cb0146b3-c882-4c7e-bc59-9d4eed2b4c6a",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T03:59:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "af73c03b-28fb-487c-8264-21eb3feb79a2",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :29 drop window",
+      "createdAt": "2026-11-06T04:29:11.566Z"
+    },
+    {
+      "id": "9f70eb41-4758-4c1f-a82b-5416c95714b5",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T03:20:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "4f19ed3f-65bf-4346-8442-70e821360d27",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :20 drop window",
+      "createdAt": "2026-11-06T04:17:11.578Z"
+    },
+    {
+      "id": "2dc891c8-b2ce-49bb-8589-f93454c71a95",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T03:50:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "bfb0e1ef-f38b-47b2-8984-56b3b6d5b028",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :50 drop window",
+      "createdAt": "2026-11-06T04:30:07.716Z"
+    },
+    {
+      "id": "edd9615f-2db1-4121-aaad-e91996db642e",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T03:29:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "fff763b2-6ab6-4b91-9cd4-52bb069d74ec",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :29 drop window",
+      "createdAt": "2026-11-06T04:18:07.811Z"
+    },
+    {
+      "id": "587caabd-2d01-4062-b637-18a2d5386676",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T03:20:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "0896bd82-036f-43fd-afee-eac0481ba334",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :20 drop window",
+      "createdAt": "2026-11-06T04:06:07.814Z"
+    },
+    {
+      "id": "51a468ca-8129-41de-ab7d-b24b586ec859",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T03:50:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "8263b24a-7e40-4ed4-ad01-767a4cfb0f5e",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :50 drop window",
+      "createdAt": "2026-11-06T03:58:46.384Z"
+    },
+    {
+      "id": "d3b1c90c-cfe6-409c-bd92-2f934ec0b89d",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T02:59:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "95f02596-b53c-4806-850d-b06b8568861f",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :29 drop window",
+      "createdAt": "2026-11-06T03:46:46.475Z"
+    },
+    {
+      "id": "17f62390-610c-4eb5-bb49-2f77b930ef08",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T02:20:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "a8a58f65-70ae-4f98-a5cb-6083c1eb0908",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :20 drop window",
+      "createdAt": "2026-11-06T03:34:46.478Z"
+    },
+    {
+      "id": "44ddd976-7868-4396-a217-1b4de617ba99",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T02:50:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "d5e80cdd-e717-45e1-b54e-b76357e682d4",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :50 drop window",
+      "createdAt": "2026-11-06T03:49:29.948Z"
+    },
+    {
+      "id": "dbd65d6a-3a28-4a2f-8f53-2233a545b418",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T02:59:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "0bd97278-3208-4ebf-8109-ecb242bd774f",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :29 drop window",
+      "createdAt": "2026-11-06T03:37:30.029Z"
+    },
+    {
+      "id": "dc23b4fb-400d-489b-af29-22b322216525",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T02:20:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "be8f9ce5-c31a-4bde-8629-9fba90bb38cb",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :20 drop window",
+      "createdAt": "2026-11-06T03:25:30.032Z"
+    },
+    {
+      "id": "ff3f5837-d23b-45c7-a915-0c26fd5d7cb6",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T02:50:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "5162e3c1-2845-4ba8-8da6-1f880cef86c2",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :50 drop window",
+      "createdAt": "2026-11-06T03:39:32.173Z"
+    },
+    {
+      "id": "1e1b97b0-686d-463e-b7af-fe7010155993",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T02:59:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "69258bd5-e26e-4e6d-a28e-30542d352c60",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :29 drop window",
+      "createdAt": "2026-11-06T03:27:32.201Z"
+    },
+    {
+      "id": "8f2a88f6-e653-4a44-a754-fdd2a4ee590b",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T02:20:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "4e2ba827-bc0f-4f5d-8dfe-625d01afd06b",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :20 drop window",
+      "createdAt": "2026-11-06T03:15:32.203Z"
+    },
+    {
+      "id": "8c09856f-738e-4540-a469-9a027c77d844",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T02:50:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "ad02e912-ac04-4230-9b3f-2f55e2ec4e00",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :50 drop window",
+      "createdAt": "2026-11-06T03:33:00.091Z"
+    },
+    {
+      "id": "be297cdb-4911-4784-ab31-4b0cc58eb76a",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T02:29:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "66d24e8d-6fa8-48c0-aca4-7808663ced41",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :29 drop window",
+      "createdAt": "2026-11-06T03:21:00.174Z"
+    },
+    {
+      "id": "4fc10f75-0296-4dce-81b4-c83cfdb96fe7",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T02:20:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "6c32c195-deec-4776-bc19-56cd198c7ff7",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :20 drop window",
+      "createdAt": "2026-11-06T03:09:00.176Z"
+    },
+    {
+      "id": "0055547e-dd9f-400c-be31-e446022eeea5",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T01:50:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "f9c14099-4de3-442d-8688-90f2d08e8a90",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :50 drop window",
+      "createdAt": "2026-11-06T02:34:39.557Z"
+    },
+    {
+      "id": "64c0b06b-85a6-482a-a7f6-5a7514836a01",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T01:59:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "3fc2d8e1-1aa1-439c-8aeb-8769c6a42560",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :29 drop window",
+      "createdAt": "2026-11-06T02:22:39.647Z"
+    },
+    {
+      "id": "37363dcc-4cda-4334-8e6f-f3e97db00bfe",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T01:20:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "6354ddb3-4d4d-4f42-a625-7d5be9733e73",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :20 drop window",
+      "createdAt": "2026-11-06T02:10:39.651Z"
+    },
+    {
+      "id": "3d2af21d-21c8-455e-b41b-1cf4e3d015bd",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T01:50:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "6df3b834-5233-44d5-9be1-e69d986555bc",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :50 drop window",
+      "createdAt": "2026-11-06T02:14:17.896Z"
+    },
+    {
+      "id": "affc98ae-8b5e-45dc-9516-be2f4cf59b5d",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T01:29:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "005011ec-3af8-4ac6-89fa-210c06bbf043",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :29 drop window",
+      "createdAt": "2026-11-06T02:02:17.932Z"
+    },
+    {
+      "id": "a80edc08-2112-4466-95f0-46abcc21ec41",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T00:20:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "1f3a9a09-910a-4226-a765-5cc57b76d3e0",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :20 drop window",
+      "createdAt": "2026-11-06T01:50:17.964Z"
+    },
+    {
+      "id": "e0ae42af-daca-443e-aaff-390b6224d437",
+      "machineId": "Q01168",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T01:25:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "95b89d65-b18b-4657-a728-038e747934a0",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :25 drop window",
+      "createdAt": "2026-11-06T02:15:19.370Z"
+    },
+    {
+      "id": "edcd3ba4-c429-450a-9f3f-916567ce9f0d",
+      "machineId": "Q02071",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T01:31:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "6ef9da31-1219-448e-bba7-25147437e3aa",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :01 drop window",
+      "createdAt": "2026-11-06T02:03:19.374Z"
+    },
+    {
+      "id": "e15ef076-df06-4a03-a1d1-3707bcdf3b7b",
+      "machineId": "Q00337",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T00:58:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "0a5c9140-9678-4392-9c37-7d3d14d85a8a",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :58 drop window",
+      "createdAt": "2026-11-06T01:51:19.377Z"
+    },
+    {
+      "id": "4ebe0073-d902-4f4d-8a80-b2542168b123",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T11:50:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "2dc19ccd-cbf0-4961-bf52-8246e68a85ae",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :50 drop window",
+      "createdAt": "2026-11-06T12:00:16.763Z"
+    },
+    {
+      "id": "d7021b37-060b-4ce5-bcb9-81ac40c8d9f8",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T10:59:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "f8258aa7-b7fb-4adc-9788-127871cc9b7e",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :29 drop window",
+      "createdAt": "2026-11-06T11:48:16.766Z"
+    },
+    {
+      "id": "e9b31e71-5eb0-4489-b62f-3b3ad0ca5331",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T10:20:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "ca383193-c076-405b-8442-9e03559842d3",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :20 drop window",
+      "createdAt": "2026-11-06T11:36:16.831Z"
+    },
+    {
+      "id": "f7ee9457-5a42-42e4-99b2-88ca504ba6a8",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T17:50:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "2dc19ccd-cbf0-4961-bf52-8246e68a85ae",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :50 drop window",
+      "createdAt": "2026-11-06T18:00:17.343Z"
+    },
+    {
+      "id": "06ec5575-2854-4d02-803d-20c4fa7b37a2",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T16:59:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "f8258aa7-b7fb-4adc-9788-127871cc9b7e",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :29 drop window",
+      "createdAt": "2026-11-06T17:48:17.347Z"
+    },
+    {
+      "id": "20068305-e119-4dda-9a4b-cce1a4439e28",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-06T16:20:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "ca383193-c076-405b-8442-9e03559842d3",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :20 drop window",
+      "createdAt": "2026-11-06T17:36:17.351Z"
+    },
+    {
+      "id": "066c8c29-9f1e-46bc-a4f7-3c7fde4870dc",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-07T01:50:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "2dc19ccd-cbf0-4961-bf52-8246e68a85ae",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :50 drop window",
+      "createdAt": "2026-11-07T02:00:18.040Z"
+    },
+    {
+      "id": "23239231-6800-48d5-afb4-0a5f42ba6d91",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-07T00:59:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "f8258aa7-b7fb-4adc-9788-127871cc9b7e",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :29 drop window",
+      "createdAt": "2026-11-07T01:48:18.044Z"
+    },
+    {
+      "id": "5e61c2c1-4300-461c-8df7-5ee73c9dfe76",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-07T00:20:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "ca383193-c076-405b-8442-9e03559842d3",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :20 drop window",
+      "createdAt": "2026-11-07T01:36:18.048Z"
+    },
+    {
+      "id": "f1d80d20-19d5-4381-8354-28aae0a5c4ac",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-07T09:50:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "2dc19ccd-cbf0-4961-bf52-8246e68a85ae",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :50 drop window",
+      "createdAt": "2026-11-07T10:00:16.737Z"
+    },
+    {
+      "id": "43e5153b-b03e-4e8d-a67a-11901b33c249",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-07T08:59:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "f8258aa7-b7fb-4adc-9788-127871cc9b7e",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :29 drop window",
+      "createdAt": "2026-11-07T09:48:16.742Z"
+    },
+    {
+      "id": "c2105e8b-6433-48c7-a938-06edf744c103",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-07T08:20:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "ca383193-c076-405b-8442-9e03559842d3",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :20 drop window",
+      "createdAt": "2026-11-07T09:36:16.745Z"
+    },
+    {
+      "id": "05a55ee9-445f-48c3-a660-391058c68a02",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-07T15:50:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "2dc19ccd-cbf0-4961-bf52-8246e68a85ae",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :50 drop window",
+      "createdAt": "2026-11-07T16:00:17.349Z"
+    },
+    {
+      "id": "eb89d8c8-816d-4d2b-a5ac-663ecac1c3fc",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-07T14:59:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "f8258aa7-b7fb-4adc-9788-127871cc9b7e",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :29 drop window",
+      "createdAt": "2026-11-07T15:48:17.353Z"
+    },
+    {
+      "id": "79117feb-2829-4ae8-b548-68cfa78b761b",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-07T14:20:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "ca383193-c076-405b-8442-9e03559842d3",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :20 drop window",
+      "createdAt": "2026-11-07T15:36:17.431Z"
+    },
+    {
+      "id": "45843503-6f9c-4402-8f89-54370821845f",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-07T23:50:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "2dc19ccd-cbf0-4961-bf52-8246e68a85ae",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :50 drop window",
+      "createdAt": "2026-11-08T00:00:23.555Z"
+    },
+    {
+      "id": "e8d463bd-c29f-4d70-9da8-0490008b96b0",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-07T22:59:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "f8258aa7-b7fb-4adc-9788-127871cc9b7e",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :29 drop window",
+      "createdAt": "2026-11-07T23:48:23.558Z"
+    },
+    {
+      "id": "f23db1b7-be3b-4ba2-9e92-71a0ab85da63",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-07T22:20:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "ca383193-c076-405b-8442-9e03559842d3",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :20 drop window",
+      "createdAt": "2026-11-07T23:36:23.560Z"
+    },
+    {
+      "id": "96c67645-5581-4638-b735-d63d38b655a8",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-08T05:50:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "2dc19ccd-cbf0-4961-bf52-8246e68a85ae",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :50 drop window",
+      "createdAt": "2026-11-08T06:00:25.638Z"
+    },
+    {
+      "id": "fa124590-96f1-4fc1-a5f7-304680e47da1",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-08T04:59:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "f8258aa7-b7fb-4adc-9788-127871cc9b7e",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :29 drop window",
+      "createdAt": "2026-11-08T05:48:25.641Z"
+    },
+    {
+      "id": "7e959e81-1fbd-44f9-9102-9c3115fd2c32",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-08T04:20:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "ca383193-c076-405b-8442-9e03559842d3",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :20 drop window",
+      "createdAt": "2026-11-08T05:36:25.645Z"
+    },
+    {
+      "id": "f23c1f84-a479-436c-b81d-5c14b81890e4",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-08T13:50:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "2dc19ccd-cbf0-4961-bf52-8246e68a85ae",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :50 drop window",
+      "createdAt": "2026-11-08T14:00:24.361Z"
+    },
+    {
+      "id": "38e17f5e-1bd7-442f-a2e8-3cf6f67ebcc4",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-08T12:59:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "f8258aa7-b7fb-4adc-9788-127871cc9b7e",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :29 drop window",
+      "createdAt": "2026-11-08T13:48:24.364Z"
+    },
+    {
+      "id": "351e8cb6-c04c-40ee-b1be-ac4a136e56fa",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-08T12:20:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "ca383193-c076-405b-8442-9e03559842d3",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :20 drop window",
+      "createdAt": "2026-11-08T13:36:24.430Z"
+    },
+    {
+      "id": "27c3f5d2-1fa5-4d4e-b2cd-68a4ac73cd82",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-09T01:50:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "118cf051-f96e-4833-b8c5-3bb59a9c21d0",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :50 drop window",
+      "createdAt": "2026-11-09T02:48:29.621Z"
+    },
+    {
+      "id": "f8d96c5b-d714-4585-93ff-c99fe5560155",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-09T01:59:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "65c9f030-0921-4a86-ba9b-eeb417f98d59",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :29 drop window",
+      "createdAt": "2026-11-09T02:36:29.713Z"
+    },
+    {
+      "id": "ccf3891e-7418-4410-a5b2-d5d991304ae9",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-09T01:20:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "12d0958e-1e1d-4818-bcb9-d7c4bce0e7bf",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :20 drop window",
+      "createdAt": "2026-11-09T02:24:29.719Z"
+    },
+    {
+      "id": "fae72162-09ad-4b67-b6b3-5a033dcfe6ae",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-09T09:50:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "118cf051-f96e-4833-b8c5-3bb59a9c21d0",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :50 drop window",
+      "createdAt": "2026-11-09T10:00:18.639Z"
+    },
+    {
+      "id": "3d2228b6-6199-4066-a308-c22894def33f",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-09T08:59:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "65c9f030-0921-4a86-ba9b-eeb417f98d59",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :29 drop window",
+      "createdAt": "2026-11-09T09:48:18.643Z"
+    },
+    {
+      "id": "1126c2ac-6b3d-4270-a550-a8c73e32c0f7",
+      "machineId": "Q00506",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-09T08:50:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "88d0b018-b716-406a-a45c-f7ffaf885173",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :50 drop window",
+      "createdAt": "2026-11-09T09:36:18.645Z"
+    },
+    {
+      "id": "1d11058a-bb36-49be-a43b-f2fd19323d60",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-09T17:50:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "118cf051-f96e-4833-b8c5-3bb59a9c21d0",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :50 drop window",
+      "createdAt": "2026-11-09T18:00:19.260Z"
+    },
+    {
+      "id": "5fcb50a3-779b-4833-bf2a-f635daa4546d",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-09T16:59:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "65c9f030-0921-4a86-ba9b-eeb417f98d59",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :29 drop window",
+      "createdAt": "2026-11-09T17:48:19.263Z"
+    },
+    {
+      "id": "cd0e50b0-003e-46c8-951e-758aa556baa4",
+      "machineId": "Q00506",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-09T16:50:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "88d0b018-b716-406a-a45c-f7ffaf885173",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :50 drop window",
+      "createdAt": "2026-11-09T17:36:19.411Z"
+    }
+  ],
+  "stockReports": [
+    {
+      "id": "fc5312ec-1e2f-4ccc-9232-659a881acdc2",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-09T02:32:16.303Z"
+    },
+    {
+      "id": "3f3b44ea-d94e-4821-a523-1bcd712a5411",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-09T02:20:16.398Z"
+    },
+    {
+      "id": "4527357b-6731-4ffa-8e32-5dee508f9e8e",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-09T02:08:16.403Z"
+    },
+    {
+      "id": "a6611394-624e-49f1-a84c-45b7c3634361",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-08T21:03:36.040Z"
+    },
+    {
+      "id": "fc4ef94b-dbec-49bc-8da5-36557ccc4b17",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-08T20:51:36.130Z"
+    },
+    {
+      "id": "79a2d72b-f85a-4a0d-9207-56f0b4827cb2",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-08T20:39:36.133Z"
+    },
+    {
+      "id": "bdb8c5ae-037d-4871-89fe-fc80fc5486c6",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-08T20:57:09.440Z"
+    },
+    {
+      "id": "01f955a1-1030-4a71-9c40-884e143ecc90",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-08T20:45:09.526Z"
+    },
+    {
+      "id": "f0fe26c9-ef72-4bd5-89ed-92ebfcd1352b",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-08T20:33:09.530Z"
+    },
+    {
+      "id": "48d99f5c-5784-4922-b79c-92c2153a6bd5",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-08T18:43:24.645Z"
+    },
+    {
+      "id": "a947e830-e326-43bd-9c46-0cac854dcea9",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-08T18:31:24.736Z"
+    },
+    {
+      "id": "7588bdaa-4523-4f66-9e29-b8d608a74358",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-08T18:19:24.739Z"
+    },
+    {
+      "id": "fda22493-d43d-4d58-a974-671abef3396f",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-08T18:28:45.606Z"
+    },
+    {
+      "id": "bba333c2-10c2-44d2-ac75-524943a626e3",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-08T18:16:45.637Z"
+    },
+    {
+      "id": "2c57d9e9-671b-46ae-81c5-f557d22c23db",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-08T18:04:45.689Z"
+    },
+    {
+      "id": "cd77ffe6-983f-48fe-8e4c-8f10784aaee1",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-08T18:17:33.477Z"
+    },
+    {
+      "id": "3fd2fc69-8333-4ba3-a652-7567ca20b38d",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-08T18:05:33.563Z"
+    },
+    {
+      "id": "90e97740-192e-4f93-810b-b588606f4d06",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-08T17:53:33.566Z"
+    },
+    {
+      "id": "b0611216-d31e-4d6d-aa39-1ec892f286c1",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T04:48:46.142Z"
+    },
+    {
+      "id": "bd3afa8c-ad8e-40dc-abda-8b8d694828f0",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T04:36:46.233Z"
+    },
+    {
+      "id": "684a78af-72e5-46e3-83df-79151e84895e",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T04:24:46.237Z"
+    },
+    {
+      "id": "b61e83d8-9803-4daa-91e4-1fe213b38cad",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T04:41:11.496Z"
+    },
+    {
+      "id": "f7e3070e-e3b4-47a6-be90-4faefadca999",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T04:29:11.570Z"
+    },
+    {
+      "id": "707b96c3-3f79-4a3c-b1e9-77284d7f40bf",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T04:17:11.578Z"
+    },
+    {
+      "id": "251ee664-460d-4e4e-a13f-a898427a8e63",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T04:30:07.717Z"
+    },
+    {
+      "id": "eedfa3a1-2d3b-4264-9101-3fb952f4b3b0",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T04:18:07.811Z"
+    },
+    {
+      "id": "90f88fb0-c17e-4f2d-a57e-50264d24f6d7",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T04:06:07.814Z"
+    },
+    {
+      "id": "fbb9fe7d-13f1-4d63-a5d5-7074504d2a47",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T03:58:46.385Z"
+    },
+    {
+      "id": "8f6f8694-ae6d-4605-9518-e17cefe55dc6",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T03:46:46.475Z"
+    },
+    {
+      "id": "3bfa69a9-a85d-43ac-baae-e1e749bebcb4",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T03:34:46.479Z"
+    },
+    {
+      "id": "824ce60e-fdec-4fb2-bc49-2b9fee87bb5d",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T03:49:29.949Z"
+    },
+    {
+      "id": "8d28b40c-95c2-4f8c-9f34-0e338ebb9643",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T03:37:30.029Z"
+    },
+    {
+      "id": "e331d3d0-cc7f-4a39-9f33-bedc732ee098",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T03:25:30.033Z"
+    },
+    {
+      "id": "439d0ba5-d318-4c1a-bd5b-7f62cf53329c",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T03:39:32.174Z"
+    },
+    {
+      "id": "07f2a208-0fe7-47d3-b44d-05a9e2f84a5d",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T03:27:32.201Z"
+    },
+    {
+      "id": "43a0bee1-b4b6-4713-a297-fe01fe19f6ac",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T03:15:32.203Z"
+    },
+    {
+      "id": "c2488bef-00f6-443d-a540-cbd87c0e0bda",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T03:33:00.093Z"
+    },
+    {
+      "id": "814b7766-4773-4764-9962-00a1a7a8d797",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T03:21:00.174Z"
+    },
+    {
+      "id": "24563386-9821-4f74-a4eb-f7f8dcc8b3f0",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T03:09:00.177Z"
+    },
+    {
+      "id": "30be362c-3353-4f19-8633-242d5d4f7b79",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T02:34:39.559Z"
+    },
+    {
+      "id": "ea0fc138-88f1-408d-8644-45a2158c42b2",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T02:22:39.648Z"
+    },
+    {
+      "id": "67b04ca3-41dd-4779-8da0-d3bd4025800e",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T02:10:39.651Z"
+    },
+    {
+      "id": "71fc1603-1b36-4580-9986-157990526b25",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T02:14:17.898Z"
+    },
+    {
+      "id": "732841ea-1896-470a-8f11-f65bc17b8cb9",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T02:02:17.933Z"
+    },
+    {
+      "id": "f0723bc1-4896-4cae-9387-51e2ca63b3dc",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T01:50:17.965Z"
+    },
+    {
+      "id": "4f452cc8-3a88-4e1f-be2b-1aa46c3eb204",
+      "machineId": "Q01168",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T02:15:19.371Z"
+    },
+    {
+      "id": "bcfb58b0-a91b-4bc4-83b7-45aa61bf59f9",
+      "machineId": "Q02071",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T02:03:19.374Z"
+    },
+    {
+      "id": "0398a52d-97a8-4b56-9d18-492f5e5082e8",
+      "machineId": "Q00337",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T01:51:19.377Z"
+    },
+    {
+      "id": "8faa488b-3874-4b8b-9ddf-4e0a9ca8adf5",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T12:00:16.763Z"
+    },
+    {
+      "id": "84eb36cf-edbb-4af6-8b60-ed36eb72c038",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T11:48:16.767Z"
+    },
+    {
+      "id": "9dde4a51-5f4d-49cd-9401-c3bfdfa71e6b",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T11:36:16.831Z"
+    },
+    {
+      "id": "a1909249-3b6b-4222-a525-4a9800ef0cdc",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T18:00:17.344Z"
+    },
+    {
+      "id": "3e96b9fb-faeb-441a-840e-523fa28a751c",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T17:48:17.347Z"
+    },
+    {
+      "id": "d01bc648-eba8-4a13-b010-a003963c49aa",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-06T17:36:17.352Z"
+    },
+    {
+      "id": "766b7446-bec8-41de-b6e1-44d74b3e63ff",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-07T02:00:18.040Z"
+    },
+    {
+      "id": "6f5af146-9480-47f5-b235-b141c8224af8",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-07T01:48:18.045Z"
+    },
+    {
+      "id": "5dc6a86b-baa8-4eaf-ad20-bc854f0abcb3",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-07T01:36:18.048Z"
+    },
+    {
+      "id": "23de388d-d316-4994-bfe8-0fe30b95368c",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-07T10:00:16.738Z"
+    },
+    {
+      "id": "db88bd56-0eef-4c58-b2a2-30519a12d1b3",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-07T09:48:16.743Z"
+    },
+    {
+      "id": "fb965c49-5010-4114-a2ec-411a441b9338",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-07T09:36:16.746Z"
+    },
+    {
+      "id": "670a4868-3c60-41d8-9239-71c447b35d51",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-07T16:00:17.349Z"
+    },
+    {
+      "id": "02c6bb20-a183-462c-999b-aa222da573b7",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-07T15:48:17.353Z"
+    },
+    {
+      "id": "cdc9d561-a9af-4521-b4b9-5b9009659093",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-07T15:36:17.431Z"
+    },
+    {
+      "id": "bc3c57f8-9abf-4b90-b8dc-a2339c4c1e22",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-08T00:00:23.555Z"
+    },
+    {
+      "id": "0a206b1c-b3d0-4900-946e-ea48c8f43c6f",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-07T23:48:23.558Z"
+    },
+    {
+      "id": "97750d2b-120c-465c-b091-2cd0ff7af482",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-07T23:36:23.560Z"
+    },
+    {
+      "id": "b0510685-c378-4ff9-bc49-abcf635e3705",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-08T06:00:25.639Z"
+    },
+    {
+      "id": "046d46fc-f81e-43d7-894a-bebf87f0cf97",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-08T05:48:25.642Z"
+    },
+    {
+      "id": "302f69d2-5ca1-4318-93ec-24b6d58dbef5",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-08T05:36:25.645Z"
+    },
+    {
+      "id": "3b3ca660-0a33-4b6f-9bfd-9f48b8b9020b",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-08T14:00:24.361Z"
+    },
+    {
+      "id": "469c163b-7eef-41c7-a12c-060128c62df8",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-08T13:48:24.364Z"
+    },
+    {
+      "id": "d6b31420-d8cf-411d-83f9-766be91d85ff",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-08T13:36:24.430Z"
+    },
+    {
+      "id": "b32f1c66-f934-44ce-ad9a-8a52e03376fc",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-09T02:48:29.623Z"
+    },
+    {
+      "id": "4c6285de-e54c-45b2-a6ce-cb91c18d357e",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-09T02:36:29.714Z"
+    },
+    {
+      "id": "c5abb869-e37b-4ad5-b53c-700558deeb7e",
+      "machineId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-09T02:24:29.720Z"
+    },
+    {
+      "id": "e8eccb67-ba68-4d35-b1f5-9420f150a5ba",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-09T10:00:18.640Z"
+    },
+    {
+      "id": "dcebbfbd-422a-443a-88c5-af0b801673d3",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-09T09:48:18.643Z"
+    },
+    {
+      "id": "09251680-4526-40b7-8958-b182d8c0ab66",
+      "machineId": "Q00506",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-09T09:36:18.646Z"
+    },
+    {
+      "id": "ff478ece-e21c-4726-b3c1-3c9ec617ff59",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-09T18:00:19.260Z"
+    },
+    {
+      "id": "5a841cab-de2a-4c22-91bd-e77869391ae3",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-09T17:48:19.263Z"
+    },
+    {
+      "id": "0a919ea5-732a-4fec-8447-7c9d2b41a465",
+      "machineId": "Q00506",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-09T17:36:19.412Z"
+    }
+  ],
+  "comments": [
+    {
+      "id": "552b7263-a6a4-44b9-aa4f-b5d5f32e81b1",
+      "targetType": "machine",
+      "targetId": "Q00699",
+      "userId": "u-packradar-worker-bot",
+      "body": "Timer at this Vons has been holding steady right around :22 past the hour (60m cycle). Usually unlocks 1–2 items per cooldown window.",
+      "hidden": 0,
+      "createdAt": "2026-11-09T21:51:17.607Z"
+    },
+    {
+      "id": "246592b5-973a-4bf7-b726-bf385476a84d",
+      "targetType": "machine",
+      "targetId": "Q00337",
+      "userId": "u-packradar-worker-bot",
+      "body": "Touchscreen was super responsive earlier—the :58 window unlocked right on time with Booster Bundles and sleeved packs in the front row.",
+      "hidden": 0,
+      "createdAt": "2026-11-09T21:42:17.607Z"
+    },
+    {
+      "id": "929e07bf-76fb-4aac-8017-49ae09a6e23b",
+      "targetType": "machine",
+      "targetId": "Q01168",
+      "userId": "u-packradar-worker-bot",
+      "body": "Good to see another confirmation on the :25 mark here. Most of the Safeway kiosks around Seattle have been on a similar 60-minute stagger lately.",
+      "hidden": 0,
+      "createdAt": "2026-11-09T15:51:18.429Z"
+    },
+    {
+      "id": "4789b76b-fa35-4461-87a0-0c116cb298e0",
+      "targetType": "machine",
+      "targetId": "Q02071",
+      "userId": "u-packradar-worker-bot",
+      "body": "Tip for anyone checking this Jewel-Osco in Chicago: if the main screen shows sold out, tap through the individual set tabs right at :01 when the cooldown clears.",
+      "hidden": 0,
+      "createdAt": "2026-11-09T15:42:18.430Z"
+    },
+    {
+      "id": "4d2466c7-412f-4e0e-9a41-688c1b3733f7",
+      "targetType": "machine",
+      "targetId": "Q00506",
+      "userId": "u-packradar-worker-bot",
+      "body": "Showed up about 3 minutes before :50 and caught the timer reset right on the dot. Still had Surging Sparks and 151 tins loaded.",
+      "hidden": 0,
+      "createdAt": "2026-11-09T09:51:18.651Z"
+    },
+    {
+      "id": "379ee45b-0d8d-4891-b87a-98837b4c733c",
+      "targetType": "machine",
+      "targetId": "Q00955",
+      "userId": "u-packradar-worker-bot",
+      "body": "The 60-minute cooldown at :20 is still accurate here. Left plenty of packs in the machine for the next window!",
+      "hidden": 0,
+      "createdAt": "2026-11-09T09:42:18.652Z"
+    },
+    {
+      "id": "88eb6731-2b20-467e-a1bc-55ffa3bc8ea4",
+      "targetType": "machine",
+      "targetId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "body": "Kiosk is right near the front entrance / customer service desk at this Safeway. Vended cleanly on the :50 timer without any card reader lag.",
+      "hidden": 0,
+      "createdAt": "2026-11-09T02:39:29.729Z"
+    },
+    {
+      "id": "8eb88bd3-ef21-459a-b5b3-6a888827a00f",
+      "targetType": "machine",
+      "targetId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "body": "Can confirm the :29 drop window is still active here in Dallas. It released a couple of tins and a bundle as soon as the timer rolled over.",
+      "hidden": 0,
+      "createdAt": "2026-11-09T02:30:29.730Z"
+    },
+    {
+      "id": "06c1e52f-2124-47fa-b08d-2c0cd37577e7",
+      "targetType": "machine",
+      "targetId": "Q02139",
+      "userId": "u-packradar-worker-bot",
+      "body": "Timer at this Fred Meyer has been holding steady right around :00 past the hour (60m cycle). Usually unlocks 1–2 items per cooldown window.",
+      "hidden": 0,
+      "createdAt": "2026-11-08T17:51:16.732Z"
+    },
+    {
+      "id": "6c53e2b4-a66d-4a00-ae24-d25b6f311417",
+      "targetType": "machine",
+      "targetId": "Q01957",
+      "userId": "u-packradar-worker-bot",
+      "body": "Don't trust the 'Sold Out' splash screen here—tap into the Booster Bundle tab right at :14 and the per-SKU timer usually unlocks.",
+      "hidden": 0,
+      "createdAt": "2026-11-08T17:42:16.732Z"
+    },
+    {
+      "id": "a536954f-44db-4f6d-acee-6faad629870b",
+      "targetType": "machine",
+      "targetId": "Q01012",
+      "userId": "u-packradar-worker-bot",
+      "body": "This Seattle QFC kiosk has been one of the more consistent ones lately. The :45 hourly drip keeps everything from getting wiped out at open.",
+      "hidden": 0,
+      "createdAt": "2026-11-08T11:51:17.548Z"
+    },
+    {
+      "id": "eee9c90a-41e5-469d-a37f-426fc7836e9c",
+      "targetType": "machine",
+      "targetId": "Q00789",
+      "userId": "u-packradar-worker-bot",
+      "body": "Tip for anyone checking this Fred Meyer in Seattle: if the main screen shows sold out, tap through the individual set tabs right at :14 when the cooldown clears.",
+      "hidden": 0,
+      "createdAt": "2026-11-08T11:42:17.549Z"
+    },
+    {
+      "id": "514921ec-a85b-4369-9539-6d80af26a962",
+      "targetType": "machine",
+      "targetId": "Q00307",
+      "userId": "u-packradar-worker-bot",
+      "body": "Showed up about 3 minutes before :29 and caught the timer reset right on the dot. Still had Surging Sparks and 151 tins loaded.",
+      "hidden": 0,
+      "createdAt": "2026-11-08T05:51:25.651Z"
+    },
+    {
+      "id": "b70f9852-36b8-4661-b9f0-b05ab76411c3",
+      "targetType": "machine",
+      "targetId": "Q00256",
+      "userId": "u-packradar-worker-bot",
+      "body": "The 60-minute cooldown at :29 is still accurate here. Left plenty of packs in the machine for the next window!",
+      "hidden": 0,
+      "createdAt": "2026-11-08T05:42:25.651Z"
+    },
+    {
+      "id": "f0d4d670-025f-4658-b10c-686c0a3c032e",
+      "targetType": "machine",
+      "targetId": "Q00808",
+      "userId": "u-packradar-worker-bot",
+      "body": "Kiosk is right near the front entrance / customer service desk at this Safeway. Vended cleanly on the :16 timer without any card reader lag.",
+      "hidden": 0,
+      "createdAt": "2026-11-07T23:51:23.564Z"
+    },
+    {
+      "id": "ca03f02b-7761-4574-87cc-4d5aaaa9ced8",
+      "targetType": "machine",
+      "targetId": "Q01943",
+      "userId": "u-packradar-worker-bot",
+      "body": "Can confirm the :14 drop window is still active here in Seattle. It released a couple of tins and a bundle as soon as the timer rolled over.",
+      "hidden": 0,
+      "createdAt": "2026-11-07T23:42:23.565Z"
+    },
+    {
+      "id": "1414eb75-7ae6-441e-936d-72e75431c684",
+      "targetType": "machine",
+      "targetId": "Q00280",
+      "userId": "u-packradar-worker-bot",
+      "body": "Timer at this QFC has been holding steady right around :42 past the hour (60m cycle). Usually unlocks 1–2 items per cooldown window.",
+      "hidden": 0,
+      "createdAt": "2026-11-07T17:51:17.144Z"
+    },
+    {
+      "id": "a8450e4d-4fd3-456b-8b75-b39a43baef21",
+      "targetType": "machine",
+      "targetId": "Q01946",
+      "userId": "u-packradar-worker-bot",
+      "body": "Touchscreen was super responsive earlier—the :00 window unlocked right on time with Booster Bundles and sleeved packs in the front row.",
+      "hidden": 0,
+      "createdAt": "2026-11-07T17:42:17.144Z"
+    },
+    {
+      "id": "8e605f87-8607-48cc-af3d-eda6e2e285c9",
+      "targetType": "machine",
+      "targetId": "Q01947",
+      "userId": "u-packradar-worker-bot",
+      "body": "Good to see another confirmation on the :45 mark here. Most of the QFC kiosks around Seattle have been on a similar 60-minute stagger lately.",
+      "hidden": 0,
+      "createdAt": "2026-11-07T11:51:17.060Z"
+    },
+    {
+      "id": "6d5342c2-d377-48f3-b383-754ca6d8d52c",
+      "targetType": "machine",
+      "targetId": "Q00159",
+      "userId": "u-packradar-worker-bot",
+      "body": "Tip for anyone checking this Safeway in Seattle: if the main screen shows sold out, tap through the individual set tabs right at :30 when the cooldown clears.",
+      "hidden": 0,
+      "createdAt": "2026-11-07T11:42:17.060Z"
+    },
+    {
+      "id": "0f075be7-545b-4cb3-a7bc-8952ec0e0b7a",
+      "targetType": "machine",
+      "targetId": "Q00162",
+      "userId": "u-packradar-worker-bot",
+      "body": "Showed up about 3 minutes before :21 and caught the timer reset right on the dot. Still had Surging Sparks and 151 tins loaded.",
+      "hidden": 0,
+      "createdAt": "2026-11-07T05:51:17.867Z"
+    },
+    {
+      "id": "8a5da479-c9f4-47ff-a8bc-17c599d73f61",
+      "targetType": "machine",
+      "targetId": "Q00245",
+      "userId": "u-packradar-worker-bot",
+      "body": "Don't trust the 'Sold Out' splash screen here—tap into the Booster Bundle tab right at :12 and the per-SKU timer usually unlocks.",
+      "hidden": 0,
+      "createdAt": "2026-11-07T05:42:17.867Z"
+    },
+    {
+      "id": "206374c0-be53-4ccb-95fb-63ec83dd039f",
+      "targetType": "machine",
+      "targetId": "Q00902",
+      "userId": "u-packradar-worker-bot",
+      "body": "This Dallas Tom Thumb kiosk has been one of the more consistent ones lately. The :30 hourly drip keeps everything from getting wiped out at open.",
+      "hidden": 0,
+      "createdAt": "2026-11-06T23:51:16.029Z"
+    },
+    {
+      "id": "91aa4902-3ed2-4eb9-9981-1f4b967e3085",
+      "targetType": "machine",
+      "targetId": "Q00361",
+      "userId": "u-packradar-worker-bot",
+      "body": "Can confirm the :35 drop window is still active here in Phoenix. It released a couple of tins and a bundle as soon as the timer rolled over.",
+      "hidden": 0,
+      "createdAt": "2026-11-06T23:42:16.029Z"
+    },
+    {
+      "id": "6eccd4f8-e65d-4019-b985-8d453d24f833",
+      "targetType": "machine",
+      "targetId": "Q00364",
+      "userId": "u-packradar-worker-bot",
+      "body": "Timer at this Frys has been holding steady right around :25 past the hour (60m cycle). Usually unlocks 1–2 items per cooldown window.",
+      "hidden": 0,
+      "createdAt": "2026-11-06T17:51:17.357Z"
+    },
+    {
+      "id": "1ff5ad51-a4bd-4249-94ba-bb4efea5f227",
+      "targetType": "machine",
+      "targetId": "Q01748",
+      "userId": "u-packradar-worker-bot",
+      "body": "Touchscreen was super responsive earlier—the :02 window unlocked right on time with Booster Bundles and sleeved packs in the front row.",
+      "hidden": 0,
+      "createdAt": "2026-11-06T17:42:17.357Z"
+    }
+  ],
+  "dropVotes": []
+}

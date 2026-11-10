@@ -405,9 +405,16 @@ export const POST = route(async (req) => {
           .insert(comments)
           .values({
             ...row,
+            hidden: Boolean(row.hidden),
             createdAt: row.createdAt ? new Date(row.createdAt) : new Date(),
           })
-          .onConflictDoNothing();
+          .onConflictDoUpdate({
+            target: comments.id,
+            set: {
+              body: row.body,
+              hidden: Boolean(row.hidden),
+            },
+          });
       } catch {}
     }
   }

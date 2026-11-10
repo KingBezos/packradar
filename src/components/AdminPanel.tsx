@@ -400,7 +400,7 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
   } | null>(null);
   const [resendKeyInput, setResendKeyInput] = useState("");
   const [emailFromInput, setEmailFromInput] = useState("PackRadar <drops@alerts.jpegtown.com>");
-  const [emailReplyToInput, setEmailReplyToInput] = useState("james@jpegtown.com");
+  const [emailReplyToInput, setEmailReplyToInput] = useState("drops@alerts.jpegtown.com");
   const [emailActionBusy, setEmailActionBusy] = useState(false);
 
   const loadInbox = () =>

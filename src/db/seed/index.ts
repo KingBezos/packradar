@@ -11,7 +11,22 @@ import fs from "node:fs";
 import path from "node:path";
 import { and, eq, sql } from "drizzle-orm";
 import type { DB } from "@/db";
-import { activity, alertSubscriptions, dropCandidates, machines, newsPosts, releases, reputationEvents, settings, sponsors, user } from "@/db/schema";
+import {
+  activity,
+  alertSubscriptions,
+  comments,
+  dropCandidates,
+  dropObservations,
+  dropVotes,
+  machines,
+  newsPosts,
+  releases,
+  reputationEvents,
+  settings,
+  sponsors,
+  stockReports,
+  user,
+} from "@/db/schema";
 import { titleCase, type OfficialMachine } from "@/lib/machines";
 import { slugify, timezoneFor } from "@/lib/geo";
 
@@ -579,6 +594,109 @@ export async function seedIfEmpty(db: DB) {
       },
     ])
     .onConflictDoNothing();
+
+  // 3d. Restore persisted community state (users, comments, alertSubscriptions, dropObservations, stockReports, reputationEvents) from src/db/community-seed.json so container restarts never lose comments or users
+  try {
+    const commSeedPath = path.join(process.cwd(), "src", "db", "community-seed.json");
+    if (fs.existsSync(commSeedPath)) {
+      const comm = JSON.parse(fs.readFileSync(commSeedPath, "utf8")) as {
+        users?: Record<string, unknown>[];
+        alertSubscriptions?: Record<string, unknown>[];
+        reputationEvents?: Record<string, unknown>[];
+        dropObservations?: Record<string, unknown>[];
+        stockReports?: Record<string, unknown>[];
+        comments?: Record<string, unknown>[];
+        dropVotes?: Record<string, unknown>[];
+      };
+      if (Array.isArray(comm.users)) {
+        for (const u of comm.users) {
+          try {
+            await db
+              .insert(user)
+              .values({
+                ...(u as typeof user.$inferInsert),
+                emailVerified: Boolean(u.emailVerified),
+                createdAt: u.createdAt ? new Date(String(u.createdAt)) : new Date(),
+                updatedAt: u.updatedAt ? new Date(String(u.updatedAt)) : new Date(),
+                planExpiresAt: u.planExpiresAt ? new Date(String(u.planExpiresAt)) : null,
+              })
+              .onConflictDoNothing();
+          } catch {}
+        }
+      }
+      if (Array.isArray(comm.alertSubscriptions)) {
+        for (const row of comm.alertSubscriptions) {
+          try {
+            await db
+              .insert(alertSubscriptions)
+              .values({
+                ...(row as typeof alertSubscriptions.$inferInsert),
+                active: Boolean(row.active),
+                createdAt: row.createdAt ? new Date(String(row.createdAt)) : new Date(),
+                lastNotifiedAt: row.lastNotifiedAt ? new Date(String(row.lastNotifiedAt)) : null,
+              })
+              .onConflictDoNothing();
+          } catch {}
+        }
+      }
+      if (Array.isArray(comm.reputationEvents)) {
+        for (const row of comm.reputationEvents) {
+          try {
+            await db
+              .insert(reputationEvents)
+              .values({
+                ...(row as typeof reputationEvents.$inferInsert),
+                createdAt: row.createdAt ? new Date(String(row.createdAt)) : new Date(),
+              })
+              .onConflictDoNothing();
+          } catch {}
+        }
+      }
+      if (Array.isArray(comm.dropObservations)) {
+        for (const row of comm.dropObservations) {
+          try {
+            await db
+              .insert(dropObservations)
+              .values({
+                ...(row as typeof dropObservations.$inferInsert),
+                observedAt: row.observedAt ? new Date(String(row.observedAt)) : new Date(),
+                createdAt: row.createdAt ? new Date(String(row.createdAt)) : new Date(),
+              })
+              .onConflictDoNothing();
+          } catch {}
+        }
+      }
+      if (Array.isArray(comm.stockReports)) {
+        for (const row of comm.stockReports) {
+          try {
+            await db
+              .insert(stockReports)
+              .values({
+                ...(row as typeof stockReports.$inferInsert),
+                createdAt: row.createdAt ? new Date(String(row.createdAt)) : new Date(),
+              })
+              .onConflictDoNothing();
+          } catch {}
+        }
+      }
+      if (Array.isArray(comm.comments)) {
+        for (const row of comm.comments) {
+          try {
+            await db
+              .insert(comments)
+              .values({
+                ...(row as typeof comments.$inferInsert),
+                hidden: Boolean(row.hidden),
+                createdAt: row.createdAt ? new Date(String(row.createdAt)) : new Date(),
+              })
+              .onConflictDoNothing();
+          } catch {}
+        }
+      }
+    }
+  } catch (e) {
+    console.warn("[seed] community-seed restore warning:", e);
+  }
 
   // 4. Welcome News & Sponsors
   await db

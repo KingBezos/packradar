@@ -67,7 +67,9 @@ function recentAlignedObservationDate(
   return new Date(alignedMs);
 }
 
-const HELPFUL_MACHINE_COMMENTS: ((m: {
+const MAX_DAILY_BOT_COMMENTS = 6;
+
+const SENSIBLE_MACHINE_COMMENTS: ((m: {
   id: string;
   retailer: string;
   city: string;
@@ -75,17 +77,68 @@ const HELPFUL_MACHINE_COMMENTS: ((m: {
   anchorMinute: number | null;
   intervalMinutes: number | null;
 }) => string)[] = [
-  (m) =>
-    `Checked ${m.retailer} in ${m.city} (${m.id}) today — the :${String(m.anchorMinute ?? 18).padStart(2, "0")} drop window is still right on schedule. Released 2 booster bundles and a 151 tin right on the dot.`,
-  (m) =>
-    `Heads up for ${m.city} collectors: ${m.retailer} (${m.id}) is active and touchscreen is responsive. Best to show up ~3 mins before :${String(m.anchorMinute ?? 25).padStart(2, "0")} so you beat the cooldown timer.`,
-  (m) =>
-    `Stopped by ${m.retailer} ${m.city} on my route run. Machine vended right at :${String(m.anchorMinute ?? 35).padStart(2, "0")} past the hour — Prismatic & Surging Sparks packs were both showing in the front row.`,
-  (m) =>
-    `Confirmed ${m.id} (${m.retailer} ${m.city}) is sticking to the ${m.intervalMinutes ?? 60}m cadence at :${String(m.anchorMinute ?? 15).padStart(2, "0")}. Left plenty of stock for the next window!`,
-  (m) =>
-    `Quick status check for ${m.city}, ${m.state}: ${m.retailer} kiosk (${m.id}) is stocked and dropping cleanly on the :${String(m.anchorMinute ?? 42).padStart(2, "0")} timer.`,
+  (m) => {
+    const mm = String(m.anchorMinute ?? 18).padStart(2, "0");
+    const cycle = m.intervalMinutes ?? 60;
+    return `Timer on this ${m.retailer} kiosk has been holding steady around :${mm} past the hour (${cycle}m cycle). Usually unlocks 1–2 items per cooldown window rather than the whole row at once.`;
+  },
+  (m) => {
+    const mm = String(m.anchorMinute ?? 25).padStart(2, "0");
+    return `Tip for anyone checking this ${m.retailer} in ${m.city}: if the main splash screen shows sold out, tap through the individual set tabs right at :${mm} when the per-SKU cooldown clears.`;
+  },
+  (m) => {
+    const mm = String(m.anchorMinute ?? 35).padStart(2, "0");
+    const cycle = m.intervalMinutes ?? 60;
+    return `Good to see another confirmation on the :${mm} window here—most of the ${m.retailer} kiosks around ${m.city} have been running on this same ${cycle}-minute stagger lately.`;
+  },
+  (m) => {
+    const mm = String(m.anchorMinute ?? 15).padStart(2, "0");
+    return `The :${mm} drop mark has been super reliable on this unit. Showing up 2–3 minutes before the minute rolls over is usually enough to catch the refresh before it goes back on cooldown.`;
+  },
+  (m) => {
+    const mm = String(m.anchorMinute ?? 42).padStart(2, "0");
+    return `Kiosk is located right near the main entrance / customer service desk at this ${m.retailer}. Card reader and touchscreen have been working cleanly on the :${mm} timer.`;
+  },
+  (m) => {
+    const mm = String(m.anchorMinute ?? 20).padStart(2, "0");
+    const cycle = m.intervalMinutes ?? 60;
+    return `If you miss the :${mm} window here, the machine locks out for ${cycle} minutes even if you can still see Booster Bundles or tins physically sitting on the coil.`;
+  },
+  (m) => {
+    const mm = String(m.anchorMinute ?? 12).padStart(2, "0");
+    return `Surging Sparks sleeved boosters and 151 tins have been rotating through the front slots on this ${m.retailer} machine right around :${mm} past the hour.`;
+  },
+  (m) => {
+    const mm = String(m.anchorMinute ?? 30).padStart(2, "0");
+    const cycle = m.intervalMinutes ?? 60;
+    return `The ${cycle}-minute cadence at :${mm} is still spot-on for this ${m.city} ${m.retailer}. Appreciate everyone logging their drop times so the countdown stays calibrated!`;
+  },
+  (m) => {
+    const mm = String(m.anchorMinute ?? 48).padStart(2, "0");
+    return `Heads up for ${m.city} collectors: don't trust the 'Out of Stock' banner on the attract screen—tap the screen right at :${mm} and check the Booster Bundle tab directly.`;
+  },
+  (m) => {
+    const mm = String(m.anchorMinute ?? 10).padStart(2, "0");
+    return `This ${m.retailer} location usually gets serviced mid-week by the route rep, and the :${mm} hourly drip keeps stock lasting several days instead of getting wiped out at open.`;
+  },
 ];
+
+function buildSensibleNewsComment(post: { slug: string; title: string; category: string }): string {
+  const lower = `${post.slug} ${post.title}`.toLowerCase();
+  if (lower.includes("sams-club") || lower.includes("151-mini-tins")) {
+    return "$34.98 for a 4-pack of 151 + 30th Celebration mini tins works out to $8.74 per tin. Way better than paying $18+ per tin on secondary—definitely watching for pallets around Nov 20.";
+  }
+  if (lower.includes("lottery") || lower.includes("queue") || lower.includes("walmart")) {
+    return "The online queues and EQL draws have honestly been the fairest way to land ETBs at MSRP lately without having to camp customer service on Friday mornings.";
+  }
+  if (lower.includes("prismatic")) {
+    return "Glad they're staggering Prismatic Evolutions across both the vending kiosks and retail waves—the per-hour cooldown on the kiosks gives regular collectors a much better shot.";
+  }
+  if (lower.includes("surging-sparks")) {
+    return "Surging Sparks Booster Bundles have been popping up way more consistently in the grocery kiosks this week compared to big-box shelves.";
+  }
+  return "Super helpful breakdown—having the exact dates and retail allocation numbers in one place makes planning route runs way easier.";
+}
 
 const TRAFFIC_AND_EFFICIENCY_PLAYBOOK: {
   title: string;
@@ -374,52 +427,83 @@ export const workerUserBot: Adapter = {
       }
     }
 
-    // 4. Post 2 helpful collector comments on machines/news if none posted in the last 6 hours
-    const recentBotComments = await db
+    // 4. Post up to 6 sensible collector comments per 24-hour day (~1 every 4 hours, strictly capped at 6/day)
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 3600_000);
+    const fourHoursAgo = new Date(Date.now() - 4 * 3600_000);
+    const dayBotComments = await db
       .select()
       .from(comments)
       .where(
         and(
           eq(comments.userId, WORKER_BOT_USER.id),
-          gte(comments.createdAt, sixHoursAgo),
+          gte(comments.createdAt, twentyFourHoursAgo),
         ),
       );
 
-    if (recentBotComments.length === 0 || forceReport) {
-      const existingBotCommentTargets = new Set(
-        (
-          await db
-            .select({ targetId: comments.targetId })
-            .from(comments)
-            .where(eq(comments.userId, WORKER_BOT_USER.id))
-        ).map((c) => c.targetId),
-      );
+    const recentFourHourComments = dayBotComments.filter(
+      (c) => new Date(c.createdAt).getTime() >= fourHoursAgo.getTime(),
+    );
+    const remainingDailyQuota = Math.max(0, MAX_DAILY_BOT_COMMENTS - dayBotComments.length);
 
-      const commentCandidates = [
-        ...popularMachineIds
-          .map((id) => scheduledMachines.find((m) => m.id === id))
-          .filter((m): m is NonNullable<typeof m> => Boolean(m)),
-        ...scheduledMachines,
-      ].filter(
-        (m, idx, arr) =>
-          arr.findIndex((x) => x.id === m.id) === idx && !existingBotCommentTargets.has(m.id),
-      );
+    if (remainingDailyQuota > 0 && (recentFourHourComments.length === 0 || forceReport)) {
+      const allBotComments = await db
+        .select({ targetType: comments.targetType, targetId: comments.targetId, body: comments.body })
+        .from(comments)
+        .where(eq(comments.userId, WORKER_BOT_USER.id));
 
-      for (let i = 0; i < Math.min(2, commentCandidates.length); i++) {
-        const m = commentCandidates[i];
-        const template =
-          HELPFUL_MACHINE_COMMENTS[(Date.now() + i) % HELPFUL_MACHINE_COMMENTS.length];
-        const body = template(m);
+      const existingBotCommentTargets = new Set(allBotComments.map((c) => `${c.targetType}:${c.targetId}`));
+      const existingBotBodies = new Set(allBotComments.map((c) => c.body));
 
-        await db.insert(comments).values({
-          targetType: "machine",
-          targetId: m.id,
-          userId: WORKER_BOT_USER.id,
-          body,
-          hidden: false,
-          createdAt: new Date(Date.now() - (i + 1) * 9 * 60_000),
-        });
-        commentsPosted++;
+      // Post 1 comment per 4-hour window so 6 windows/day = 6 comments/day max
+      const toPostCount = Math.min(1, remainingDailyQuota);
+
+      // Alternate between commenting on a fresh News article (if any uncommented) and a popular scheduled Machine
+      const uncommentedNews = allNews.filter((n) => !existingBotCommentTargets.has(`news:${n.slug}`));
+      if (uncommentedNews.length > 0 && dayBotComments.length % 3 === 2) {
+        const post = uncommentedNews[0];
+        const body = buildSensibleNewsComment(post);
+        if (!existingBotBodies.has(body)) {
+          await db.insert(comments).values({
+            targetType: "news",
+            targetId: post.slug,
+            userId: WORKER_BOT_USER.id,
+            body,
+            hidden: false,
+            createdAt: new Date(Date.now() - 4 * 60_000),
+          });
+          commentsPosted++;
+        }
+      }
+
+      if (commentsPosted < toPostCount) {
+        const commentCandidates = [
+          ...popularMachineIds
+            .map((id) => scheduledMachines.find((m) => m.id === id))
+            .filter((m): m is NonNullable<typeof m> => Boolean(m)),
+          ...scheduledMachines,
+        ].filter(
+          (m, idx, arr) =>
+            arr.findIndex((x) => x.id === m.id) === idx &&
+            !existingBotCommentTargets.has(`machine:${m.id}`),
+        );
+
+        for (let i = 0; i < commentCandidates.length && commentsPosted < toPostCount; i++) {
+          const m = commentCandidates[i];
+          const templateIdx = (allBotComments.length + i) % SENSIBLE_MACHINE_COMMENTS.length;
+          const body = SENSIBLE_MACHINE_COMMENTS[templateIdx](m);
+          if (existingBotBodies.has(body)) continue;
+
+          await db.insert(comments).values({
+            targetType: "machine",
+            targetId: m.id,
+            userId: WORKER_BOT_USER.id,
+            body,
+            hidden: false,
+            createdAt: new Date(Date.now() - 6 * 60_000),
+          });
+          existingBotBodies.add(body);
+          commentsPosted++;
+        }
       }
     }
 
