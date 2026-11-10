@@ -7,7 +7,7 @@
       "emailVerified": 1,
       "image": null,
       "createdAt": "2026-10-25T18:00:00.000Z",
-      "updatedAt": "2026-10-25T18:00:00.000Z",
+      "updatedAt": "2026-11-10T00:58:14.715Z",
       "role": "admin",
       "reputation": 90,
       "plan": "premium",
@@ -28,7 +28,7 @@
       "emailVerified": 1,
       "image": null,
       "createdAt": "2026-11-02T16:30:00.000Z",
-      "updatedAt": "2026-11-02T16:30:00.000Z",
+      "updatedAt": "2026-11-10T00:58:14.716Z",
       "role": "user",
       "reputation": 2,
       "plan": "free",
@@ -49,7 +49,7 @@
       "emailVerified": 0,
       "image": null,
       "createdAt": "2026-11-04T21:15:00.000Z",
-      "updatedAt": "2026-11-04T21:15:00.000Z",
+      "updatedAt": "2026-11-10T00:58:14.717Z",
       "role": "user",
       "reputation": 0,
       "plan": "free",
@@ -70,7 +70,7 @@
       "emailVerified": 1,
       "image": null,
       "createdAt": "2026-10-28T12:00:00.000Z",
-      "updatedAt": "2026-11-10T00:54:07.477Z",
+      "updatedAt": "2026-11-10T00:58:14.717Z",
       "role": "user",
       "reputation": 117,
       "plan": "premium",
@@ -91,7 +91,7 @@
       "emailVerified": 1,
       "image": null,
       "createdAt": "2026-11-06T15:14:22.540Z",
-      "updatedAt": "2026-11-09T02:42:15.281Z",
+      "updatedAt": "2026-11-10T00:58:14.718Z",
       "role": "user",
       "reputation": 0,
       "plan": "free",
@@ -112,7 +112,7 @@
       "emailVerified": 1,
       "image": null,
       "createdAt": "2026-11-08T19:08:17.069Z",
-      "updatedAt": "2026-11-09T02:42:15.282Z",
+      "updatedAt": "2026-11-10T00:58:14.718Z",
       "role": "user",
       "reputation": 0,
       "plan": "free",
@@ -133,7 +133,7 @@
       "emailVerified": 1,
       "image": null,
       "createdAt": "2026-11-09T02:36:03.811Z",
-      "updatedAt": "2026-11-09T02:42:15.283Z",
+      "updatedAt": "2026-11-10T00:58:14.719Z",
       "role": "user",
       "reputation": 0,
       "plan": "free",
@@ -154,7 +154,7 @@
       "emailVerified": 1,
       "image": null,
       "createdAt": "2026-11-09T02:55:13.196Z",
-      "updatedAt": "2026-11-09T02:55:13.250Z",
+      "updatedAt": "2026-11-10T00:58:14.719Z",
       "role": "user",
       "reputation": 0,
       "plan": "free",
@@ -175,7 +175,7 @@
       "emailVerified": 1,
       "image": null,
       "createdAt": "2026-11-09T03:00:16.953Z",
-      "updatedAt": "2026-11-09T03:00:16.959Z",
+      "updatedAt": "2026-11-10T00:58:14.720Z",
       "role": "user",
       "reputation": 0,
       "plan": "free",
@@ -196,7 +196,7 @@
       "emailVerified": 1,
       "image": null,
       "createdAt": "2026-11-09T03:04:45.556Z",
-      "updatedAt": "2026-11-09T03:36:52.447Z",
+      "updatedAt": "2026-11-10T00:58:14.720Z",
       "role": "user",
       "reputation": 0,
       "plan": "free",
@@ -217,7 +217,7 @@
       "emailVerified": 1,
       "image": null,
       "createdAt": "2026-11-09T03:13:18.234Z",
-      "updatedAt": "2026-11-09T03:13:18.244Z",
+      "updatedAt": "2026-11-10T00:58:14.721Z",
       "role": "user",
       "reputation": 0,
       "plan": "free",
@@ -238,7 +238,7 @@
       "emailVerified": 1,
       "image": null,
       "createdAt": "2026-11-09T03:28:35.239Z",
-      "updatedAt": "2026-11-09T03:28:35.242Z",
+      "updatedAt": "2026-11-10T00:58:14.721Z",
       "role": "user",
       "reputation": 0,
       "plan": "free",
@@ -259,7 +259,7 @@
       "emailVerified": 1,
       "image": null,
       "createdAt": "2026-11-09T03:44:45.762Z",
-      "updatedAt": "2026-11-09T03:44:45.767Z",
+      "updatedAt": "2026-11-10T00:58:14.722Z",
       "role": "user",
       "reputation": 0,
       "plan": "free",
@@ -280,7 +280,7 @@
       "emailVerified": 1,
       "image": null,
       "createdAt": "2026-11-09T06:44:31.761Z",
-      "updatedAt": "2026-11-09T06:44:31.763Z",
+      "updatedAt": "2026-11-10T00:58:14.723Z",
       "role": "user",
       "reputation": 0,
       "plan": "free",
@@ -301,7 +301,7 @@
       "emailVerified": 1,
       "image": null,
       "createdAt": "2026-11-09T10:14:29.739Z",
-      "updatedAt": "2026-11-09T10:14:29.741Z",
+      "updatedAt": "2026-11-10T00:58:14.723Z",
       "role": "user",
       "reputation": 0,
       "plan": "free",
@@ -322,7 +322,7 @@
       "emailVerified": 1,
       "image": null,
       "createdAt": "2026-11-09T13:38:13.136Z",
-      "updatedAt": "2026-11-09T13:38:13.146Z",
+      "updatedAt": "2026-11-10T00:58:14.724Z",
       "role": "user",
       "reputation": 0,
       "plan": "free",
@@ -343,7 +343,7 @@
       "emailVerified": 1,
       "image": null,
       "createdAt": "2026-11-09T22:51:58.608Z",
-      "updatedAt": "2026-11-09T22:51:58.612Z",
+      "updatedAt": "2026-11-10T00:58:14.725Z",
       "role": "user",
       "reputation": 0,
       "plan": "free",
@@ -381,7 +381,7 @@
       "windowEndMinute": null,
       "active": 1,
       "lastNotifiedAt": null,
-      "createdAt": "2026-11-10T00:54:04.445Z"
+      "createdAt": "2026-11-10T00:57:43.598Z"
     },
     {
       "id": "alert-owner-q01010",
@@ -405,7 +405,7 @@
       "windowEndMinute": null,
       "active": 1,
       "lastNotifiedAt": null,
-      "createdAt": "2026-11-10T00:54:04.445Z"
+      "createdAt": "2026-11-10T00:57:43.598Z"
     },
     {
       "id": "alert-owner-q00120",
@@ -428,7 +428,7 @@
       "windowEndMinute": null,
       "active": 1,
       "lastNotifiedAt": null,
-      "createdAt": "2026-11-10T00:54:04.445Z"
+      "createdAt": "2026-11-10T00:57:43.598Z"
     },
     {
       "id": "alert-owner-q00955",
@@ -451,7 +451,7 @@
       "windowEndMinute": null,
       "active": 1,
       "lastNotifiedAt": null,
-      "createdAt": "2026-11-10T00:54:04.445Z"
+      "createdAt": "2026-11-10T00:57:43.598Z"
     },
     {
       "id": "alert-owner-q00226",
@@ -474,7 +474,7 @@
       "windowEndMinute": null,
       "active": 1,
       "lastNotifiedAt": null,
-      "createdAt": "2026-11-10T00:54:04.445Z"
+      "createdAt": "2026-11-10T00:57:43.598Z"
     },
     {
       "id": "alert-owner-restock",
@@ -498,7 +498,7 @@
       "windowEndMinute": null,
       "active": 1,
       "lastNotifiedAt": null,
-      "createdAt": "2026-11-10T00:54:04.445Z"
+      "createdAt": "2026-11-10T00:57:43.598Z"
     },
     {
       "id": "alert-owner-release",
@@ -520,8 +520,8 @@
       "windowStartMinute": null,
       "windowEndMinute": null,
       "active": 1,
-      "lastNotifiedAt": null,
-      "createdAt": "2026-11-10T00:54:04.445Z"
+      "lastNotifiedAt": "2026-11-10T00:57:56.714Z",
+      "createdAt": "2026-11-10T00:57:43.598Z"
     },
     {
       "id": "alert-rayquaza-1-zip85013",
@@ -543,8 +543,8 @@
       "windowStartMinute": null,
       "windowEndMinute": null,
       "active": 1,
-      "lastNotifiedAt": "2026-11-10T00:55:00.288Z",
-      "createdAt": "2026-11-10T00:54:04.445Z"
+      "lastNotifiedAt": null,
+      "createdAt": "2026-11-10T00:57:43.598Z"
     },
     {
       "id": "alert-rayquaza-2-q01328",
@@ -567,7 +567,7 @@
       "windowEndMinute": null,
       "active": 1,
       "lastNotifiedAt": null,
-      "createdAt": "2026-11-10T00:54:04.445Z"
+      "createdAt": "2026-11-10T00:57:43.598Z"
     },
     {
       "id": "alert-rayquaza-3-q00364",
@@ -590,7 +590,7 @@
       "windowEndMinute": null,
       "active": 1,
       "lastNotifiedAt": null,
-      "createdAt": "2026-11-10T00:54:04.445Z"
+      "createdAt": "2026-11-10T00:57:43.598Z"
     },
     {
       "id": "alert-rayquaza-4-q00337",
@@ -613,7 +613,7 @@
       "windowEndMinute": null,
       "active": 1,
       "lastNotifiedAt": null,
-      "createdAt": "2026-11-10T00:54:04.445Z"
+      "createdAt": "2026-11-10T00:57:43.598Z"
     },
     {
       "id": "alert-rayquaza-5-q00361",
@@ -636,7 +636,7 @@
       "windowEndMinute": null,
       "active": 1,
       "lastNotifiedAt": null,
-      "createdAt": "2026-11-10T00:54:04.445Z"
+      "createdAt": "2026-11-10T00:57:43.598Z"
     },
     {
       "id": "alert-rayquaza-6-q00377",
@@ -659,7 +659,7 @@
       "windowEndMinute": null,
       "active": 1,
       "lastNotifiedAt": null,
-      "createdAt": "2026-11-10T00:54:04.445Z"
+      "createdAt": "2026-11-10T00:57:43.598Z"
     },
     {
       "id": "alert-rayquaza-7-q00365",
@@ -681,8 +681,8 @@
       "windowStartMinute": null,
       "windowEndMinute": null,
       "active": 1,
-      "lastNotifiedAt": "2026-11-10T00:55:00.481Z",
-      "createdAt": "2026-11-10T00:54:04.445Z"
+      "lastNotifiedAt": null,
+      "createdAt": "2026-11-10T00:57:43.598Z"
     },
     {
       "id": "alert-rayquaza-8-q00369",
@@ -705,7 +705,7 @@
       "windowEndMinute": null,
       "active": 1,
       "lastNotifiedAt": null,
-      "createdAt": "2026-11-10T00:54:04.445Z"
+      "createdAt": "2026-11-10T00:57:43.598Z"
     },
     {
       "id": "alert-rayquaza-9-q01301",
@@ -728,7 +728,7 @@
       "windowEndMinute": null,
       "active": 1,
       "lastNotifiedAt": null,
-      "createdAt": "2026-11-10T00:54:04.445Z"
+      "createdAt": "2026-11-10T00:57:43.598Z"
     },
     {
       "id": "alert-rayquaza-10-restock",
@@ -751,7 +751,7 @@
       "windowEndMinute": null,
       "active": 1,
       "lastNotifiedAt": null,
-      "createdAt": "2026-11-10T00:54:04.445Z"
+      "createdAt": "2026-11-10T00:57:43.598Z"
     },
     {
       "id": "b3ce77e3-7ceb-4d7a-9a8f-b1409270fa40",
@@ -796,7 +796,7 @@
       "windowStartMinute": null,
       "windowEndMinute": null,
       "active": 1,
-      "lastNotifiedAt": "2026-11-10T00:54:27.749Z",
+      "lastNotifiedAt": "2026-11-10T00:57:56.789Z",
       "createdAt": "2026-11-08T18:26:25.790Z"
     },
     {
@@ -1003,7 +1003,7 @@
       "windowStartMinute": null,
       "windowEndMinute": null,
       "active": 1,
-      "lastNotifiedAt": "2026-11-10T00:54:27.912Z",
+      "lastNotifiedAt": "2026-11-10T00:57:56.791Z",
       "createdAt": "2026-11-09T03:37:00.459Z"
     },
     {
@@ -1095,7 +1095,7 @@
       "windowStartMinute": null,
       "windowEndMinute": null,
       "active": 1,
-      "lastNotifiedAt": "2026-11-10T00:54:27.571Z",
+      "lastNotifiedAt": "2026-11-10T00:57:56.785Z",
       "createdAt": "2026-11-09T03:39:57.050Z"
     },
     {
