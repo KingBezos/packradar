@@ -283,7 +283,6 @@ export async function seedIfEmpty(db: DB) {
             note: OBSERVATION_NOTES[noteIdx],
             source: "scraped",
             matchedCandidateId: candId,
-            ipHash: `seed-corridor-1-${code}`,
             createdAt: obsTime1,
           },
           {
@@ -295,7 +294,6 @@ export async function seedIfEmpty(db: DB) {
             note: OBSERVATION_NOTES[(noteIdx + 2) % OBSERVATION_NOTES.length],
             source: "scraped",
             matchedCandidateId: candId,
-            ipHash: `seed-corridor-2-${code}`,
             createdAt: obsTime2,
           },
         );
