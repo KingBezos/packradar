@@ -70,9 +70,9 @@
       "emailVerified": 1,
       "image": null,
       "createdAt": "2026-10-28T12:00:00.000Z",
-      "updatedAt": "2026-11-09T18:00:19.418Z",
+      "updatedAt": "2026-11-10T00:54:07.477Z",
       "role": "user",
-      "reputation": 81,
+      "reputation": 117,
       "plan": "premium",
       "planExpiresAt": null,
       "stripeCustomerId": null,
@@ -380,8 +380,8 @@
       "windowStartMinute": null,
       "windowEndMinute": null,
       "active": 1,
-      "lastNotifiedAt": "2026-11-09T04:10:00.031Z",
-      "createdAt": "2026-11-09T02:48:26.548Z"
+      "lastNotifiedAt": null,
+      "createdAt": "2026-11-10T00:54:04.445Z"
     },
     {
       "id": "alert-owner-q01010",
@@ -405,7 +405,7 @@
       "windowEndMinute": null,
       "active": 1,
       "lastNotifiedAt": null,
-      "createdAt": "2026-11-09T02:48:26.548Z"
+      "createdAt": "2026-11-10T00:54:04.445Z"
     },
     {
       "id": "alert-owner-q00120",
@@ -428,7 +428,7 @@
       "windowEndMinute": null,
       "active": 1,
       "lastNotifiedAt": null,
-      "createdAt": "2026-11-09T02:48:26.548Z"
+      "createdAt": "2026-11-10T00:54:04.445Z"
     },
     {
       "id": "alert-owner-q00955",
@@ -450,8 +450,8 @@
       "windowStartMinute": null,
       "windowEndMinute": null,
       "active": 1,
-      "lastNotifiedAt": "2026-11-09T18:10:00.036Z",
-      "createdAt": "2026-11-09T02:48:26.548Z"
+      "lastNotifiedAt": null,
+      "createdAt": "2026-11-10T00:54:04.445Z"
     },
     {
       "id": "alert-owner-q00226",
@@ -474,7 +474,7 @@
       "windowEndMinute": null,
       "active": 1,
       "lastNotifiedAt": null,
-      "createdAt": "2026-11-09T02:48:26.548Z"
+      "createdAt": "2026-11-10T00:54:04.445Z"
     },
     {
       "id": "alert-owner-restock",
@@ -498,7 +498,7 @@
       "windowEndMinute": null,
       "active": 1,
       "lastNotifiedAt": null,
-      "createdAt": "2026-11-09T02:48:26.548Z"
+      "createdAt": "2026-11-10T00:54:04.445Z"
     },
     {
       "id": "alert-owner-release",
@@ -520,8 +520,8 @@
       "windowStartMinute": null,
       "windowEndMinute": null,
       "active": 1,
-      "lastNotifiedAt": "2026-11-10T00:00:16.943Z",
-      "createdAt": "2026-11-09T02:48:26.548Z"
+      "lastNotifiedAt": null,
+      "createdAt": "2026-11-10T00:54:04.445Z"
     },
     {
       "id": "alert-rayquaza-1-zip85013",
@@ -543,8 +543,8 @@
       "windowStartMinute": null,
       "windowEndMinute": null,
       "active": 1,
-      "lastNotifiedAt": "2026-11-09T03:45:00.050Z",
-      "createdAt": "2026-11-09T02:48:26.548Z"
+      "lastNotifiedAt": "2026-11-10T00:55:00.288Z",
+      "createdAt": "2026-11-10T00:54:04.445Z"
     },
     {
       "id": "alert-rayquaza-2-q01328",
@@ -566,8 +566,8 @@
       "windowStartMinute": null,
       "windowEndMinute": null,
       "active": 1,
-      "lastNotifiedAt": "2026-11-09T18:40:00.022Z",
-      "createdAt": "2026-11-09T02:48:26.548Z"
+      "lastNotifiedAt": null,
+      "createdAt": "2026-11-10T00:54:04.445Z"
     },
     {
       "id": "alert-rayquaza-3-q00364",
@@ -589,8 +589,8 @@
       "windowStartMinute": null,
       "windowEndMinute": null,
       "active": 1,
-      "lastNotifiedAt": "2026-11-09T15:45:00.049Z",
-      "createdAt": "2026-11-09T02:48:26.548Z"
+      "lastNotifiedAt": null,
+      "createdAt": "2026-11-10T00:54:04.445Z"
     },
     {
       "id": "alert-rayquaza-4-q00337",
@@ -613,7 +613,7 @@
       "windowEndMinute": null,
       "active": 1,
       "lastNotifiedAt": null,
-      "createdAt": "2026-11-09T02:48:26.548Z"
+      "createdAt": "2026-11-10T00:54:04.445Z"
     },
     {
       "id": "alert-rayquaza-5-q00361",
@@ -635,8 +635,8 @@
       "windowStartMinute": null,
       "windowEndMinute": null,
       "active": 1,
-      "lastNotifiedAt": "2026-11-09T18:25:00.056Z",
-      "createdAt": "2026-11-09T02:48:26.548Z"
+      "lastNotifiedAt": null,
+      "createdAt": "2026-11-10T00:54:04.445Z"
     },
     {
       "id": "alert-rayquaza-6-q00377",
@@ -659,7 +659,7 @@
       "windowEndMinute": null,
       "active": 1,
       "lastNotifiedAt": null,
-      "createdAt": "2026-11-09T02:48:26.548Z"
+      "createdAt": "2026-11-10T00:54:04.445Z"
     },
     {
       "id": "alert-rayquaza-7-q00365",
@@ -681,8 +681,8 @@
       "windowStartMinute": null,
       "windowEndMinute": null,
       "active": 1,
-      "lastNotifiedAt": "2026-11-09T17:55:00.034Z",
-      "createdAt": "2026-11-09T02:48:26.548Z"
+      "lastNotifiedAt": "2026-11-10T00:55:00.481Z",
+      "createdAt": "2026-11-10T00:54:04.445Z"
     },
     {
       "id": "alert-rayquaza-8-q00369",
@@ -705,7 +705,7 @@
       "windowEndMinute": null,
       "active": 1,
       "lastNotifiedAt": null,
-      "createdAt": "2026-11-09T02:48:26.548Z"
+      "createdAt": "2026-11-10T00:54:04.445Z"
     },
     {
       "id": "alert-rayquaza-9-q01301",
@@ -728,7 +728,7 @@
       "windowEndMinute": null,
       "active": 1,
       "lastNotifiedAt": null,
-      "createdAt": "2026-11-09T02:48:26.548Z"
+      "createdAt": "2026-11-10T00:54:04.445Z"
     },
     {
       "id": "alert-rayquaza-10-restock",
@@ -751,7 +751,7 @@
       "windowEndMinute": null,
       "active": 1,
       "lastNotifiedAt": null,
-      "createdAt": "2026-11-09T02:48:26.548Z"
+      "createdAt": "2026-11-10T00:54:04.445Z"
     },
     {
       "id": "b3ce77e3-7ceb-4d7a-9a8f-b1409270fa40",
@@ -796,7 +796,7 @@
       "windowStartMinute": null,
       "windowEndMinute": null,
       "active": 1,
-      "lastNotifiedAt": "2026-11-09T02:37:48.672Z",
+      "lastNotifiedAt": "2026-11-10T00:54:27.749Z",
       "createdAt": "2026-11-08T18:26:25.790Z"
     },
     {
@@ -1003,7 +1003,7 @@
       "windowStartMinute": null,
       "windowEndMinute": null,
       "active": 1,
-      "lastNotifiedAt": "2026-11-10T00:00:16.941Z",
+      "lastNotifiedAt": "2026-11-10T00:54:27.912Z",
       "createdAt": "2026-11-09T03:37:00.459Z"
     },
     {
@@ -1095,7 +1095,7 @@
       "windowStartMinute": null,
       "windowEndMinute": null,
       "active": 1,
-      "lastNotifiedAt": "2026-11-10T00:00:16.947Z",
+      "lastNotifiedAt": "2026-11-10T00:54:27.571Z",
       "createdAt": "2026-11-09T03:39:57.050Z"
     },
     {
@@ -1128,56 +1128,56 @@
       "userId": "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go",
       "delta": 90,
       "reason": "Verified vending drop & product spotter",
-      "createdAt": "2026-11-09T02:48:26.546Z"
+      "createdAt": "2026-11-10T00:54:04.443Z"
     },
     {
       "id": "rep-user-seed-rayquaza-2",
       "userId": "hI9VC9qnVaRkxImLuvsx6oOWh2oerkEa",
       "delta": 2,
       "reason": "Community drop confirmation",
-      "createdAt": "2026-11-09T02:48:26.546Z"
+      "createdAt": "2026-11-10T00:54:04.443Z"
     },
     {
       "id": "rep-pikachuelite-drop-q00810",
       "userId": "u-packradar-worker-bot",
       "delta": 2,
       "reason": "Report live drop at Q00810",
-      "createdAt": "2026-11-09T02:48:26.546Z"
+      "createdAt": "2026-11-10T00:54:04.443Z"
     },
     {
       "id": "rep-pikachuelite-stock-q00810",
       "userId": "u-packradar-worker-bot",
       "delta": 1,
       "reason": "Stock check at Q00810",
-      "createdAt": "2026-11-09T02:48:26.546Z"
+      "createdAt": "2026-11-10T00:54:04.443Z"
     },
     {
       "id": "rep-pikachuelite-drop-q01328",
       "userId": "u-packradar-worker-bot",
       "delta": 2,
       "reason": "Report live drop at Q01328",
-      "createdAt": "2026-11-09T02:48:26.546Z"
+      "createdAt": "2026-11-10T00:54:04.443Z"
     },
     {
       "id": "rep-pikachuelite-stock-q01328",
       "userId": "u-packradar-worker-bot",
       "delta": 1,
       "reason": "Stock check at Q01328",
-      "createdAt": "2026-11-09T02:48:26.546Z"
+      "createdAt": "2026-11-10T00:54:04.443Z"
     },
     {
       "id": "rep-pikachuelite-drop-q00901",
       "userId": "u-packradar-worker-bot",
       "delta": 2,
       "reason": "Report live drop at Q00901",
-      "createdAt": "2026-11-09T02:48:26.546Z"
+      "createdAt": "2026-11-10T00:54:04.443Z"
     },
     {
       "id": "rep-pikachuelite-stock-q00901",
       "userId": "u-packradar-worker-bot",
       "delta": 1,
       "reason": "Stock check at Q00901",
-      "createdAt": "2026-11-09T02:48:26.546Z"
+      "createdAt": "2026-11-10T00:54:04.443Z"
     },
     {
       "id": "b88ad14f-c9e7-473c-82af-4298b9d3545f",
@@ -1640,6 +1640,48 @@
       "delta": 1,
       "reason": "Stock check at Q00506",
       "createdAt": "2026-11-09T17:36:19.417Z"
+    },
+    {
+      "id": "ddd78368-7253-4b89-b70c-71754c79b41d",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q01328",
+      "createdAt": "2026-11-10T00:54:07.469Z"
+    },
+    {
+      "id": "1062d5e4-96d3-475f-8cca-0518eaa90058",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q01328",
+      "createdAt": "2026-11-10T00:54:07.470Z"
+    },
+    {
+      "id": "5e5043ef-8fe7-4668-aeaa-edec7c446ffc",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q00901",
+      "createdAt": "2026-11-10T00:42:07.473Z"
+    },
+    {
+      "id": "9da72314-1513-4e69-9c9c-874e8fb83fc9",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q00901",
+      "createdAt": "2026-11-10T00:42:07.473Z"
+    },
+    {
+      "id": "61c9a2e9-cd03-4fdb-b528-e0e9aaf3e26a",
+      "userId": "u-packradar-worker-bot",
+      "delta": 2,
+      "reason": "Report live drop at Q00506",
+      "createdAt": "2026-11-10T00:30:07.476Z"
+    },
+    {
+      "id": "7048febc-b241-4008-aa2f-1c98132c7b99",
+      "userId": "u-packradar-worker-bot",
+      "delta": 1,
+      "reason": "Stock check at Q00506",
+      "createdAt": "2026-11-10T00:30:07.476Z"
     }
   ],
   "dropObservations": [
@@ -2614,6 +2656,42 @@
       "sourceUrl": null,
       "note": "Confirmed on-time :50 drop window",
       "createdAt": "2026-11-09T17:36:19.411Z"
+    },
+    {
+      "id": "b043e966-d7fa-43bc-93f9-fa5ade86764c",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-10T00:50:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "a3fded4b-6187-4dbc-b8f6-b32a0732ae2f",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :50 drop window",
+      "createdAt": "2026-11-10T00:54:07.442Z"
+    },
+    {
+      "id": "0a12c411-05fb-4170-bf48-041b17733d3c",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-09T23:59:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "3b0e90f3-6dfb-45e8-9a31-a0d00b5fa3dc",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :29 drop window",
+      "createdAt": "2026-11-10T00:42:07.470Z"
+    },
+    {
+      "id": "c6ecbe27-f95c-4893-beed-220c4fe7924e",
+      "machineId": "Q00506",
+      "userId": "u-packradar-worker-bot",
+      "observedAt": "2026-11-09T22:50:00.000Z",
+      "kind": "dropped",
+      "matchedCandidateId": "9ac1bd1e-a183-472c-882d-6c815df4dfe4",
+      "source": "user",
+      "sourceUrl": null,
+      "note": "Confirmed on-time :50 drop window",
+      "createdAt": "2026-11-10T00:30:07.473Z"
     }
   ],
   "stockReports": [
@@ -3264,6 +3342,30 @@
       "status": "stocked",
       "note": "Front row stocked with Booster Bundles & tins",
       "createdAt": "2026-11-09T17:36:19.412Z"
+    },
+    {
+      "id": "dba6237c-14ff-4755-a18c-526331cbc197",
+      "machineId": "Q01328",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-10T00:54:07.444Z"
+    },
+    {
+      "id": "21d2c675-5ec1-4c0e-85a2-2e78112bee78",
+      "machineId": "Q00901",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-10T00:42:07.470Z"
+    },
+    {
+      "id": "0910eda3-7519-4e28-9d16-aaf1747f5d33",
+      "machineId": "Q00506",
+      "userId": "u-packradar-worker-bot",
+      "status": "stocked",
+      "note": "Front row stocked with Booster Bundles & tins",
+      "createdAt": "2026-11-10T00:30:07.474Z"
     }
   ],
   "comments": [

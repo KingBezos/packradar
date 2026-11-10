@@ -215,12 +215,12 @@
     "e966ecf3f74030ab",
     "a6225296ec5c11a9"
   ],
-  "totalBotHitsExcluded": 3633,
+  "totalBotHitsExcluded": 3647,
   "botBreakdown": {
-    "Internal QA & Health Checks": 3251,
+    "Internal QA & Health Checks": 3264,
     "Discord Link Preview (Discordbot)": 4,
     "Search Engine Crawler (Google/Bing/DuckDuckGo)": 1,
-    "Headless Browser / Automation (Puppeteer/Playwright/Curl/Node)": 26,
+    "Headless Browser / Automation (Puppeteer/Playwright/Curl/Node)": 27,
     "Empty or Synthetic User-Agent": 26,
     "Social Preview Bot (Twitter/FB/Slack/Telegram/Reddit)": 220,
     "Non-Browser HTTP Client": 103,
@@ -1828,7 +1828,7 @@
         "a6225296ec5c11a9",
         "0d1dd19288169b75"
       ],
-      "botHitsBlocked": 29,
+      "botHitsBlocked": 43,
       "signUps": 0,
       "searches": 4
     }
@@ -4586,7 +4586,6 @@
     }
   ],
   "activeVisitorsMap": {
-    "a6225296ec5c11a9": 1794270657435,
     "0d1dd19288169b75": 1794271482139
   },
   "totalSearches": 202,
@@ -7254,7 +7253,7 @@
     }
   },
   "userLastActiveMap": {
-    "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go": "2026-11-10T00:49:51.760Z",
+    "jQFs9xPMTQ6Y4eQS5DGfzi4y5Nxsy5go": "2026-11-10T00:55:11.755Z",
     "cxr93C94t2VMtGoiA5F3OCQjleiTTN6d": "2026-11-09T02:37:09.240Z",
     "0Ih30V4CH7zYbs3YW7QDXcRZs6I0bTVp": "2026-11-09T02:56:51.845Z",
     "uAs02vhou3iDpjtisMT9qJBjVf7p32CT": "2026-11-09T03:01:03.076Z",
@@ -7267,5 +7266,5 @@
     "Qwy3J9j7YwyyJ6DYVcNj90CkHPZCgHeR": "2026-11-09T13:39:14.170Z",
     "r47fkuEdnUGH1O74MUySr1YkaKSbqccZ": "2026-11-10T00:15:40.827Z"
   },
-  "updatedAt": "2026-11-10T00:49:51.760Z"
+  "updatedAt": "2026-11-10T00:55:11.755Z"
 }

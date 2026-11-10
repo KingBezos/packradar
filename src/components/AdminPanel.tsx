@@ -329,6 +329,8 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
   // 2. Users
   const [users, setUsers] = useState<ManagedUser[]>([]);
   const [userSearch, setUserSearch] = useState("");
+  const [userSortBy, setUserSortBy] = useState<"lastActive" | "joined" | "reputation" | "alerts" | "name">("lastActive");
+  const [userSortDir, setUserSortDir] = useState<"desc" | "asc">("desc");
   const [editingNames, setEditingNames] = useState<Record<string, string>>({});
   const [editingReps, setEditingReps] = useState<Record<string, string>>({});
   const [selectedUserDetail, setSelectedUserDetail] = useState<UserDetailPayload | null>(null);
@@ -797,16 +799,47 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
     );
   });
 
-  const filteredUsers = users.filter((u) => {
-    const q = userSearch.trim().toLowerCase();
-    if (!q) return true;
-    return (
-      u.name.toLowerCase().includes(q) ||
-      u.email.toLowerCase().includes(q) ||
-      u.role.toLowerCase().includes(q) ||
-      (u.homeZip ?? "").includes(q)
-    );
-  });
+  const toggleUserSort = (col: "lastActive" | "joined" | "reputation" | "alerts" | "name") => {
+    if (userSortBy === col) {
+      setUserSortDir((prev) => (prev === "desc" ? "asc" : "desc"));
+    } else {
+      setUserSortBy(col);
+      setUserSortDir(col === "name" ? "asc" : "desc");
+    }
+  };
+
+  const filteredUsers = users
+    .filter((u) => {
+      const q = userSearch.trim().toLowerCase();
+      if (!q) return true;
+      return (
+        u.name.toLowerCase().includes(q) ||
+        u.email.toLowerCase().includes(q) ||
+        u.role.toLowerCase().includes(q) ||
+        (u.homeZip ?? "").includes(q)
+      );
+    })
+    .slice()
+    .sort((a, b) => {
+      const mult = userSortDir === "desc" ? -1 : 1;
+      if (userSortBy === "lastActive") {
+        const ta = new Date(a.lastActiveAt || a.createdAt).getTime();
+        const tb = new Date(b.lastActiveAt || b.createdAt).getTime();
+        return (ta - tb) * mult;
+      }
+      if (userSortBy === "joined") {
+        const ta = new Date(a.createdAt).getTime();
+        const tb = new Date(b.createdAt).getTime();
+        return (ta - tb) * mult;
+      }
+      if (userSortBy === "reputation") {
+        return ((a.reputation ?? 0) - (b.reputation ?? 0)) * mult;
+      }
+      if (userSortBy === "alerts") {
+        return ((a.activeAlerts ?? 0) - (b.activeAlerts ?? 0)) * mult;
+      }
+      return a.name.localeCompare(b.name) * mult;
+    });
 
   const filteredMachines = machines
     .filter((m) => {
@@ -2958,14 +2991,71 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
             <table className="w-full text-left text-xs">
               <thead className="border-b border-line bg-panel-2/70 text-[11px] uppercase tracking-wider text-muted">
                 <tr>
-                  <th className="px-4 py-3">Spotter Handle</th>
+                  <th className="px-4 py-3">
+                    <button
+                      type="button"
+                      onClick={() => toggleUserSort("name")}
+                      className={`inline-flex items-center gap-1 uppercase tracking-wider transition hover:text-white ${
+                        userSortBy === "name" ? "text-volt font-extrabold" : "text-muted"
+                      }`}
+                    >
+                      Spotter Handle
+                      <span>{userSortBy === "name" ? (userSortDir === "desc" ? "↓" : "↑") : "↕"}</span>
+                    </button>
+                  </th>
                   <th className="px-4 py-3">Email &amp; Auth</th>
                   <th className="px-4 py-3">Role</th>
                   <th className="px-4 py-3">Plan</th>
-                  <th className="px-4 py-3">Reputation</th>
-                  <th className="px-4 py-3">ZIP / Alerts</th>
-                  <th className="px-4 py-3">Last Logged In / Active</th>
-                  <th className="px-4 py-3">Joined</th>
+                  <th className="px-4 py-3">
+                    <button
+                      type="button"
+                      onClick={() => toggleUserSort("reputation")}
+                      className={`inline-flex items-center gap-1 uppercase tracking-wider transition hover:text-white ${
+                        userSortBy === "reputation" ? "text-volt font-extrabold" : "text-muted"
+                      }`}
+                    >
+                      Reputation
+                      <span>{userSortBy === "reputation" ? (userSortDir === "desc" ? "↓" : "↑") : "↕"}</span>
+                    </button>
+                  </th>
+                  <th className="px-4 py-3">
+                    <button
+                      type="button"
+                      onClick={() => toggleUserSort("alerts")}
+                      className={`inline-flex items-center gap-1 uppercase tracking-wider transition hover:text-white ${
+                        userSortBy === "alerts" ? "text-volt font-extrabold" : "text-muted"
+                      }`}
+                    >
+                      ZIP / Alerts
+                      <span>{userSortBy === "alerts" ? (userSortDir === "desc" ? "↓" : "↑") : "↕"}</span>
+                    </button>
+                  </th>
+                  <th className="px-4 py-3">
+                    <button
+                      type="button"
+                      onClick={() => toggleUserSort("lastActive")}
+                      className={`inline-flex items-center gap-1 uppercase tracking-wider transition hover:text-white ${
+                        userSortBy === "lastActive" ? "text-volt font-extrabold" : "text-muted"
+                      }`}
+                      title="Click to sort by Last Logged In / Active"
+                    >
+                      Last Logged In / Active
+                      <span>{userSortBy === "lastActive" ? (userSortDir === "desc" ? "↓" : "↑") : "↕"}</span>
+                    </button>
+                  </th>
+                  <th className="px-4 py-3">
+                    <button
+                      type="button"
+                      onClick={() => toggleUserSort("joined")}
+                      className={`inline-flex items-center gap-1 uppercase tracking-wider transition hover:text-white ${
+                        userSortBy === "joined" ? "text-volt font-extrabold" : "text-muted"
+                      }`}
+                      title="Click to sort by Joined date"
+                    >
+                      Joined
+                      <span>{userSortBy === "joined" ? (userSortDir === "desc" ? "↓" : "↑") : "↕"}</span>
+                    </button>
+                  </th>
                   {isAdmin && <th className="px-4 py-3 text-right">Actions</th>}
                 </tr>
               </thead>
@@ -3202,7 +3292,20 @@ export function AdminPanel({ isAdmin }: { isAdmin: boolean }) {
                           );
                         })()}
                       </td>
-                      <td className="px-4 py-3 text-muted">{timeAgo(u.createdAt)}</td>
+                      <td className="px-4 py-3 text-muted">
+                        <div className="font-semibold text-slate-300">{timeAgo(u.createdAt)}</div>
+                        <div className="text-[10px] text-muted">
+                          {new Date(u.createdAt).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                          })}{" "}
+                          ·{" "}
+                          {new Date(u.createdAt).toLocaleTimeString("en-US", {
+                            hour: "numeric",
+                            minute: "2-digit",
+                          })}
+                        </div>
+                      </td>
                       {isAdmin && (
                         <td className="px-4 py-3 text-right">
                           <button
