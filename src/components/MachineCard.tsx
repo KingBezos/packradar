@@ -1,13 +1,12 @@
-"use client";
-
 import Link from "next/link";
-import { Lock, LockOpen, MapPin, Sparkles } from "lucide-react";
+import { Lock, MapPin, Sparkles } from "lucide-react";
 import type { Machine } from "@/db/schema";
 import { machineSchedule } from "@/lib/drops/engine";
 import { describeSchedule } from "@/lib/drops/schedule";
 import { LiveDropStatus } from "./live";
 import { AccuracyMeter } from "./AccuracyMeter";
 import { QuickAlertButton } from "./QuickAlertButton";
+import { UnlockTimerButton } from "./UnlockTimerButton";
 
 export function MachineCard({
   m,
@@ -24,18 +23,6 @@ export function MachineCard({
 }) {
   const sched = machineSchedule(m);
   const href = lockedTimer ? `/machines/${m.id}?locked=1` : `/machines/${m.id}`;
-
-  const handleUnlockScroll = (e: React.MouseEvent) => {
-    if (typeof window !== "undefined") {
-      const el = document.getElementById("instant-zip-capture");
-      if (el) {
-        e.preventDefault();
-        e.stopPropagation();
-        el.scrollIntoView({ behavior: "smooth", block: "center" });
-        window.dispatchEvent(new CustomEvent("packradar:focus-zip-capture"));
-      }
-    }
-  };
 
   const intervalText =
     m.intervalMinutes === 30
@@ -76,16 +63,7 @@ export function MachineCard({
           </div>
           <AccuracyMeter accuracy={m.accuracy} verified={m.scheduleVerified} size="sm" />
           <div className="mt-auto pt-1">
-            <button
-              type="button"
-              onClick={handleUnlockScroll}
-              className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-volt/50 bg-gradient-to-r from-yellow-500/20 to-amber-500/15 px-3 py-2 text-xs font-extrabold text-volt transition hover:border-volt hover:bg-volt hover:text-slate-950"
-            >
-              <LockOpen className="h-3.5 w-3.5 shrink-0" />
-              <span className="truncate">
-                {unlockLabel || "Unlock exact :XX timer — Free Account"}
-              </span>
-            </button>
+            <UnlockTimerButton label={unlockLabel || "Unlock exact :XX timer — Free Account"} />
           </div>
         </>
       ) : (
