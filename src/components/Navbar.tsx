@@ -9,6 +9,8 @@ import { UserMenu } from "./UserMenu";
 import { SearchBox } from "./SearchBox";
 import { MobileNav } from "./MobileNav";
 import { GuestSignupPopup } from "./GuestSignupPopup";
+import { MobileStickyAlertBar } from "./MobileStickyAlertBar";
+import { ReferralTracker } from "./ReferralTracker";
 
 export const NAV = [
   { href: "/map", label: "Map", icon: "map" },
@@ -93,7 +95,9 @@ export async function Navbar() {
           <MobileNav staff={isStaff(user)} />
         </div>
       </header>
+      <ReferralTracker signedIn={Boolean(user)} />
       {!user && <GuestSignupPopup />}
+      {!user && <MobileStickyAlertBar />}
     </>
   );
 }

@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Trophy, Gift, Sparkles, Camera, ShieldAlert, Clock, Award, Crown } from "lucide-react";
 import { getLeaderboardOverview, type LeaderboardEntry } from "@/lib/queries";
+import { getDb } from "@/db";
+import { getCurrentUser } from "@/lib/session";
+import { getUserReferralSummary } from "@/lib/referrals";
+import { ReferralCard } from "@/components/ReferralCard";
 import { Avatar, EARNABLE_RANKS, reputationBadge } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
@@ -18,8 +22,13 @@ const PRIZE_BADGES = [
 ];
 
 export default async function LeaderboardPage() {
-  const { todayLabel, currentMonthName, lastMonthName, daily, month, allTime, lastMonthTop3 } =
-    await getLeaderboardOverview();
+  const [overview, user, db] = await Promise.all([
+    getLeaderboardOverview(),
+    getCurrentUser(),
+    getDb(),
+  ]);
+  const { todayLabel, currentMonthName, lastMonthName, daily, month, allTime, lastMonthTop3 } = overview;
+  const refSummary = user ? await getUserReferralSummary(db, user.id, user.name) : null;
 
   const List = ({
     rows,
@@ -168,6 +177,9 @@ export default async function LeaderboardPage() {
           <span className="chip border-volt/40 text-volt">
             <Camera className="h-3 w-3" /> Snap Receipt / Screen Photo: +25 Rep
           </span>
+          <span className="chip border-emerald-400/50 text-emerald-300">
+            🎁 Refer a Hunting Buddy: +25 Rep
+          </span>
           <span className="chip text-white">First Finder: +10 Rep</span>
           <span className="chip border-green-500/40 text-green-300">Corroborated Truth Bonus: +3 Rep</span>
           <span className="chip text-white">Add machine: +5 Rep</span>
@@ -187,6 +199,9 @@ export default async function LeaderboardPage() {
           </span>
         </div>
       </div>
+
+      {/* Viral Spotter Referral Loop Card */}
+      <ReferralCard summary={refSummary} />
 
       {/* ═══════════════════════════════════════════════════════════════════════
           EARNABLE DAILY SPOTTER RANKS (RESETS DAILY AT 12:00 AM PT)

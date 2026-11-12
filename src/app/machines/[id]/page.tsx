@@ -15,6 +15,7 @@ import { getMachineVendedProducts } from "@/lib/vending-storage";
 import { getDb } from "@/db";
 import { DropMapClient } from "@/components/DropMapClient";
 import { MachineCard } from "@/components/MachineCard";
+import { InstantZipAlertBanner } from "@/components/InstantZipAlertBanner";
 import { SponsorSlot } from "@/components/SponsorSlot";
 import { AlertAdminButton } from "@/components/AlertAdminButton";
 import { QuickAlertButton } from "@/components/QuickAlertButton";
@@ -34,9 +35,17 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   };
 }
 
-export default async function MachinePage({ params }: { params: Promise<{ id: string }> }) {
+export default async function MachinePage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ locked?: string }>;
+}) {
   const { id } = await params;
+  const sp = await searchParams;
   const user = await getCurrentUser();
+  const isSoftGated = !user && sp?.locked === "1";
   const d = await getMachineDetail(id, user?.id);
   if (!d) notFound();
   const { machine: m } = d;
@@ -89,7 +98,7 @@ export default async function MachinePage({ params }: { params: Promise<{ id: st
             <MapPin className="h-4 w-4" /> {m.street}, {m.city}, {m.state} {m.zip}
           </p>
           <div className="mt-2.5 flex flex-wrap items-center gap-2">
-            <QuickAlertButton machineId={m.id} anchorMinute={m.anchorMinute} />
+            <QuickAlertButton machineId={m.id} anchorMinute={isSoftGated ? null : m.anchorMinute} />
             {m.status !== "active" && <span className="chip border-orange-400/40 text-orange-300">{m.status}</span>}
             <a
               className="chip hover:text-white"
@@ -107,37 +116,70 @@ export default async function MachinePage({ params }: { params: Promise<{ id: st
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
-          <LiveDropStatus schedule={sched} accuracy={m.accuracy} verified={m.scheduleVerified} variant="big" />
-          {sched && (
-            <div className="card p-5">
+          {isSoftGated ? (
+            <div className="card space-y-4 border-volt/45 bg-gradient-to-br from-yellow-500/15 via-panel to-panel p-6">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <div>
-                  <p className="text-xs uppercase tracking-wide text-muted">Current drop schedule</p>
-                  <p className="text-lg font-bold text-white">{describeSchedule(sched)}</p>
-                </div>
-                <p className="text-xs text-muted">Times shown in {m.timezone.replace("_", " ")}</p>
+                <span className="rounded-full bg-volt px-3 py-0.5 text-xs font-black uppercase tracking-wider text-slate-950">
+                  🔒 Exact Drop Minute Locked (Free Account)
+                </span>
+                <span className="font-mono text-sm font-bold text-volt">
+                  {m.intervalMinutes === 30 ? "Drops every 30m at :?? & :??" : "Drops hourly at :??"}
+                </span>
               </div>
-              <div className="mt-4">
-                <AccuracyMeter accuracy={m.accuracy} verified={m.scheduleVerified} size="lg" />
-                <p className="mt-2 text-xs text-muted">
-                  {m.scheduleVerified
-                    ? "Verified by a PackRadar moderator."
-                    : (m.accuracy ?? 0) >= 90
-                      ? "Confirmed by multiple collectors."
-                      : "Not confirmed yet. Confirm or report drops to raise accuracy."}
-                </p>
+              <div className="font-mono text-4xl font-black text-white sm:text-5xl">
+                Drops at :??
               </div>
+              <p className="text-sm text-slate-300">
+                Anonymous visitors get 1 free closest machine preview. Enter your email below (<b className="text-volt">1 click</b>)
+                to instantly unlock <b className="text-white">{m.retailer} ({m.city})</b> plus all 357 live drop timers and
+                10-minute pre-drop alerts!
+              </p>
+              <AccuracyMeter accuracy={m.accuracy} verified={m.scheduleVerified} size="lg" />
+              <InstantZipAlertBanner
+                query={m.zip}
+                locationLabel={`${m.city}, ${m.state}`}
+                lat={m.lat}
+                lng={m.lng}
+                machineCount={1 + d.nearby.length}
+                signedIn={false}
+                userHandle={null}
+              />
             </div>
-          )}
+          ) : (
+            <>
+              <LiveDropStatus schedule={sched} accuracy={m.accuracy} verified={m.scheduleVerified} variant="big" />
+              {sched && (
+                <div className="card p-5">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                      <p className="text-xs uppercase tracking-wide text-muted">Current drop schedule</p>
+                      <p className="text-lg font-bold text-white">{describeSchedule(sched)}</p>
+                    </div>
+                    <p className="text-xs text-muted">Times shown in {m.timezone.replace("_", " ")}</p>
+                  </div>
+                  <div className="mt-4">
+                    <AccuracyMeter accuracy={m.accuracy} verified={m.scheduleVerified} size="lg" />
+                    <p className="mt-2 text-xs text-muted">
+                      {m.scheduleVerified
+                        ? "Verified by a PackRadar moderator."
+                        : (m.accuracy ?? 0) >= 90
+                          ? "Confirmed by multiple collectors."
+                          : "Not confirmed yet. Confirm or report drops to raise accuracy."}
+                    </p>
+                  </div>
+                </div>
+              )}
 
-          <MachineActions
-            machineId={m.id}
-            signedIn={Boolean(user)}
-            isFavorite={d.isFavorite}
-            candidates={cands}
-            schedule={sched}
-            isStaff={isStaff(user)}
-          />
+              <MachineActions
+                machineId={m.id}
+                signedIn={Boolean(user)}
+                isFavorite={d.isFavorite}
+                candidates={cands}
+                schedule={sched}
+                isStaff={isStaff(user)}
+              />
+            </>
+          )}
 
           <MachineProductsCard
             machineId={m.id}
@@ -155,7 +197,11 @@ export default async function MachinePage({ params }: { params: Promise<{ id: st
                   <span>
                     {o.kind === "dropped" ? "🟢 Dropped" : "🚫 No drop"} at{" "}
                     <b className="text-white">
-                      {o.observedAt.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: m.timezone })}
+                      {isSoftGated
+                        ? o.observedAt
+                            .toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: m.timezone })
+                            .replace(/:\d{2}/, ":??")
+                        : o.observedAt.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: m.timezone })}
                     </b>
                     {o.note && <span className="text-muted"> · {o.note}</span>}
                   </span>
@@ -201,7 +247,12 @@ export default async function MachinePage({ params }: { params: Promise<{ id: st
         </div>
 
         <div className="space-y-6">
-          <DropMapClient machines={[toMapMachine(m)]} focusId={m.id} height="300px" showFilters={false} />
+          <DropMapClient
+            machines={[isSoftGated ? { ...toMapMachine(m), a: null } : toMapMachine(m)]}
+            focusId={m.id}
+            height="300px"
+            showFilters={false}
+          />
           <div className="card p-5">
             <p className="mb-1 font-bold text-white">Report machine status</p>
             <p className="mb-2.5 text-xs text-muted">
@@ -229,30 +280,41 @@ export default async function MachinePage({ params }: { params: Promise<{ id: st
                       stop.id === m.id ? "bg-purple-500/20 font-bold text-white ring-1 ring-purple-400/40" : "bg-panel-2 text-slate-300"
                     }`}
                   >
-                    <Link href={`/machines/${stop.id}`} className="truncate hover:text-volt">
-                      {idx + 1}. {stop.retailer} ({stop.city})
-                    </Link>
-                    <span className="ml-2 shrink-0 font-mono text-[11px] text-volt">
-                      {stop.anchorMinute != null
-                        ? `:${String(stop.anchorMinute).padStart(2, "0")}`
-                        : "??"}
-                    </span>
-                  </li>
-                ))}
-              </ol>
-            </div>
-          )}
-          <SponsorSlot lat={m.lat} lng={m.lng} placement="machine" />
-          {d.nearby.length > 0 && (
-            <div>
-              <SectionTitle title="Nearby machines" />
-              <div className="space-y-3">
-                {d.nearby.map((n) => (
-                  <MachineCard key={n.id} m={n} distance={n.distance} />
-                ))}
+                      <Link
+                        href={!user && stop.id !== m.id ? `/machines/${stop.id}?locked=1` : `/machines/${stop.id}`}
+                        className="truncate hover:text-volt"
+                      >
+                        {idx + 1}. {stop.retailer} ({stop.city})
+                      </Link>
+                      <span className="ml-2 shrink-0 font-mono text-[11px] text-volt">
+                        {!user && (isSoftGated || stop.id !== m.id)
+                          ? ":??"
+                          : stop.anchorMinute != null
+                            ? `:${String(stop.anchorMinute).padStart(2, "0")}`
+                            : "??"}
+                      </span>
+                    </li>
+                  ))}
+                </ol>
               </div>
-            </div>
-          )}
+            )}
+            <SponsorSlot lat={m.lat} lng={m.lng} placement="machine" />
+            {d.nearby.length > 0 && (
+              <div>
+                <SectionTitle title="Nearby machines" />
+                <div className="space-y-3">
+                  {d.nearby.map((n) => (
+                    <MachineCard
+                      key={n.id}
+                      m={n}
+                      distance={n.distance}
+                      lockedTimer={!user}
+                      unlockLabel={`Unlock all ${1 + d.nearby.length} timers near ${m.city} — Free Account`}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
         </div>
       </div>
     </div>

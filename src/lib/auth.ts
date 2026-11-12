@@ -209,6 +209,14 @@ function buildAuth() {
               patch.role = "admin";
             }
             await db.update(schema.user).set(patch).where(eq(schema.user.id, u.id));
+            try {
+              const { processReferralForNewUser } = await import("@/lib/referrals");
+              await processReferralForNewUser(db, {
+                id: u.id,
+                email: u.email,
+                name: patch.name ?? u.name,
+              });
+            } catch {}
           },
         },
       },

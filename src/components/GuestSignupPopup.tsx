@@ -46,10 +46,25 @@ export function GuestSignupPopup() {
     pathname.startsWith("/forgot-password") ||
     pathname.startsWith("/reset-password");
 
+  const hasMobileStickyBar =
+    pathname.startsWith("/search") ||
+    pathname.startsWith("/map") ||
+    pathname.startsWith("/machines/") ||
+    pathname.startsWith("/locations") ||
+    pathname.startsWith("/drops");
+
   useEffect(() => {
     if (isAuthRoute) {
       setVisible(false);
       setOpen(false);
+      return;
+    }
+
+    // On mobile (<768px), MobileStickyAlertBar handles conversion cleanly on search/map/machine pages without blocking the screen
+    if (typeof window !== "undefined" && window.innerWidth < 768 && hasMobileStickyBar) {
+      setVisible(false);
+      setOpen(false);
+      setMinimizedPill(false);
       return;
     }
 
@@ -86,7 +101,7 @@ export function GuestSignupPopup() {
       clearTimeout(timer);
       window.removeEventListener("scroll", onScroll);
     };
-  }, [isAuthRoute]);
+  }, [isAuthRoute, hasMobileStickyBar]);
 
   if (isAuthRoute) return null;
 

@@ -6,6 +6,7 @@ import { getDb } from "@/db";
 import { alertSubscriptions, machines, notifications, products, user, zipCodes } from "@/db/schema";
 import { lookupZipCentroid } from "@/db/seed";
 import { effectivePlan, PLAN_LIMITS } from "@/lib/plans";
+import { getUserReferralSummary } from "@/lib/referrals";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +26,11 @@ export const GET = route(async () => {
     .where(and(eq(notifications.userId, u.id), eq(notifications.channel, "inapp")))
     .orderBy(desc(notifications.createdAt))
     .limit(30);
-  return { subscriptions: subs, inbox, plan: effectivePlan(u), limits: PLAN_LIMITS[effectivePlan(u)] };
+  const refSummary = await getUserReferralSummary(db, u.id, u.name);
+  const plan = effectivePlan(u);
+  const baseLimits = PLAN_LIMITS[plan];
+  const limits = { ...baseLimits, maxAlerts: baseLimits.maxAlerts + refSummary.bonusAlertSlots };
+  return { subscriptions: subs, inbox, plan, limits, referral: refSummary };
 });
 
 const Create = z.object({
@@ -49,8 +54,10 @@ export const POST = route(async (req) => {
   const u = await requireUser();
   const b = Create.parse(await json(req));
   const db = await getDb();
+  const refSummary = await getUserReferralSummary(db, u.id, u.name);
   const plan = effectivePlan(u);
-  const limits = PLAN_LIMITS[plan];
+  const baseLimits = PLAN_LIMITS[plan];
+  const limits = { ...baseLimits, maxAlerts: baseLimits.maxAlerts + refSummary.bonusAlertSlots };
 
   // Avoid duplicate active alert if user taps the same machine or news/drop topic twice
   const existingUserSubs = await db

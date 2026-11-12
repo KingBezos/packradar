@@ -680,7 +680,20 @@ export async function seedIfEmpty(db: DB) {
         stockReports?: Record<string, unknown>[];
         comments?: Record<string, unknown>[];
         dropVotes?: Record<string, unknown>[];
+        referralLedger?: Record<string, unknown>;
       };
+      if (comm.referralLedger && typeof comm.referralLedger === "object") {
+        try {
+          await db
+            .insert(settings)
+            .values({
+              key: "referral_ledger_v1",
+              value: comm.referralLedger,
+              updatedAt: new Date(),
+            })
+            .onConflictDoNothing();
+        } catch {}
+      }
       if (Array.isArray(comm.users)) {
         for (const u of comm.users) {
           try {

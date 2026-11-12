@@ -5,7 +5,9 @@ import { getDb } from "@/db";
 import { alertSubscriptions, machines, notifications, products } from "@/db/schema";
 import { getCurrentUser } from "@/lib/session";
 import { effectivePlan, PLAN_LIMITS } from "@/lib/plans";
+import { getUserReferralSummary } from "@/lib/referrals";
 import { AlertsManager, type SubView } from "@/components/AccountClient";
+import { ReferralCard } from "@/components/ReferralCard";
 import { timeAgo } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
@@ -29,6 +31,8 @@ export default async function AlertsPage() {
     .orderBy(desc(notifications.createdAt))
     .limit(25);
   const plan = effectivePlan(u);
+  const refSummary = await getUserReferralSummary(db, u.id, u.name);
+  const maxAlerts = PLAN_LIMITS[plan].maxAlerts + refSummary.bonusAlertSlots;
   const subs: SubView[] = rows.map(({ s, m, p }) => ({
     id: s.id,
     kind: s.kind,
@@ -50,7 +54,10 @@ export default async function AlertsPage() {
     <div className="mx-auto max-w-4xl px-4 py-10">
       <h1 className="text-3xl font-black text-white">My alerts</h1>
       <div className="mt-6">
-        <AlertsManager subs={subs} plan={plan} maxAlerts={PLAN_LIMITS[plan].maxAlerts} maxLead={PLAN_LIMITS[plan].maxLeadMinutes} homeZip={u.homeZip} />
+        <ReferralCard summary={refSummary} />
+      </div>
+      <div className="mt-6">
+        <AlertsManager subs={subs} plan={plan} maxAlerts={maxAlerts} maxLead={PLAN_LIMITS[plan].maxLeadMinutes} homeZip={u.homeZip} />
       </div>
       <h2 className="mb-3 mt-10 text-xl font-bold text-white">Recent notifications</h2>
       <div className="card divide-y divide-line">
